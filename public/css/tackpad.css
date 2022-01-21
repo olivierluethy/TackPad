@@ -1,0 +1,228 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #69c9e2;
+}
+
+/* Navigation Bar */
+nav {
+    background: white;
+    padding: 5px 25%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 2px 3px 5px grey;
+}
+
+logo {
+    height: 36px;
+    width: 36px;
+    display: block;
+    background-image: url("../../images/favicon.ico");
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+a,
+p {
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+h1 {
+    font-family: "Playfair Display", serif;
+    font-weight: 600;
+}
+
+h2,
+p {
+    font-family: "Poppins", sans-serif;
+    font-weight: 200;
+}
+
+p {
+    font-weight: 400;
+}
+
+header h1,
+header h2 {
+    color: #ffffff;
+    width: 40%;
+    display: block;
+    margin: auto;
+    letter-spacing: 1px;
+}
+
+a.active {
+    font-weight: bold;
+    color: royalblue;
+}
+
+table,
+td,
+th {
+    border: 1px solid #ddd;
+    text-align: left;
+    background-color: white;
+}
+
+table {
+    border-collapse: collapse;
+    width: 67%;
+    box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+}
+
+.aufgabe_nicht_zu_spaet {
+    background-color: lightgreen;
+    transition: 500ms;
+}
+
+.aufgabe_nicht_zu_spaet:hover {
+    box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+    transition: 500ms;
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+.aufgabe_zu_spaet {
+    background-color: lightcoral;
+    transition: 500ms;
+}
+
+.aufgabe_zu_spaet:hover {
+    box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+    transition: 500ms;
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+th,
+td {
+    padding: 15px;
+}
+
+.selectAll {
+    display: flex;
+    background-color: lightblue;
+    height: 3.3vh;
+    margin-bottom: 1rem;
+    width: 10%;
+    box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+}
+
+.checkAll {
+    margin-right: 1rem;
+}
+
+.checkAllText {
+    margin-top: 0.5rem;
+}
+
+/* Button for deleting all */
+#deleteAll {
+    background-color: black;
+    border: 2px solid black;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition: 0.5s ease;
+    display: none;
+}
+
+#deleteAll:hover {
+    background-color: white;
+    color: black;
+    transition-duration: 0.4s;
+}
+
+/* Main Section */
+.edit {
+    background-color: #4caf50;
+    border: 2px solid #4caf50;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition: 0.5s ease;
+}
+
+.edit:hover {
+    background-color: white;
+    color: #4caf50;
+    transition-duration: 0.4s;
+}
+
+.delete {
+    background-color: red;
+    border: 2px solid red;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.5s ease;
+}
+
+.delete:hover {
+    background-color: white;
+    color: red;
+}
+
+.hinzufuegen {
+    background-color: #06145b;
+    border: 2px solid #06145b;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-left: 16.5em;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.hinzufuegen:hover {
+    background-color: white;
+    color: #06145b;
+}
+
+input[type="checkbox"] {
+    width: 25px;
+    height: 25px;
+}
+
+input[type="checkbox"]:hover {
+    cursor: pointer;
+}
+
+main {
+    margin-left: 30em;
+}
+
+/* Form */
+form {
+    display: flex;
+    margin-top: 0.2rem;
+}
+
+#aufgabe,
+#date {
+    margin-left: 1em;
+}
