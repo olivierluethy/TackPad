@@ -14,9 +14,10 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../public/css/about.css">
+    <link rel="stylesheet" type="text/css" href="public/css/about.css">
+    <link rel="stylesheet" type="text/css" href="public/css/nav.css">
 
-    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="shortcut icon" href="assets/favicon.ico">
     <meta name="author" content="Olivier Luethy">
     <title>Document</title>
 </head>

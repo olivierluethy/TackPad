@@ -1,0 +1,29 @@
+nav {
+    background: white;
+    padding: 5px 30%;
+    margin-bottom: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+logo {
+    height: 50px;
+    width: 50px;
+    display: block;
+    background-image: url("../../assets/favicon.ico");
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+a,
+p {
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}

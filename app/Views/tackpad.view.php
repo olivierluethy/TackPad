@@ -33,9 +33,10 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 <head>
     <meta charset="UTF-8">
     <title>TackPad</title>
-    <link rel="stylesheet" type="text/css" href="../public/css/tackpad.css">
+    <link rel="stylesheet" type="text/css" href="public/css/tackpad.css">
+    <link rel="stylesheet" type="text/css" href="public/css/nav.css">
 
-    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="shortcut icon" href="assets/favicon.ico">
     <meta name="author" content="Olivier Luethy">
 
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
@@ -145,7 +146,7 @@ if ($alle_aufgaben > 0){
     echo "<h1 style='color: red';>Es wurde noch keine Aufgabe hinzugefügt</h1>";
 }?>
 
-<form action="create" method="post">
+<form action="create" method="POST">
   <input type="text" id="titel" name="title" placeholder="Titel"><br>
   <input type="text" id="aufgabe" name="notice" placeholder="Aufgabe"><br><br>
   <input type="date" id="date" name="date" placeholder="Datum eingeben"><br><br>
@@ -159,7 +160,7 @@ if ($alle_aufgaben > 0){
 
 </main>
 
-<script src="../public/js/clientSideValidationNotice.js"></script>
-<script src="../public/js/tackpad.js"></script>
+<script src="public/js/clientSideValidationNotice.js"></script>
+<script src="public/js/tackpad.js"></script>
 </body>
 </html>

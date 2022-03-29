@@ -3,27 +3,28 @@ require 'core/bootstrap.php';
 
 $routes = [
 	/* Hauptseiten */
-	'/notes/home' => 'WelcomeController@index',
-	'/notes/tackpad' => 'WelcomeController@tackpad',
-	'/notes/about' => 'WelcomeController@about',
+	'' => 'TackPadController@index',
+	'home' => 'TackPadController@index',
+	'tackpad' => 'TackPadController@tackpad',
+	'about' => 'TackPadController@about',
 
 	/* Informationen hinzufügen */
-	'/notes/create' => 'WelcomeController@create',
+	'create' => 'TackPadController@create',
 
 	/* Informationen löschen */
-	'/notes/delete' => 'WelcomeController@delete',
-	'/notes/deleteAll' => 'WelcomeController@deleteAll',
+	'delete' => 'TackPadController@delete',
+	'deleteAll' => 'TackPadController@deleteAll',
 
 	/* Informationen bearbeiten */
-	'/notes/edit' => 'WelcomeController@update',
-	'/notes/erledigt' => 'WelcomeController@erledigt',
-	'/notes/nichtmehrerledigt' => 'WelcomeController@nichtmehrerledigt',
+	'edit' => 'TackPadController@update',
+	'erledigt' => 'TackPadController@erledigt',
+	'nichtmehrerledigt' => 'TackPadController@nichtmehrerledigt',
 
 	/* Login */
-	'/notes/login' => 'WelcomeController@login',
-	'/notes/config' => 'WelcomeController@config',
-	'/notes/register' => 'WelcomeController@register',
-	'/notes/logout' => 'WelcomeController@logout',
+	'login' => 'TackPadController@login',
+	'config' => 'TackPadController@config',
+	'register' => 'TackPadController@register',
+	'logout' => 'TackPadController@logout',
 ];
 
 $db = [
