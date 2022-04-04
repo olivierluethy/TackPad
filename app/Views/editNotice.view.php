@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Notiz bearbeiten</title>
-    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="shortcut icon" href="../assets/favicon.ico">
 </head>
 
 <body>
