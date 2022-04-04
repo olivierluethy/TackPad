@@ -30,6 +30,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <title>TackPad</title>
@@ -43,12 +44,13 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
 </head>
+
 <body>
 
-<!-- Navigation Part -->
-<header>
-    <nav>
-        <?php
+    <!-- Navigation Part -->
+    <header>
+        <nav>
+            <?php
             if(isset($_SESSION['loggedin']) == true){
                 echo "<logo id='logo'></logo>
                 <a href='home'>Home</a>
@@ -64,14 +66,14 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                 <a href='login'>Login</a>
             </div>";
             }?>
-    </nav>
-</header>
+        </nav>
+    </header>
 
-<main>
+    <main>
 
-<h1>Aufgaben</h1>
+        <h1>Aufgaben</h1>
 
-<?php
+        <?php
 if ($alle_aufgaben > 0){
     $anzahl_offen = $anzahl_offen_spaet + $anzahl_offen_nicht_spaet;
 
@@ -146,21 +148,22 @@ if ($alle_aufgaben > 0){
     echo "<h1 style='color: red';>Es wurde noch keine Aufgabe hinzugefügt</h1>";
 }?>
 
-<form action="create" method="POST">
-  <input type="text" id="titel" name="title" placeholder="Titel"><br>
-  <input type="text" id="aufgabe" name="notice" placeholder="Aufgabe"><br><br>
-  <input type="date" id="date" name="date" placeholder="Datum eingeben"><br><br>
-  <button class="hinzufuegen" type="submit"><i class="fas fa-plus"></i> Aufgabe hinzufügen</button>
-</form> 
-<p id="warningTitel"></p>
-<p id="warningAufgabe"></p>
-<p id="warningDate"></p>
+        <form action="create" method="POST">
+            <input type="text" id="titel" name="title" placeholder="Titel"><br>
+            <input type="text" id="aufgabe" name="notice" placeholder="Aufgabe"><br><br>
+            <input type="date" id="date" name="date" placeholder="Datum eingeben"><br><br>
+            <button class="hinzufuegen" type="submit"><i class="fas fa-plus"></i> Aufgabe hinzufügen</button>
+        </form>
+        <p id="warningTitel"></p>
+        <p id="warningAufgabe"></p>
+        <p id="warningDate"></p>
 
-<button id="deleteAll" onclick="deleteAll()"><i class="fas fa-trash-alt"></i> Delete all</button>
+        <button id="deleteAll" onclick="deleteAll()"><i class="fas fa-trash-alt"></i> Delete all</button>
 
-</main>
+    </main>
 
-<script src="public/js/clientSideValidationNotice.js"></script>
-<script src="public/js/tackpad.js"></script>
+    <script src="public/js/clientSideValidationNotice.js"></script>
+    <script src="public/js/tackpad.js"></script>
 </body>
+
 </html>

@@ -18,41 +18,23 @@ class TackPadController
         // Initialize the session
         session_start();
 
-        /* Alle Aufgaben */
-        $pdo = connectDatabase();
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $notiz = new Notiz();
 
-        $statement = $pdo->prepare("SELECT * FROM notes WHERE fk_usersId = :id");
-        $statement->bindParam(':id', $_SESSION['id'], PDO::PARAM_STR);
-        $statement->execute();
-        $alle_tasks = $statement->fetchAll();
+        /* Alle Aufgaben */
+        $alle_tasks = $notiz -> tackpad();
+        $alle_tasks = $alle_tasks -> fetchAll();
 
         /* Nicht zu späte und nicht erledigte Aufgaben */
-        $pdo = connectDatabase();
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        $statement = $pdo->prepare("SELECT * FROM notes WHERE status = 0 AND fk_usersId = :id AND NOT date_to_complete + INTERVAL 1 DAY < NOW()");
-        $statement->bindParam(':id', $_SESSION['id'], PDO::PARAM_STR);
-        $statement->execute();
-        $nicht_zu_spaet_offene_tasks = $statement->fetchAll();
+        $nicht_zu_spaet_offene_tasks = $notiz -> getNotLateButOpenTasks();
+        $nicht_zu_spaet_offene_tasks = $nicht_zu_spaet_offene_tasks -> fetchAll();
 
         /* Zu späte und nicht erledigte Aufgaben */
-        $pdo = connectDatabase();
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        $statement = $pdo->prepare("SELECT * FROM notes WHERE status = 0 AND fk_usersId = :id AND date_to_complete + INTERVAL 1 DAY < NOW()");
-        $statement->bindParam(':id', $_SESSION['id'], PDO::PARAM_STR);
-        $statement->execute();
-        $zu_spaet_offene_tasks = $statement->fetchAll();
+        $zu_spaet_offene_tasks = $notiz -> getLateAndOpenTasks();
+        $zu_spaet_offene_tasks = $zu_spaet_offene_tasks -> fetchAll();
 
         /* Erledigte Aufgaben */
-        $pdo = connectDatabase();
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        $statement = $pdo->prepare("SELECT * FROM notes WHERE status = 1 AND fk_usersId = :id");
-        $statement->bindParam(':id', $_SESSION['id'], PDO::PARAM_STR);
-        $statement->execute();
-        $erledigte_tasks = $statement->fetchAll();
+        $erledigte_tasks = $notiz -> getDoneTasks();
+        $erledigte_tasks = $erledigte_tasks -> fetchAll();
 
         require 'app/Views/tackpad.view.php';
     }

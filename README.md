@@ -2,7 +2,7 @@
 <br />
 <p align="center">
   <a href="http://192.168.100.57:3000/Olivier_Luethy/TackPad.git">
-    <img src="images/favicon.ico" alt="Logo" width="80" height="80">
+    <img src="assets/favicon.ico" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">TackPad</h3>
