@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #69c9e2;
-    /* Navigation Bar */
+    font-family: 'Inconsolata', monospace;
     header {
         nav {
             background: white;
@@ -34,7 +34,6 @@ body {
                 color: black;
             }
         }
-        /* ---- */
     }
     table {
         table,

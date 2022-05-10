@@ -2,10 +2,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #69c9e2;
-  /* Navigation Bar */
-}
-body header {
-  /* ---- */
+  font-family: "Inconsolata", monospace;
 }
 body header nav {
   background: white;

@@ -39,6 +39,11 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
     <link rel="shortcut icon" href="assets/favicon.ico">
     <meta name="author" content="Olivier Luethy">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <!-- Importing font from google -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@700&display=swap" rel="stylesheet">
 
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
