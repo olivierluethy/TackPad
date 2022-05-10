@@ -6,8 +6,7 @@ nav {
   justify-content: space-between;
   align-items: center;
 }
-
-logo {
+nav logo {
   height: 50px;
   width: 50px;
   display: block;
@@ -16,14 +15,12 @@ logo {
   background-size: contain;
   background-repeat: no-repeat;
 }
-
-a,
-p {
+nav a,
+nav p {
   font-size: 16px;
   letter-spacing: 1px;
 }
-
-a {
+nav a {
   text-decoration: none;
   color: black;
 }/*# sourceMappingURL=nav.css.map */

@@ -5,25 +5,22 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-logo {
-    height: 50px;
-    width: 50px;
-    display: block;
-    background-image: url("../../assets/favicon.ico");
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
-a,
-p {
-    font-size: 16px;
-    letter-spacing: 1px;
-}
-
-a {
-    text-decoration: none;
-    color: black;
+    logo {
+        height: 50px;
+        width: 50px;
+        display: block;
+        background-image: url("../../assets/favicon.ico");
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+    a,
+    p {
+        font-size: 16px;
+        letter-spacing: 1px;
+    }
+    a {
+        text-decoration: none;
+        color: black;
+    }
 }

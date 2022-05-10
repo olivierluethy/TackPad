@@ -1,228 +1,194 @@
 body {
-    margin: 0;
-    padding: 0;
-    background-color: #69c9e2;
+  margin: 0;
+  padding: 0;
+  background-color: #69c9e2;
+  /* Navigation Bar */
 }
-
-/* Navigation Bar */
-nav {
-    background: white;
-    padding: 5px 25%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 2px 3px 5px grey;
+body header {
+  /* ---- */
 }
-
-logo {
-    height: 36px;
-    width: 36px;
-    display: block;
-    background-image: url("../../images/favicon.ico");
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
+body header nav {
+  background: white;
+  padding: 5px 25%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 2px 3px 5px grey;
 }
-
-a,
-p {
-    font-size: 16px;
-    letter-spacing: 1px;
+body header nav logo {
+  height: 36px;
+  width: 36px;
+  display: block;
+  background-image: url("../../assets/favicon.ico");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
-
-a {
-    text-decoration: none;
-    color: black;
+body header nav a.active {
+  font-weight: bold;
+  color: royalblue;
 }
-
-h1 {
-    font-family: "Playfair Display", serif;
-    font-weight: 600;
+body header nav a,
+body header nav p {
+  font-size: 16px;
+  letter-spacing: 1px;
 }
-
-h2,
-p {
-    font-family: "Poppins", sans-serif;
-    font-weight: 200;
+body header nav a {
+  text-decoration: none;
+  color: black;
 }
-
-p {
-    font-weight: 400;
+body table {
+  width: 100%;
 }
-
-header h1,
-header h2 {
-    color: #ffffff;
-    width: 40%;
-    display: block;
-    margin: auto;
-    letter-spacing: 1px;
+body table table,
+body table th,
+body table td {
+  width: 10%;
 }
-
-a.active {
-    font-weight: bold;
-    color: royalblue;
+body table tr td main {
+  display: block;
 }
-
-table,
-td,
-th {
-    border: 1px solid #ddd;
-    text-align: left;
-    background-color: white;
+body table tr td main .selectAll {
+  display: flex;
+  background-color: lightblue;
+  height: 3.3vh;
+  margin-bottom: 1rem;
+  width: 15%;
+  box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
 }
-
-table {
-    border-collapse: collapse;
-    width: 67%;
-    box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+body table tr td main .selectAll input[type=checkbox] {
+  width: 25px;
+  height: 25px;
 }
-
-.aufgabe_nicht_zu_spaet {
-    background-color: lightgreen;
-    transition: 500ms;
+body table tr td main .selectAll input[type=checkbox]:hover {
+  cursor: pointer;
 }
-
-.aufgabe_nicht_zu_spaet:hover {
-    box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
-    transition: 500ms;
-    cursor: pointer;
-    transform: scale(1.1);
+body table tr td main .selectAll .checkAll {
+  margin-right: 1rem;
 }
-
-.aufgabe_zu_spaet {
-    background-color: lightcoral;
-    transition: 500ms;
+body table tr td main .selectAll .checkAllText {
+  margin-top: 0.5rem;
 }
-
-.aufgabe_zu_spaet:hover {
-    box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
-    transition: 500ms;
-    cursor: pointer;
-    transform: scale(1.1);
+body table tr td main table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
 }
-
-th,
-td {
-    padding: 15px;
+body table tr td main table td,
+body table tr td main table th {
+  border: 1px solid #ddd;
+  text-align: left;
+  background-color: white;
+  padding: 15px;
 }
-
-.selectAll {
-    display: flex;
-    background-color: lightblue;
-    height: 3.3vh;
-    margin-bottom: 1rem;
-    width: 10%;
-    box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+body table tr td main table td input[type=checkbox] {
+  width: 25px;
+  height: 25px;
 }
-
-.checkAll {
-    margin-right: 1rem;
+body table tr td main table td input[type=checkbox]:hover {
+  cursor: pointer;
 }
-
-.checkAllText {
-    margin-top: 0.5rem;
+body table tr td main table td .edit {
+  background-color: #4caf50;
+  border: 2px solid #4caf50;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition: 0.5s ease;
 }
-
-/* Button for deleting all */
-#deleteAll {
-    background-color: black;
-    border: 2px solid black;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    transition: 0.5s ease;
-    display: none;
+body table tr td main table td .edit:hover {
+  background-color: white;
+  color: #4caf50;
+  transition-duration: 0.4s;
 }
-
-#deleteAll:hover {
-    background-color: white;
-    color: black;
-    transition-duration: 0.4s;
+body table tr td main table td .delete {
+  background-color: red;
+  border: 2px solid red;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.5s ease;
 }
-
-/* Main Section */
-.edit {
-    background-color: #4caf50;
-    border: 2px solid #4caf50;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    transition: 0.5s ease;
+body table tr td main table td .delete:hover {
+  background-color: white;
+  color: red;
 }
-
-.edit:hover {
-    background-color: white;
-    color: #4caf50;
-    transition-duration: 0.4s;
+body table tr td main table .aufgabe_nicht_zu_spaet {
+  background-color: lightgreen;
+  transition: 500ms;
 }
-
-.delete {
-    background-color: red;
-    border: 2px solid red;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.5s ease;
+body table tr td main table .aufgabe_nicht_zu_spaet:hover {
+  box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+  transition: 500ms;
+  cursor: pointer;
+  transform: scale(1.1);
 }
-
-.delete:hover {
-    background-color: white;
-    color: red;
+body table tr td main table .aufgabe_zu_spaet {
+  background-color: lightcoral;
+  transition: 500ms;
 }
-
-.hinzufuegen {
-    background-color: #06145b;
-    border: 2px solid #06145b;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin-left: 16.5em;
-    transition-duration: 0.4s;
-    cursor: pointer;
+body table tr td main table .aufgabe_zu_spaet:hover {
+  box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+  transition: 500ms;
+  cursor: pointer;
+  transform: scale(1.1);
 }
-
-.hinzufuegen:hover {
-    background-color: white;
-    color: #06145b;
+body table tr td main form {
+  margin-top: 0.2rem;
 }
-
-input[type="checkbox"] {
-    width: 25px;
-    height: 25px;
+body table tr td main form input {
+  width: 20%;
+  height: 47px;
+  font-size: 20px;
+  border: 2px solid black;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
-
-input[type="checkbox"]:hover {
-    cursor: pointer;
+body table tr td main form #aufgabe,
+body table tr td main form #date {
+  margin-left: 1em;
 }
-
-main {
-    margin-left: 30em;
+body table tr td main form .hinzufuegen {
+  background-color: #06145b;
+  border: 2px solid #06145b;
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  transition-duration: 0.4s;
+  float: right;
+  padding: 15px 32px;
+  box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
 }
-
-/* Form */
-form {
-    display: flex;
-    margin-top: 0.2rem;
+body table tr td main form .hinzufuegen:hover {
+  background-color: white;
+  color: #06145b;
 }
-
-#aufgabe,
-#date {
-    margin-left: 1em;
+body table tr td main #deleteAll {
+  background-color: black;
+  border: 2px solid black;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition: 0.5s ease;
+  display: none;
 }
+body table tr td main #deleteAll:hover {
+  background-color: white;
+  color: black;
+  transition-duration: 0.4s;
+}/*# sourceMappingURL=tackpad.css.map */
