@@ -43,9 +43,26 @@ function openModal() {
     addmodal.style.display = "block";
 }
 
+function dispose() {
+    addmodal.style.display = "none";
+}
+
 function openBearbeiten() {
     editmodal.style.display = "block";
 }
+
+document.addEventListener("click", (e) => {
+    let element = e.target;
+    if (element.tagName.toLowerCase() === 'input' && element.getAttribute('type') === 'checkbox' && element.checked == true) {
+        document.getElementById("bearbeiten").style.display = "inline-block";
+        document.getElementById("loeschen").style.display = "inline-block";
+        document.getElementById("freigeben").style.display = "inline-block";
+    } else if (element.checked == false) {
+        document.getElementById("bearbeiten").style.display = "none";
+        document.getElementById("loeschen").style.display = "none";
+        document.getElementById("freigeben").style.display = "none";
+    }
+})
 
 // Get the modal
 var addmodal = document.getElementById("addModal");

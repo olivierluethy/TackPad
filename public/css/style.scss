@@ -29,6 +29,11 @@ body {
                     width: 100%;
                     background-color: black;
                     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                    #bearbeiten,
+                    #loeschen,
+                    #freigeben {
+                        display: none;
+                    }
                     button {
                         background-color: white;
                         border: 1px solid white;
@@ -275,7 +280,7 @@ body {
                 background-color: white;
                 color: white;
                 border-radius: 0px 0px 25px 25px;
-                .submit {
+                .select-button {
                     display: flex;
                     justify-content: center;
                     align-items: center;

@@ -64,15 +64,15 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
             <td>
                 <main>
                     <?php
-                    if (1 == 1){
+                    if ($alle_aufgaben > 0){
                     $anzahl_offen = $anzahl_offen_spaet + $anzahl_offen_nicht_spaet;
 
-                    if(1 == 1){
+                    if($anzahl_offen > 0){
                     echo "<div class='options'>
                         <button onclick='openModal()'><i class='fas fa-plus'></i> Hinzufügen</button>
-                        <button onclick='openBearbeiten()'><i class='fas fa-edit'></i> Bearbeiten</button>
-                        <button><i class='fas fa-trash'></i> Löschen</button>
-                        <button><i class='fas fa-share'></i> Freigeben</button>
+                        <button id='bearbeiten' onclick='openBearbeiten()'><i class='fas fa-edit'></i> Bearbeiten</button>
+                        <button id='loeschen'><i class='fas fa-trash'></i> Löschen</button>
+                        <button id='freigeben'><i class='fas fa-share'></i> Freigeben</button>
                     </div>";
                     /* Offene Aufgaben */
                     echo "<h1>Aufgaben</h1>";
@@ -93,19 +93,21 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     foreach ($nicht_zu_spaet_offene_tasks as $nicht_zu_spaet_offene_tasks2){
                         echo "<tr class='aufgabe_nicht_zu_spaet'>
-                        <td style='background-color:lightgreen;'><input type='checkbox' name='forAll' onclick='erledigen(" . $nicht_zu_spaet_offene_tasks2['NoteId'] . ")'></td>
+                        <td style='background-color:lightgreen;'><input type='checkbox' class='nicht_zu_spaet_offene_tasks'></td>
                         <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['titel'] . "</td>
                         <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['notiz'] . "</td>
                         <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['date_to_complete'] . "</td>
+                        <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['prioritaet'] . "</td>
                         </tr>";
                     }
 
                     foreach ($zu_spaet_offene_tasks as $zu_spaet_offene_tasks2){
                         echo "<tr class='aufgabe_zu_spaet'>
-                        <td style='background-color:lightcoral;'><input type='checkbox' name='forAll' onclick='erledigen(" . $zu_spaet_offene_tasks2['NoteId'] . ")'></td>
+                        <td style='background-color:lightcoral;'><input type='checkbox' class='zu_spaet_offene_tasks'></td>
                         <td style='background-color:lightcoral;'>" . $zu_spaet_offene_tasks2['titel'] . "</td>
                         <td style='background-color:lightcoral;'>" . $zu_spaet_offene_tasks2['notiz'] . "</td>
                         <td style='background-color:lightcoral;'>" . $zu_spaet_offene_tasks2['date_to_complete'] . "</td>
+                        <td style='background-color:lightcoral'>" . $zu_spaet_offene_tasks2['prioritaet'] . "</td>
                         </tr>";
                     }
                     echo "</table><br>";
@@ -130,7 +132,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     foreach ($erledigte_tasks as $erledigte_tasks2){
                         echo "<tr>
-                        <td><input type='checkbox' name='forAll' onclick='nichtMehrErledigt(". $erledigte_tasks2['NoteId'] . ")' checked></td>
+                        <td><input type='checkbox' class='erledigte_tasks' checked></td>
                         <td class='erledigt_titel'><del>" . $erledigte_tasks2['titel'] . "</del></td>
                         <td class='erledigt_notiz'><del>" . $erledigte_tasks2['notiz'] . "</del></td>
                         <td class='erledigt_datum'><del>" . $erledigte_tasks2['date_to_complete'] . "</del></td>

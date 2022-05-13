@@ -39,14 +39,15 @@ class TackPadController
         $pdo = connectDatabase();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $title = $_POST['title'];
-            $notice = $_POST['notice'];
+            $titel = $_POST['titel'];
+            $aufgabe = $_POST['aufgabe'];
             $status = 0;
-            $date = $_POST['date'];
+            $datum = $_POST['datum'];
+            $prioritaet = $_POST['prioritaet'];
 
-            $notiz->createNotiz($titel, $notice, $status, $date, $_SESSION['id']);
+            $notiz->createNotiz($titel, $aufgabe, $status, $datum, $prioritaet, $_SESSION['id']);
 
-            header('Location: http://localhost/TackPad/tackpad');
+            header('Location: http://localhost/TackPad/');
         }
     }
 

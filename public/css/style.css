@@ -32,6 +32,11 @@ body table tr td .options {
   background-color: black;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
+body table tr td .options #bearbeiten,
+body table tr td .options #loeschen,
+body table tr td .options #freigeben {
+  display: none;
+}
 body table tr td .options button {
   background-color: white;
   border: 1px solid white;
@@ -275,12 +280,12 @@ body .modal .modal-content .modal-footer {
   color: white;
   border-radius: 0px 0px 25px 25px;
 }
-body .modal .modal-content .modal-footer .submit {
+body .modal .modal-content .modal-footer .select-button {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-body .modal .modal-content .modal-footer .submit .hinzufuegen {
+body .modal .modal-content .modal-footer .select-button .hinzufuegen {
   background-color: black;
   border-radius: 10px;
   border: 1px solid black;
@@ -294,11 +299,11 @@ body .modal .modal-content .modal-footer .submit .hinzufuegen {
   transition-duration: 0.4s;
   cursor: pointer;
 }
-body .modal .modal-content .modal-footer .submit .hinzufuegen:hover {
+body .modal .modal-content .modal-footer .select-button .hinzufuegen:hover {
   background-color: white;
   color: black;
 }
-body .modal .modal-content .modal-footer .submit .verwerfen {
+body .modal .modal-content .modal-footer .select-button .verwerfen {
   background-color: red;
   border-radius: 10px;
   border: 1px solid red;
@@ -312,7 +317,7 @@ body .modal .modal-content .modal-footer .submit .verwerfen {
   transition-duration: 0.4s;
   cursor: pointer;
 }
-body .modal .modal-content .modal-footer .submit .verwerfen:hover {
+body .modal .modal-content .modal-footer .select-button .verwerfen:hover {
   background-color: white;
   color: red;
 }

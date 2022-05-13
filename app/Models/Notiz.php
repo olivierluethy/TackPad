@@ -11,7 +11,7 @@ class Notiz
 	// TackPad Ansicht
 	public function tackpad(){
 		/* Alle Aufgaben */
-		$statement = $this->db->prepare("SELECT * FROM notes WHERE fk_usersId = :id");
+		$statement = $this->db->prepare("SELECT * FROM notes WHERE fk_usersId = :id ORDER BY prioritaet ASC");
 		$statement->bindParam(':id', $_SESSION['id'], PDO::PARAM_STR);
 		$statement->execute();
 		return $statement;
@@ -42,16 +42,18 @@ class Notiz
 	}
 
 	/* Notiz hinzufügen */
-	public function createNotiz($titel, $notice, $status, $date, $id){
-		$title = htmlspecialchars($_POST['title']);
-		$notice = htmlspecialchars($_POST['notice']);
-		$date = htmlspecialchars($_POST['date']);
+	public function createNotiz($titel, $aufgabe, $status, $datum, $prioritaet, $id){
+		$titel = htmlspecialchars($_POST['titel']);
+		$aufgabe = htmlspecialchars($_POST['aufgabe']);
+		$datum = htmlspecialchars($_POST['datum']);
+		$prioritaet = htmlspecialchars($_POST['prioritaet']);
 
-		$statement = $this->db->prepare("INSERT INTO `notes` (titel, notiz, status, date_to_complete, fk_usersId) VALUES (:titel, :notiz, :status, :date_to_complete, :fk_usersId)");
-		$statement->bindParam(':titel', $title, PDO::PARAM_STR);
-		$statement->bindParam(':notiz', $notice, PDO::PARAM_STR);
+		$statement = $this->db->prepare("INSERT INTO `notes` (titel, notiz, status, date_to_complete, prioritaet, fk_usersId) VALUES (:titel, :aufgabe, :status, :date_to_complete, :prioritaet, :fk_usersId)");
+		$statement->bindParam(':titel', $titel, PDO::PARAM_STR);
+		$statement->bindParam(':aufgabe', $aufgabe, PDO::PARAM_STR);
 		$statement->bindParam(':status', $status, PDO::PARAM_STR);
-		$statement->bindParam(':date_to_complete', $date, PDO::PARAM_STR);
+		$statement->bindParam(':prioritaet', $prioritaet, PDO::PARAM_STR);
+		$statement->bindParam(':date_to_complete', $datum, PDO::PARAM_STR);
 		$statement->bindParam(':fk_usersId', $id, PDO::PARAM_STR);
 		$statement->execute();
 	}
