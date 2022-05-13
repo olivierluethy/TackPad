@@ -1,0 +1,338 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: black;
+  font-family: "Inconsolata", monospace;
+  /* The Modal (background) */
+  /* Add Animation */
+}
+body .navi {
+  font-size: 35px;
+  cursor: pointer;
+  color: white;
+  position: absolute;
+  left: 17px;
+  top: 5px;
+}
+body table {
+  width: 100%;
+}
+body table table,
+body table th,
+body table td {
+  width: 10%;
+}
+body table tr td .options {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  padding: 2px;
+  font-size: 20px;
+  width: 100%;
+  background-color: black;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+body table tr td .options button {
+  background-color: white;
+  border: 1px solid white;
+  color: black;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  border-radius: 10px;
+  cursor: pointer;
+}
+body table tr td .options button:hover {
+  background-color: black;
+  color: white;
+}
+body table tr td main {
+  display: block;
+  margin-left: 3rem;
+}
+body table tr td main h1,
+body table tr td main p {
+  color: white;
+}
+body table tr td main table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+}
+body table tr td main table td,
+body table tr td main table th {
+  border: 1px solid #ddd;
+  text-align: left;
+  background-color: white;
+  padding: 15px;
+}
+body table tr td main table td input[type=checkbox],
+body table tr td main table th input[type=checkbox] {
+  width: 25px;
+  height: 25px;
+}
+body table tr td main table td input[type=checkbox]:hover,
+body table tr td main table th input[type=checkbox]:hover {
+  cursor: pointer;
+}
+body table tr td main table td input[type=checkbox] {
+  width: 25px;
+  height: 25px;
+}
+body table tr td main table td input[type=checkbox]:hover {
+  cursor: pointer;
+}
+body table tr td main table td .edit {
+  background-color: #4caf50;
+  border: 2px solid #4caf50;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition: 0.5s ease;
+}
+body table tr td main table td .edit:hover {
+  background-color: white;
+  color: #4caf50;
+  transition-duration: 0.4s;
+}
+body table tr td main table td .delete {
+  background-color: red;
+  border: 2px solid red;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.5s ease;
+}
+body table tr td main table td .delete:hover {
+  background-color: white;
+  color: red;
+}
+body table tr td main table .aufgabe_nicht_zu_spaet {
+  background-color: lightgreen;
+  transition: 500ms;
+}
+body table tr td main table .aufgabe_nicht_zu_spaet:hover {
+  box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+  transition: 500ms;
+  cursor: pointer;
+  transform: scale(1.1);
+}
+body table tr td main table .aufgabe_zu_spaet {
+  background-color: lightcoral;
+  transition: 500ms;
+}
+body table tr td main table .aufgabe_zu_spaet:hover {
+  box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+  transition: 500ms;
+  cursor: pointer;
+  transform: scale(1.1);
+}
+body table tr td main form {
+  margin-top: 0.2rem;
+}
+body table tr td main form input {
+  width: 20%;
+  height: 47px;
+  font-size: 20px;
+  border: 2px solid black;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+body table tr td main form #aufgabe,
+body table tr td main form #date {
+  margin-left: 1em;
+}
+body table tr td main form .hinzufuegen {
+  background-color: #06145b;
+  border: 2px solid #06145b;
+  color: white;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  transition-duration: 0.4s;
+  float: right;
+  padding: 15px 32px;
+  box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+body table tr td main form .hinzufuegen:hover {
+  background-color: white;
+  color: #06145b;
+}
+body table tr td main #deleteAll {
+  background-color: black;
+  border: 2px solid black;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition: 0.5s ease;
+  display: none;
+}
+body table tr td main #deleteAll:hover {
+  background-color: white;
+  color: black;
+  transition-duration: 0.4s;
+}
+body .modal {
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  padding-top: 100px;
+  /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
+  /* Modal Content */
+}
+body .modal .modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  border: 1px solid #888;
+  width: 25%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  border-radius: 25px;
+  /* The Close Button */
+}
+body .modal .modal-content .close {
+  color: black;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+body .modal .modal-content .close:hover, body .modal .modal-content .close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+body .modal .modal-content .modal-header {
+  text-align: center;
+  border-radius: 25px 25px 0px 0px;
+  padding: 2px 16px;
+  background-color: white;
+  color: white;
+  border-bottom: 2px solid black;
+}
+body .modal .modal-content .modal-header h2 {
+  color: black;
+}
+body .modal .modal-content .modal-body {
+  padding: 2px 16px;
+}
+body .modal .modal-content .modal-body table {
+  margin-left: auto;
+  margin-right: auto;
+}
+body .modal .modal-content .modal-body table label {
+  float: right;
+}
+body .modal .modal-content .modal-body table input {
+  width: 90%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+body .modal .modal-content .modal-footer {
+  border-top: 2px solid black;
+  padding: 2px 16px;
+  background-color: white;
+  color: white;
+  border-radius: 0px 0px 25px 25px;
+}
+body .modal .modal-content .modal-footer .submit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+body .modal .modal-content .modal-footer .submit .hinzufuegen {
+  background-color: black;
+  border-radius: 10px;
+  border: 1px solid black;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+body .modal .modal-content .modal-footer .submit .hinzufuegen:hover {
+  background-color: white;
+  color: black;
+}
+body .modal .modal-content .modal-footer .submit .verwerfen {
+  background-color: red;
+  border-radius: 10px;
+  border: 1px solid red;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+body .modal .modal-content .modal-footer .submit .verwerfen:hover {
+  background-color: white;
+  color: red;
+}
+@-webkit-keyframes animatetop {
+  from {
+    top: -300px;
+    opacity: 0;
+  }
+  to {
+    top: 0;
+    opacity: 1;
+  }
+}
+@keyframes animatetop {
+  from {
+    top: -300px;
+    opacity: 0;
+  }
+  to {
+    top: 0;
+    opacity: 1;
+  }
+}/*# sourceMappingURL=style.css.map */

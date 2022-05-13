@@ -5,8 +5,6 @@ $routes = [
 	/* Hauptseiten */
 	'' => 'TackPadController@index',
 	'home' => 'TackPadController@index',
-	'tackpad' => 'TackPadController@tackpad',
-	'about' => 'TackPadController@about',
 
 	/* Informationen hinzufügen */
 	'create' => 'TackPadController@create',

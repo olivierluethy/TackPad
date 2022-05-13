@@ -17,8 +17,11 @@ CREATE TABLE notes (
     NoteId INTEGER AUTO_INCREMENT,
     titel VARCHAR(100) NOT NULL,
 	notiz VARCHAR(100) NOT NULL,
+    prioritaet TINYINT(5) NOT NULL,
 	status TINYINT(1) NOT NULL,
     date_to_complete DATE NOT NULL,
+    date_when_completed DATE,
+    last_change DATE,
 	fk_usersId INT NOT NULL,
 	FOREIGN KEY (fk_usersId) REFERENCES users(id),
     PRIMARY KEY(NoteId)
