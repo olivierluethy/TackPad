@@ -93,7 +93,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     foreach ($nicht_zu_spaet_offene_tasks as $nicht_zu_spaet_offene_tasks2){
                         echo "<tr class='aufgabe_nicht_zu_spaet'>
-                        <td style='background-color:lightgreen;'><input type='checkbox' class='nicht_zu_spaet_offene_tasks'></td>
+                        <td style='background-color:lightgreen;'><input type='checkbox' onclick='getId(" . $nicht_zu_spaet_offene_tasks2['NoteId'] . ")' class='nicht_zu_spaet_offene_tasks'></td>
                         <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['titel'] . "</td>
                         <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['notiz'] . "</td>
                         <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['date_to_complete'] . "</td>

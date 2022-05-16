@@ -52,15 +52,11 @@ function openBearbeiten() {
 }
 
 function getId(id) {
-    if (counter == 0) {
-        changeId = id;
-        console.log(changeId);
-    } else {
-        changeId = 0;
-    }
+    changeId.push(id)
+    console.log(changeId);
 }
 
-let changeId;
+let changeId = [];
 let counter = 0;
 
 document.addEventListener("click", (e) => {
@@ -73,10 +69,12 @@ document.addEventListener("click", (e) => {
     } else if (element.checked == false) {
         counter--;
     }
-    if (counter > 0) {
+    if (counter == 1) {
         document.getElementById("bearbeiten").style.display = "inline-block";
         document.getElementById("loeschen").style.display = "inline-block";
         document.getElementById("freigeben").style.display = "inline-block";
+    } else if (counter > 1) {
+        document.getElementById("bearbeiten").style.display = "none";
     } else if (counter == 0) {
         document.getElementById("bearbeiten").style.display = "none";
         document.getElementById("loeschen").style.display = "none";
