@@ -51,13 +51,33 @@ function openBearbeiten() {
     editmodal.style.display = "block";
 }
 
+function getId(id) {
+    if (counter == 0) {
+        changeId = id;
+        console.log(changeId);
+    } else {
+        changeId = 0;
+    }
+}
+
+let changeId;
+let counter = 0;
+
 document.addEventListener("click", (e) => {
     let element = e.target;
     if (element.tagName.toLowerCase() === 'input' && element.getAttribute('type') === 'checkbox' && element.checked == true) {
         document.getElementById("bearbeiten").style.display = "inline-block";
         document.getElementById("loeschen").style.display = "inline-block";
         document.getElementById("freigeben").style.display = "inline-block";
+        counter++;
     } else if (element.checked == false) {
+        counter--;
+    }
+    if (counter > 0) {
+        document.getElementById("bearbeiten").style.display = "inline-block";
+        document.getElementById("loeschen").style.display = "inline-block";
+        document.getElementById("freigeben").style.display = "inline-block";
+    } else if (counter == 0) {
         document.getElementById("bearbeiten").style.display = "none";
         document.getElementById("loeschen").style.display = "none";
         document.getElementById("freigeben").style.display = "none";
