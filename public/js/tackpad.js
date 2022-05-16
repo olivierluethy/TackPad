@@ -52,8 +52,15 @@ function openBearbeiten() {
 }
 
 function getId(id) {
-    changeId.push(id)
-    console.log(changeId);
+    /* Check if id is already in array */
+    if (changeId.includes(id)) {
+        let Index = changeId.indexOf(id);
+        changeId.splice(Index, 1);
+        console.log(changeId);
+    } else {
+        changeId.push(id);
+        console.log(changeId);
+    }
 }
 
 let changeId = [];
