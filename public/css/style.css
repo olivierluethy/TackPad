@@ -34,6 +34,7 @@ body table tr td .options {
 }
 body table tr td .options #bearbeiten,
 body table tr td .options #loeschen,
+body table tr td .options #erledigt,
 body table tr td .options #freigeben {
   display: none;
 }
@@ -46,7 +47,6 @@ body table tr td .options button {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin: 4px 2px;
   transition-duration: 0.4s;
   border-radius: 10px;
   cursor: pointer;
@@ -176,7 +176,8 @@ body table tr td main form .hinzufuegen:hover {
   background-color: white;
   color: #06145b;
 }
-body #deleteAllOffeneTasks {
+body #deleteAllOffeneTasks,
+body #deleteAllErledigteTasks {
   background-color: white;
   border: 2px solid white;
   color: black;
@@ -189,7 +190,8 @@ body #deleteAllOffeneTasks {
   transition: 0.5s ease;
   display: none;
 }
-body #deleteAllOffeneTasks:hover {
+body #deleteAllOffeneTasks:hover,
+body #deleteAllErledigteTasks:hover {
   background-color: black;
   color: white;
   transition-duration: 0.4s;

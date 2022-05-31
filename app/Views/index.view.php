@@ -64,17 +64,20 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
             <td>
                 <main>
                     <?php
+                    /* Alle Aufgaben */
                     if ($alle_aufgaben > 0){
                     $anzahl_offen = $anzahl_offen_spaet + $anzahl_offen_nicht_spaet;
 
-                    if($anzahl_offen > 0){
                     echo "<div class='options'>
                         <button onclick='openModal()'><i class='fas fa-plus'></i> Hinzufügen</button>
                         <button id='bearbeiten' onclick='openBearbeiten()'><i class='fas fa-edit'></i> Bearbeiten</button>
                         <button id='loeschen' onclick='realyDeleteNote()'><i class='fas fa-trash'></i> Löschen</button>
+                        <button id='erledigt' onclick='erledigt()'>Erledigt</button>
                         <button id='freigeben'><i class='fas fa-share'></i> Freigeben</button>
                     </div>";
+
                     /* Offene Aufgaben */
+                    if($anzahl_offen > 0){
                     echo "<h1>Aufgaben</h1>";
                     echo "<p>Offene Aufgaben ($anzahl_offen)</p>
 
@@ -113,36 +116,37 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                     echo "</table><br>";
                     echo "<button id='deleteAllOffeneTasks' onclick='deleteAll()'><i class='fas fa-trash-alt'></i> Delete all</button>";
                     }
-                    if ($anzahl_erledigt > 0){
                     /* Erledigte Aufgaben */
+                    if ($anzahl_erledigt > 0){
                     echo "<p>Erledigte Aufgaben ($anzahl_erledigt)</p>
 
                     <table>
 
                     <tr>
                         <th>
-                            <input type='checkbox' title='Alle auswählen' name='vehicle1'>
+                            <input id='checkAllErledigteTasks' type='checkbox' onclick='checkAllErledigteTasks(this)' title='Alle auswählen' name='vehicle1'>
                         </th>
                         <th>Titel</th>
                         <th>Aufgabe</th>
                         <th>Datum</th>
                         <th>Priorität</th>
-                        <th>Geändert</th>
                         <th>Wurde erledigt am</th>
+                        <th>Geändert</th>
                     </tr>";
 
                     foreach ($erledigte_tasks as $erledigte_tasks2){
                         echo "<tr>
-                        <td><input type='checkbox' class='erledigte_tasks' checked></td>
+                        <td><input type='checkbox' onclick='getId(" . $erledigte_tasks2['NoteId'] . ")' class='erledigte_tasks'></td>
                         <td class='erledigt_titel'><del>" . $erledigte_tasks2['titel'] . "</del></td>
                         <td class='erledigt_notiz'><del>" . $erledigte_tasks2['notiz'] . "</del></td>
                         <td class='erledigt_datum'><del>" . $erledigte_tasks2['date_to_complete'] . "</del></td>
                         <td class='erledigt_priority'><del>" . $erledigte_tasks2['prioritaet'] . "</del></td>
-                        <td class='erledigt_lastchange'><del>" . $erledigte_tasks2['last_change'] . "</del></td>
                         <td class='erledigt_completed_at'><del>" . $erledigte_tasks2['date_when_completed'] . "</del></td>
+                        <td class='erledigt_lastchange'><del>" . $erledigte_tasks2['last_change'] . "</del></td>
                         </tr>";
                     }
                     echo "</table><br>";
+                    echo "<button id='deleteAllErledigteTasks' onclick='deleteAll()'><i class='fas fa-trash-alt'></i> Delete all</button>";
                     }
                 }else{
                     echo "<h1 style='color: red';>Es wurde noch keine Aufgabe hinzugefügt</h1>";

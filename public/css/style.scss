@@ -31,6 +31,7 @@ body {
                     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
                     #bearbeiten,
                     #loeschen,
+                    #erledigt,
                     #freigeben {
                         display: none;
                     }
@@ -43,7 +44,6 @@ body {
                         text-decoration: none;
                         display: inline-block;
                         font-size: 16px;
-                        margin: 4px 2px;
                         transition-duration: 0.4s;
                         border-radius: 10px;
                         cursor: pointer;
@@ -177,7 +177,8 @@ body {
             }
         }
     }
-    #deleteAllOffeneTasks {
+    #deleteAllOffeneTasks,
+    #deleteAllErledigteTasks {
         background-color: white;
         border: 2px solid white;
         color: black;

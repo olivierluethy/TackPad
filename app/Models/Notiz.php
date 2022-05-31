@@ -69,6 +69,15 @@ class Notiz
         $statement->execute();
 	}
 
+	public function istErledigt($id){
+		$statement = $this->db->prepare('UPDATE `notes` SET notes.status = 1, notes.date_when_completed = CURRENT_TIMESTAMP, notes.last_change = CURRENT_TIMESTAMP WHERE NoteId = :id');
+        $statement->bindParam(':id', $id);
+        $statement->execute();
+	}
+
+
+
+
 	public function renewNotiz($titel, $notice, $date, $id){
 		$titel = htmlspecialchars($_POST['title']);
 		$notice = htmlspecialchars($_POST['notice']);
@@ -80,12 +89,6 @@ class Notiz
 		$statement->bindParam(':date', $date);
 		$statement->bindParam(':id', $id);
 		$statement->execute();
-	}
-
-	public function istErledigt($id){
-		$statement = $this->db->prepare('UPDATE `notes` SET status = 1 WHERE NoteId = :id');
-        $statement->bindParam(':id', $id);
-        $statement->execute();
 	}
 
 	public function istnichtmehrerledigt($id){

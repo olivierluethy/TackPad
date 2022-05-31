@@ -96,6 +96,19 @@ class TackPadController
         require 'app/Views/editNote.view.php';
     }
 
+    public function erledigt(){
+        $notiz = new Notiz();
+
+        // Initialize the session
+        session_start();
+
+        $id = $_GET['id'];
+
+        $notiz->istErledigt($id);
+
+        header('Location: http://localhost/TackPad/');
+    }
+
     public function login(){
         require 'app/Views/login.php';
     }
