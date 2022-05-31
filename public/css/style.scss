@@ -173,27 +173,26 @@ body {
                             }
                         }
                     }
-                    #deleteAll {
-                        background-color: black;
-                        border: 2px solid black;
-                        color: white;
-                        padding: 15px 32px;
-                        text-align: center;
-                        text-decoration: none;
-                        display: inline-block;
-                        font-size: 16px;
-                        margin: 4px 2px;
-                        cursor: pointer;
-                        transition: 0.5s ease;
-                        display: none;
-                        &:hover {
-                            background-color: white;
-                            color: black;
-                            transition-duration: 0.4s;
-                        }
-                    }
                 }
             }
+        }
+    }
+    #deleteAllOffeneTasks {
+        background-color: white;
+        border: 2px solid white;
+        color: black;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.5s ease;
+        display: none;
+        &:hover {
+            background-color: black;
+            color: white;
+            transition-duration: 0.4s;
         }
     }
     /* The Modal (background) */

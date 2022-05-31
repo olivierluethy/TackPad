@@ -26,22 +26,22 @@ function openBearbeiten() {
     // editmodal.style.display = "block";
 }
 
-// function checkAll(source) {
-//     checkboxes = document.getElementsByName('forAll');
-//     for (var i = 0, n = checkboxes.length; i < n; i++) {
-//         checkboxes[i].checked = source.checked;
-//     }
+function checkAllOffeneTasks(source) {
+    checkboxes = document.getElementsByClassName('offene_tasks');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
 
-//     if (document.getElementById("checkAll").checked) {
-//         document.getElementById("deleteAll").style.display = "block";
-//     } else {
-//         document.getElementById("deleteAll").style.display = "none";
-//     }
-// }
+    if (document.getElementById("checkAllOffeneTasks").checked) {
+        document.getElementById("deleteAllOffeneTasks").style.display = "block";
+    } else {
+        document.getElementById("deleteAllOffeneTasks").style.display = "none";
+    }
+}
 
-// function deleteAll() {
-//     location.href = "deleteAll";
-// }
+function deleteAllNichtZuSpaetOffeneTasks() {
+    location.href = "deleteAllNichtZuSpaetOffeneTasks";
+}
 
 function openNav() {
     document.getElementById("mySidenav").style.width = "250px";
@@ -60,27 +60,26 @@ function dispose() {
 }
 
 function getId(id) {
+    counter = 0;
     /* Check if id is already in array */
-    // if (changeId.includes(id)) {
-    //     let Index = changeId.indexOf(id);
-    //     changeId.splice(Index, 1);
-    //     console.log(changeId);
-    // } else {
-    //     changeId.push(id);
-    //     console.log(changeId);
-    // }
-    changeId = id;
-}
-
-document.addEventListener("click", (e) => {
-    let element = e.target;
-    if (element.tagName.toLowerCase() === 'input' && element.getAttribute('type') === 'checkbox' && element.checked == true) {
-        document.getElementById("bearbeiten").style.display = "inline-block";
-        document.getElementById("loeschen").style.display = "inline-block";
-        document.getElementById("freigeben").style.display = "inline-block";
-        counter++;
-    } else if (element.checked == false) {
-        counter--;
+    if (changeId.includes(id)) {
+        let Index = changeId.indexOf(id);
+        changeId.splice(Index, 1);
+    } else {
+        changeId.push(id);
+    }
+    elements = document.getElementsByClassName("offene_tasks");
+    for (var i = 0; i < elements.length; i++) {
+        if (elements[i].checked == true) {
+            counter++;
+        }
+    }
+    if (elements.length == counter) {
+        document.getElementById("checkAllOffeneTasks").checked = true;
+        document.getElementById("deleteAllOffeneTasks").style.display = "block";
+    } else {
+        document.getElementById("checkAllOffeneTasks").checked = false;
+        document.getElementById("deleteAllOffeneTasks").style.display = "none";
     }
     if (counter == 1) {
         document.getElementById("bearbeiten").style.display = "inline-block";
@@ -93,7 +92,7 @@ document.addEventListener("click", (e) => {
         document.getElementById("loeschen").style.display = "none";
         document.getElementById("freigeben").style.display = "none";
     }
-})
+}
 
 // Get the modal
 var deletemodal = document.getElementById("deleteModal");

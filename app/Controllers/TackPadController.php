@@ -67,6 +67,19 @@ class TackPadController
         require 'app/Views/tackpad.view.php';
 	}
 
+    public function deleteAllNichtZuSpaetOffeneTasks(){
+        $notiz = new Notiz();
+
+        // Initialize the session
+        session_start();
+
+        $notiz->removeAllNichtZuSpaetOffeneTasks();
+
+        header('Location: http://localhost/TackPad/');
+
+        require 'app/Views/tackpad.view.php';
+    }
+
     public function showEditPage(){
         $notiz = new Notiz();
 

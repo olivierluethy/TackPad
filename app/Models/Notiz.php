@@ -64,6 +64,11 @@ class Notiz
         $statement->execute();
 	}
 
+	public function removeAllNichtZuSpaetOffeneTasks(){
+		$statement = $this->db->prepare('DELETE FROM `notes` WHERE status = 0 AND NOT date_to_complete + INTERVAL 1 DAY < NOW()');
+        $statement->execute();
+	}
+
 	public function renewNotiz($titel, $notice, $date, $id){
 		$titel = htmlspecialchars($_POST['title']);
 		$notice = htmlspecialchars($_POST['notice']);

@@ -11,7 +11,7 @@ $routes = [
 
 	/* Informationen löschen */
 	'delete' => 'TackPadController@delete',
-	'deleteAll' => 'TackPadController@deleteAll',
+	'deleteAllNichtZuSpaetOffeneTasks' => 'TackPadController@deleteAllNichtZuSpaetOffeneTasks',
 
 	/* Informationen bearbeiten */
 	'showEditPage' => 'TackPadController@showEditPage',

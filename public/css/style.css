@@ -176,23 +176,22 @@ body table tr td main form .hinzufuegen:hover {
   background-color: white;
   color: #06145b;
 }
-body table tr td main #deleteAll {
-  background-color: black;
-  border: 2px solid black;
-  color: white;
+body #deleteAllOffeneTasks {
+  background-color: white;
+  border: 2px solid white;
+  color: black;
   padding: 15px 32px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin: 4px 2px;
   cursor: pointer;
   transition: 0.5s ease;
   display: none;
 }
-body table tr td main #deleteAll:hover {
-  background-color: white;
-  color: black;
+body #deleteAllOffeneTasks:hover {
+  background-color: black;
+  color: white;
   transition-duration: 0.4s;
 }
 body .modal {

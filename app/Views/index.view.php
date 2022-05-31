@@ -82,7 +82,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     <tr>
                         <th>
-                            <input type='checkbox' name='vehicle1' title='Alles auswählen'>
+                            <input id='checkAllOffeneTasks' type='checkbox' onclick='checkAllOffeneTasks(this)' name='vehicle1' title='Alles auswählen'>
                         </th>
                         <th>Titel</th>
                         <th>Aufgabe</th>
@@ -93,7 +93,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     foreach ($nicht_zu_spaet_offene_tasks as $nicht_zu_spaet_offene_tasks2){
                         echo "<tr class='aufgabe_nicht_zu_spaet'>
-                        <td style='background-color:lightgreen;'><input type='checkbox' onclick='getId(" . $nicht_zu_spaet_offene_tasks2['NoteId'] . ")' class='nicht_zu_spaet_offene_tasks'></td>
+                        <td style='background-color:lightgreen;'><input type='checkbox' onclick='getId(" . $nicht_zu_spaet_offene_tasks2['NoteId'] . ")' class='offene_tasks'></td>
                         <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['titel'] . "</td>
                         <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['notiz'] . "</td>
                         <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['date_to_complete'] . "</td>
@@ -103,7 +103,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     foreach ($zu_spaet_offene_tasks as $zu_spaet_offene_tasks2){
                         echo "<tr class='aufgabe_zu_spaet'>
-                        <td style='background-color:lightcoral;'><input type='checkbox' onclick='getId(" . $zu_spaet_offene_tasks2['NoteId'] . ")' class='zu_spaet_offene_tasks'></td>
+                        <td style='background-color:lightcoral;'><input type='checkbox' onclick='getId(" . $zu_spaet_offene_tasks2['NoteId'] . ")' class='offene_tasks'></td>
                         <td style='background-color:lightcoral;'>" . $zu_spaet_offene_tasks2['titel'] . "</td>
                         <td style='background-color:lightcoral;'>" . $zu_spaet_offene_tasks2['notiz'] . "</td>
                         <td style='background-color:lightcoral;'>" . $zu_spaet_offene_tasks2['date_to_complete'] . "</td>
@@ -111,6 +111,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         </tr>";
                     }
                     echo "</table><br>";
+                    echo "<button id='deleteAllOffeneTasks' onclick='deleteAll()'><i class='fas fa-trash-alt'></i> Delete all</button>";
                     }
                     if ($anzahl_erledigt > 0){
                     /* Erledigte Aufgaben */
