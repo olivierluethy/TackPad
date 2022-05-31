@@ -14,9 +14,11 @@ $routes = [
 	'deleteAll' => 'TackPadController@deleteAll',
 
 	/* Informationen bearbeiten */
-	'edit' => 'TackPadController@update',
+	'showEditPage' => 'TackPadController@showEditPage',
 	'erledigt' => 'TackPadController@erledigt',
 	'nichtmehrerledigt' => 'TackPadController@nichtmehrerledigt',
+
+	'getInfoFromId' => 'TackPadController@allInfoFromId',
 
 	/* Login */
 	'login' => 'TackPadController@login',

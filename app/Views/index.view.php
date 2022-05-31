@@ -51,13 +51,13 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 </head>
 
 <body>
-<div id="mySidenav" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-  <h1>TackPad</h1>
-  <h2>Hello user!</h2>
-  <a href="#">Logout</a>
-</div>
-<span class='navi' onclick="openNav()">&#9776;</span>
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <h1>TackPad</h1>
+        <h2>Hello user!</h2>
+        <a href="#">Logout</a>
+    </div>
+    <span class='navi' onclick="openNav()">&#9776;</span>
     <table>
         <tr>
             <td></td>
@@ -71,7 +71,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                     echo "<div class='options'>
                         <button onclick='openModal()'><i class='fas fa-plus'></i> Hinzufügen</button>
                         <button id='bearbeiten' onclick='openBearbeiten()'><i class='fas fa-edit'></i> Bearbeiten</button>
-                        <button id='loeschen'><i class='fas fa-trash'></i> Löschen</button>
+                        <button id='loeschen' onclick='realyDeleteNote()'><i class='fas fa-trash'></i> Löschen</button>
                         <button id='freigeben'><i class='fas fa-share'></i> Freigeben</button>
                     </div>";
                     /* Offene Aufgaben */
@@ -103,7 +103,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     foreach ($zu_spaet_offene_tasks as $zu_spaet_offene_tasks2){
                         echo "<tr class='aufgabe_zu_spaet'>
-                        <td style='background-color:lightcoral;'><input type='checkbox' class='zu_spaet_offene_tasks'></td>
+                        <td style='background-color:lightcoral;'><input type='checkbox' onclick='getId(" . $zu_spaet_offene_tasks2['NoteId'] . ")' class='zu_spaet_offene_tasks'></td>
                         <td style='background-color:lightcoral;'>" . $zu_spaet_offene_tasks2['titel'] . "</td>
                         <td style='background-color:lightcoral;'>" . $zu_spaet_offene_tasks2['notiz'] . "</td>
                         <td style='background-color:lightcoral;'>" . $zu_spaet_offene_tasks2['date_to_complete'] . "</td>
@@ -112,7 +112,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                     }
                     echo "</table><br>";
                     }
-                    if (1 == 1){
+                    if ($anzahl_erledigt > 0){
                     /* Erledigte Aufgaben */
                     echo "<p>Erledigte Aufgaben ($anzahl_erledigt)</p>
 
@@ -157,10 +157,12 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     ?>
 
     <?php
-    include("editNote.view.php");
+    include("addNote.view.php");
     ?>
 
-    <script src="public/js/clientSideValidationNotice.js"></script>
+    <?php
+    include("realyDelete.view.php");
+    ?>
     <script src="public/js/tackpad.js"></script>
 </body>
 

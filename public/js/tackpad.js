@@ -1,3 +1,6 @@
+let changeId = [];
+let counter = 0;
+
 function erledigen(id) {
     location.href = "erledigt?id=" + id;
 }
@@ -10,26 +13,35 @@ function editNote(id) {
     location.href = "edit?id=" + id;
 }
 
-function deleteNote(id) {
-    location.href = "delete?id=" + id;
+function realyDeleteNote() {
+    deletemodal.style.display = "block";
 }
 
-function checkAll(source) {
-    checkboxes = document.getElementsByName('forAll');
-    for (var i = 0, n = checkboxes.length; i < n; i++) {
-        checkboxes[i].checked = source.checked;
-    }
-
-    if (document.getElementById("checkAll").checked) {
-        document.getElementById("deleteAll").style.display = "block";
-    } else {
-        document.getElementById("deleteAll").style.display = "none";
-    }
+function deleteNote() {
+    location.href = "delete?id=" + changeId;
 }
 
-function deleteAll() {
-    location.href = "deleteAll";
+function openBearbeiten() {
+    location.href = "showEditPage?id=" + changeId;
+    // editmodal.style.display = "block";
 }
+
+// function checkAll(source) {
+//     checkboxes = document.getElementsByName('forAll');
+//     for (var i = 0, n = checkboxes.length; i < n; i++) {
+//         checkboxes[i].checked = source.checked;
+//     }
+
+//     if (document.getElementById("checkAll").checked) {
+//         document.getElementById("deleteAll").style.display = "block";
+//     } else {
+//         document.getElementById("deleteAll").style.display = "none";
+//     }
+// }
+
+// function deleteAll() {
+//     location.href = "deleteAll";
+// }
 
 function openNav() {
     document.getElementById("mySidenav").style.width = "250px";
@@ -47,24 +59,18 @@ function dispose() {
     addmodal.style.display = "none";
 }
 
-function openBearbeiten() {
-    editmodal.style.display = "block";
-}
-
 function getId(id) {
     /* Check if id is already in array */
-    if (changeId.includes(id)) {
-        let Index = changeId.indexOf(id);
-        changeId.splice(Index, 1);
-        console.log(changeId);
-    } else {
-        changeId.push(id);
-        console.log(changeId);
-    }
+    // if (changeId.includes(id)) {
+    //     let Index = changeId.indexOf(id);
+    //     changeId.splice(Index, 1);
+    //     console.log(changeId);
+    // } else {
+    //     changeId.push(id);
+    //     console.log(changeId);
+    // }
+    changeId = id;
 }
-
-let changeId = [];
-let counter = 0;
 
 document.addEventListener("click", (e) => {
     let element = e.target;
@@ -89,6 +95,8 @@ document.addEventListener("click", (e) => {
     }
 })
 
+// Get the modal
+var deletemodal = document.getElementById("deleteModal");
 // Get the modal
 var addmodal = document.getElementById("addModal");
 

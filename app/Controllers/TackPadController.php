@@ -60,16 +60,28 @@ class TackPadController
         
 		$id = $_GET['id'];
 
-        $title = '';
-        $pdo = connectDatabase();
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
         $notiz->removeNotiz($id);
         
-        header('Location: http://localhost/TackPad/tackpad');
+        header('Location: http://localhost/TackPad/');
 
         require 'app/Views/tackpad.view.php';
 	}
+
+    public function showEditPage(){
+        $notiz = new Notiz();
+
+        // Initialize the session
+        session_start();
+
+        $id = $_GET['id'];
+
+        /* Infos von Aufgabe */
+        $getInfosFromTask = $notiz -> getInfosFromTask($id);
+        $getInfosFromTask = $getInfosFromTask -> fetchAll();
+
+        require 'app/Views/index.view.php';
+        require 'app/Views/editNote.view.php';
+    }
 
     public function login(){
         require 'app/Views/login.php';
