@@ -2,8 +2,19 @@
 
 class TackPadController
 {
+    /* For the Home Page */
+	public function index()
+	{	
+		require 'app/Views/welcome.view.php';
+	}
+
+    /* For the About Page */
+    public function about(){
+        require 'app/Views/about.view.php';
+    }
+
     /* For the TackPad Page */
-    public function index(){
+    public function tackpad(){
         // Initialize the session
         session_start();
 
@@ -25,7 +36,7 @@ class TackPadController
         $erledigte_tasks = $notiz -> getDoneTasks();
         $erledigte_tasks = $erledigte_tasks -> fetchAll();
 
-        require 'app/Views/index.view.php';
+        require 'app/Views/tackpad.view.php';
     }
 
     /* Aufgabe hinzufügen */
@@ -39,15 +50,14 @@ class TackPadController
         $pdo = connectDatabase();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $titel = $_POST['titel'];
-            $aufgabe = $_POST['aufgabe'];
+            $title = $_POST['title'];
+            $notice = $_POST['notice'];
             $status = 0;
-            $datum = $_POST['datum'];
-            $prioritaet = $_POST['prioritaet'];
+            $date = $_POST['date'];
 
-            $notiz->createNotiz($titel, $aufgabe, $status, $datum, $prioritaet, $_SESSION['id']);
+            $notiz->createNotiz($titel, $notice, $status, $date, $_SESSION['id']);
 
-            header('Location: http://localhost/TackPad/');
+            header('Location: http://localhost/TackPad/tackpad');
         }
     }
 
@@ -60,27 +70,19 @@ class TackPadController
         
 		$id = $_GET['id'];
 
+        $title = '';
+        $pdo = connectDatabase();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
         $notiz->removeNotiz($id);
         
-        header('Location: http://localhost/TackPad/');
+        header('Location: http://localhost/TackPad/tackpad');
 
         require 'app/Views/tackpad.view.php';
 	}
 
-    public function deleteAllNichtZuSpaetOffeneTasks(){
-        $notiz = new Notiz();
-
-        // Initialize the session
-        session_start();
-
-        $notiz->removeAllNichtZuSpaetOffeneTasks();
-
-        header('Location: http://localhost/TackPad/');
-
-        require 'app/Views/tackpad.view.php';
-    }
-
-    public function showEditPage(){
+    /* Aufgabe bearbeiten */
+    public function update(){
         $notiz = new Notiz();
 
         // Initialize the session
@@ -88,12 +90,25 @@ class TackPadController
 
         $id = $_GET['id'];
 
-        /* Infos von Aufgabe */
-        $getInfosFromTask = $notiz -> getInfosFromTask($id);
-        $getInfosFromTask = $getInfosFromTask -> fetchAll();
+        $title = '';
+        $pdo = connectDatabase();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        require 'app/Views/index.view.php';
-        require 'app/Views/editNote.view.php';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $titel = $_POST['title'];
+            $notice = $_POST['notice'];
+            $date = $_POST['date'];
+
+            $notiz->renewNotiz($titel, $notice, $date, $id);
+
+            header('Location: http://localhost/TackPad/tackpad');
+        }else{
+            $statement = $pdo->prepare('SELECT * FROM notes WHERE NoteId = :id');
+            $statement->bindParam(':id', $id);
+            $statement->execute();
+            $notiz = $statement->fetchAll();
+        }
+        require 'app/Views/editNotice.view.php';
     }
 
     public function erledigt(){
@@ -104,9 +119,30 @@ class TackPadController
 
         $id = $_GET['id'];
 
+        $title = '';
+        $pdo = connectDatabase();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
         $notiz->istErledigt($id);
 
-        header('Location: http://localhost/TackPad/');
+        header('Location: http://localhost/TackPad/tackpad');
+    }
+
+    public function nichtmehrerledigt(){
+        $notiz = new Notiz();
+
+        // Initialize the session
+        session_start();
+
+        $id = $_GET['id'];
+
+        $title = '';
+        $pdo = connectDatabase();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $notiz->istnichtmehrerledigt($id);
+
+        header('Location: http://localhost/TackPad/tackpad');
     }
 
     public function login(){
@@ -123,5 +159,24 @@ class TackPadController
 
     public function register(){
         require 'app/Views/register.view.php';
+    }
+
+    public function deleteAll(){
+        $notiz = new Notiz();
+
+        // Initialize the session
+        session_start();
+
+        $id = $_SESSION['id'];
+
+        $title = '';
+        $pdo = connectDatabase();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $notiz->deleteEvery($id);
+        
+        header('Location: http://localhost/TackPad/tackpad');
+
+        require 'app/Views/tackpad.view.php';
     }
 }

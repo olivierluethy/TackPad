@@ -1,0 +1,200 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #69c9e2;
+    font-family: 'Inconsolata', monospace;
+    header {
+        nav {
+            background: white;
+            padding: 5px 25%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 2px 3px 5px grey;
+            logo {
+                height: 36px;
+                width: 36px;
+                display: block;
+                background-image: url("../../assets/favicon.ico");
+                background-position: center;
+                background-size: contain;
+                background-repeat: no-repeat;
+            }
+            a.active {
+                font-weight: bold;
+                color: royalblue;
+            }
+            a,
+            p {
+                font-size: 16px;
+                letter-spacing: 1px;
+            }
+            a {
+                text-decoration: none;
+                color: black;
+            }
+        }
+    }
+    table {
+        table,
+        th,
+        td {
+            width: 10%;
+        }
+        width: 100%;
+        tr {
+            td {
+                main {
+                    display: block;
+                    margin-left: 1rem;
+                    .selectAll {
+                        display: flex;
+                        background-color: lightblue;
+                        height: 3.3vh;
+                        margin-bottom: 1rem;
+                        width: 15%;
+                        box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+                        input[type="checkbox"] {
+                            width: 25px;
+                            height: 25px;
+                            &:hover {
+                                cursor: pointer;
+                            }
+                        }
+                        .checkAll {
+                            margin-right: 1rem;
+                        }
+                        .checkAllText {
+                            margin-top: 0.5rem;
+                        }
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+                        td,
+                        th {
+                            border: 1px solid #ddd;
+                            text-align: left;
+                            background-color: white;
+                            padding: 15px;
+                        }
+                        td {
+                            input[type="checkbox"] {
+                                width: 25px;
+                                height: 25px;
+                                &:hover {
+                                    cursor: pointer;
+                                }
+                            }
+                            .edit {
+                                background-color: #4caf50;
+                                border: 2px solid #4caf50;
+                                color: white;
+                                padding: 15px 32px;
+                                text-align: center;
+                                text-decoration: none;
+                                display: inline-block;
+                                font-size: 16px;
+                                margin: 4px 2px;
+                                cursor: pointer;
+                                transition: 0.5s ease;
+                                &:hover {
+                                    background-color: white;
+                                    color: #4caf50;
+                                    transition-duration: 0.4s;
+                                }
+                            }
+                            .delete {
+                                background-color: red;
+                                border: 2px solid red;
+                                color: white;
+                                padding: 15px 32px;
+                                text-align: center;
+                                text-decoration: none;
+                                display: inline-block;
+                                font-size: 16px;
+                                cursor: pointer;
+                                transition: 0.5s ease;
+                                &:hover {
+                                    background-color: white;
+                                    color: red;
+                                }
+                            }
+                        }
+                        .aufgabe_nicht_zu_spaet {
+                            background-color: lightgreen;
+                            transition: 500ms;
+                            &:hover {
+                                box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+                                transition: 500ms;
+                                cursor: pointer;
+                                transform: scale(1.1);
+                            }
+                        }
+                        .aufgabe_zu_spaet {
+                            background-color: lightcoral;
+                            transition: 500ms;
+                            &:hover {
+                                box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+                                transition: 500ms;
+                                cursor: pointer;
+                                transform: scale(1.1);
+                            }
+                        }
+                    }
+                    form {
+                        margin-top: 0.2rem;
+                        input {
+                            width: 20%;
+                            height: 47px;
+                            font-size: 20px;
+                            border: 2px solid black;
+                            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                        }
+                        #aufgabe,
+                        #date {
+                            margin-left: 1em;
+                        }
+                        .hinzufuegen {
+                            background-color: #06145b;
+                            border: 2px solid #06145b;
+                            color: white;
+                            text-decoration: none;
+                            display: inline-block;
+                            font-size: 16px;
+                            transition-duration: 0.4s;
+                            float: right;
+                            padding: 15px 32px;
+                            box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+                            cursor: pointer;
+                            &:hover {
+                                background-color: white;
+                                color: #06145b;
+                            }
+                        }
+                    }
+                    #deleteAll {
+                        background-color: black;
+                        border: 2px solid black;
+                        color: white;
+                        padding: 15px 32px;
+                        text-align: center;
+                        text-decoration: none;
+                        display: inline-block;
+                        font-size: 16px;
+                        margin: 4px 2px;
+                        cursor: pointer;
+                        transition: 0.5s ease;
+                        display: none;
+                        &:hover {
+                            background-color: white;
+                            color: black;
+                            transition-duration: 0.4s;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
