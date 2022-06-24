@@ -107,5 +107,6 @@ class Notiz
 		$statement = $this->db->prepare('SELECT * FROM notes WHERE NoteId = :id');
 		$statement->bindParam(':id', $id);
         $statement->execute();
+		return $statement;
 	}
 }

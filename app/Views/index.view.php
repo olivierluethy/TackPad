@@ -78,8 +78,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     /* Offene Aufgaben */
                     if($anzahl_offen > 0){
-                    echo "<h1>Aufgaben</h1>";
-                    echo "<p>Offene Aufgaben ($anzahl_offen)</p>
+                    echo "<h1>Aufgaben</h1>
+                    <p>Offene Aufgaben ($anzahl_offen)</p>
 
                     <table>
 
@@ -96,7 +96,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     foreach ($nicht_zu_spaet_offene_tasks as $nicht_zu_spaet_offene_tasks2){
                         echo "<tr class='aufgabe_nicht_zu_spaet'>
-                        <td style='background-color:lightgreen;'><input type='checkbox' onclick='getId(" . $nicht_zu_spaet_offene_tasks2['NoteId'] . ")' class='offene_tasks'></td>
+                        <td style='background-color:lightgreen;'><input type='checkbox' onclick='getId_for_offen(" . $nicht_zu_spaet_offene_tasks2['NoteId'] . ")' class='offene_tasks'></td>
                         <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['titel'] . "</td>
                         <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['notiz'] . "</td>
                         <td style='background-color:lightgreen;'>" . $nicht_zu_spaet_offene_tasks2['date_to_complete'] . "</td>
@@ -106,15 +106,15 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     foreach ($zu_spaet_offene_tasks as $zu_spaet_offene_tasks2){
                         echo "<tr class='aufgabe_zu_spaet'>
-                        <td style='background-color:lightcoral;'><input type='checkbox' onclick='getId(" . $zu_spaet_offene_tasks2['NoteId'] . ")' class='offene_tasks'></td>
+                        <td style='background-color:lightcoral;'><input type='checkbox' onclick='getId_for_offen(" . $zu_spaet_offene_tasks2['NoteId'] . ")' class='offene_tasks'></td>
                         <td style='background-color:lightcoral;'>" . $zu_spaet_offene_tasks2['titel'] . "</td>
                         <td style='background-color:lightcoral;'>" . $zu_spaet_offene_tasks2['notiz'] . "</td>
                         <td style='background-color:lightcoral;'>" . $zu_spaet_offene_tasks2['date_to_complete'] . "</td>
                         <td style='background-color:lightcoral'>" . $zu_spaet_offene_tasks2['prioritaet'] . "</td>
                         </tr>";
                     }
-                    echo "</table><br>";
-                    echo "<button id='deleteAllOffeneTasks' onclick='deleteAll()'><i class='fas fa-trash-alt'></i> Delete all</button>";
+                    echo "</table><br>
+                    <button id='deleteAllOffeneTasks' onclick='deleteAll()'><i class='fas fa-trash-alt'></i> Delete all</button>";
                     }
                     /* Erledigte Aufgaben */
                     if ($anzahl_erledigt > 0){
@@ -136,7 +136,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
                     foreach ($erledigte_tasks as $erledigte_tasks2){
                         echo "<tr>
-                        <td><input type='checkbox' onclick='getId(" . $erledigte_tasks2['NoteId'] . ")' class='erledigte_tasks'></td>
+                        <td><input type='checkbox' onclick='getId_for_erledigt(" . $erledigte_tasks2['NoteId'] . ")' class='erledigte_tasks'></td>
                         <td class='erledigt_titel'><del>" . $erledigte_tasks2['titel'] . "</del></td>
                         <td class='erledigt_notiz'><del>" . $erledigte_tasks2['notiz'] . "</del></td>
                         <td class='erledigt_datum'><del>" . $erledigte_tasks2['date_to_complete'] . "</del></td>
@@ -145,8 +145,8 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         <td class='erledigt_lastchange'><del>" . $erledigte_tasks2['last_change'] . "</del></td>
                         </tr>";
                     }
-                    echo "</table><br>";
-                    echo "<button id='deleteAllErledigteTasks' onclick='deleteAll()'><i class='fas fa-trash-alt'></i> Delete all</button>";
+                    echo "</table><br>
+                    <button id='deleteAllErledigteTasks' onclick='deleteAll()'><i class='fas fa-trash-alt'></i> Delete all</button>";
                     }
                 }else{
                     echo "<h1 style='color: red';>Es wurde noch keine Aufgabe hinzugefügt</h1>";
@@ -156,6 +156,23 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
             <td></td>
         </tr>
     </table>
+
+    <?php
+    echo "<script>
+    
+    function openBearbeiten() {
+        console.log(changeId_offenEinzel);";
+        echo "showEditPage(' + changeId_offen + ')?>
+        editmodal.style.display = 'block';
+    }
+
+    </script>";
+    
+    ?>
+
+    <?php
+    include("editNote.view.php");
+    ?>
 
     <?php
     include("addNote.view.php");
