@@ -22,11 +22,21 @@ function realyDeleteNote() {
 }
 
 function deleteNote() {
-  location.href = "delete?id=" + changeId;
+  let idToDelete;
+
+  if (changeId_erledigtEinzel) {
+    idToDelete = changeId_erledigtEinzel;
+  } else if (changeId_offenEinzel) {
+    idToDelete = changeId_offenEinzel;
+  }
+
+  if (idToDelete) {
+    location.href = "delete?id=" + idToDelete;
+  }
 }
 
 function erledigt() {
-  location.href = "erledigt?id=" + changeId;
+  location.href = "erledigt?id=" + changeId_offenEinzel;
 }
 
 function checkAllOffeneTasks(source) {
@@ -69,10 +79,6 @@ function closeNav() {
 
 function openModal() {
   addmodal.style.display = "block";
-}
-
-function dispose() {
-  addmodal.style.display = "none";
 }
 
 function getId_for_offen(id) {
@@ -120,18 +126,23 @@ function getId_for_offen(id) {
 
 function getId_for_erledigt(id) {
   counter_erledigt = 0;
-  /* Check if id is already in array */
-  if (changeId_erledigt.includes(id)) {
-    let Index = changeId_erledigt.indexOf(id);
-    changeId_erledigt.splice(Index, 1);
+
+  if (changeId_erledigtEinzel) {
+    /* Check if id is already in array */
+    if (changeId_erledigt.includes(id)) {
+      let Index = changeId_erledigt.indexOf(id);
+      changeId_erledigt.splice(Index, 1);
+    } else {
+      changeId_erledigt.push(id);
+    }
   } else {
-    changeId_erledigt.push(id);
+    changeId_erledigtEinzel = id;
   }
+
   elements_erledigt = document.getElementsByClassName("erledigte_tasks");
   for (var i = 0; i < elements_erledigt.length; i++) {
     if (elements_erledigt[i].checked == true) {
       counter_erledigt++;
-      console.log("Eins erledigt!");
     }
   }
   if (elements_erledigt.length == counter_erledigt) {
@@ -146,7 +157,6 @@ function getId_for_erledigt(id) {
     document.getElementById("bearbeiten").style.display = "inline-block";
     document.getElementById("loeschen").style.display = "inline-block";
     document.getElementById("freigeben").style.display = "inline-block";
-    document.getElementById("erledigt").style.display = "inline-block";
   } else if (counter_erledigt > 1) {
     document.getElementById("bearbeiten").style.display = "none";
     document.getElementById("erledigt").style.display = "none";
@@ -158,40 +168,82 @@ function getId_for_erledigt(id) {
   }
 }
 
-// Get the modal
-var deletemodal = document.getElementById("deleteModal");
-// Get the modal
-var addmodal = document.getElementById("addModal");
+// // Function to handle modal closing
+// function closeModal(modal) {
+//   modal.style.display = "none";
+// }
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
+// // Function to set up modal closing event handlers
+// function setupModalClose(modal, modalCloseIndex) {
+//   // Get the <span> element that closes the modal
+//   var closeSpan = modal.getElementsByClassName("close")[modalCloseIndex];
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function () {
-  addmodal.style.display = "none";
-};
+//   // When the user clicks on <span> (x), close the modal
+//   closeSpan.onclick = function () {
+//     closeModal(modal);
+//   };
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function (event) {
-  if (event.target == addmodal) {
-    addmodal.style.display = "none";
-  }
-};
+//   // When the user clicks anywhere outside of the modal, close it
+//   window.onclick = function (event) {
+//     if (event.target == modal) {
+//       closeModal(modal);
+//     }
+//   };
+// }
 
-// Get the modal
-var editmodal = document.getElementById("editModal");
+// // Delete Modal
+// var deleteModal = document.getElementById("deleteModal");
+// setupModalClose(deleteModal, 0);
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[1];
+// // Add Modal
+// var addModal = document.getElementById("addModal");
+// setupModalClose(addModal, 0);
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function () {
-  editmodal.style.display = "none";
-};
+// // Edit Modal
+// var editModal = document.getElementById("editModal");
+// setupModalClose(editModal, 0);
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function (event) {
-  if (event.target == editmodal) {
-    editmodal.style.display = "none";
-  }
-};
+// Function to display a modal
+function displayModal(modal) {
+  modal.style.display = "block";
+}
+
+// Function to hide a modal
+function hideModal(modal) {
+  modal.style.display = "none";
+}
+
+// Function to handle closing of a modal
+function closeModal(modal) {
+  hideModal(modal);
+}
+
+// Function to set up close behavior for a modal
+function setupModalClose(modal) {
+  // Get the <span> element that closes the modal
+  var closeSpan = modal.getElementsByClassName("close")[0];
+
+  // When the user clicks on <span> (x), close the modal
+  closeSpan.onclick = function () {
+    closeModal(modal);
+  };
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      closeModal(modal);
+    }
+  };
+}
+
+// Setup modal close behavior for delete modal
+var deleteModal = document.getElementById("deleteModal");
+setupModalClose(deleteModal);
+
+// Setup modal close behavior for add modal
+var addModal = document.getElementById("addModal");
+setupModalClose(addModal);
+
+// Setup modal close behavior for edit modal
+var editModal = document.getElementById("editModal");
+setupModalClose(editModal);

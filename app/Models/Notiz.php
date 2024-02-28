@@ -75,9 +75,6 @@ class Notiz
         $statement->execute();
 	}
 
-
-
-
 	public function renewNotiz($titel, $notice, $date, $id){
 		$titel = htmlspecialchars($_POST['title']);
 		$notice = htmlspecialchars($_POST['notice']);

@@ -30,10 +30,11 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 
 <body>
     <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a class="closebtn" onclick="closeNav()">&times;</a>
+        <img src="assets\icon.png" alt="">
         <h1>TackPad</h1>
         <h2>Hello user!</h2>
-        <a href="logout">Logout</a>
+        <a href="logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</a>
     </div>
     <span class='navi' onclick="openNav()">&#9776;</span>
     <table>
@@ -47,7 +48,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         $anzahl_offen = count($zu_spaet_offene_tasks) + count($nicht_zu_spaet_offene_tasks);?>
 
                     <div class='options'>
-                        <button onclick='openModal()'><i class='fas fa-plus'></i> Hinzufügen</button>
+                        <button onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Hinzufügen</button>
                         <button id='bearbeiten' onclick='openBearbeiten()'><i
                                 class='fas fa-edit'></i>&nbsp;Bearbeiten</button>
                         <button id='loeschen' onclick='realyDeleteNote()'><i
@@ -97,7 +98,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         <?php } foreach ($zu_spaet_offene_tasks as $zu_spaet_offene_tasks2){ ?>
                         <tr class='aufgabe_zu_spaet'>
                             <td style="background-color:lightcoral;"><input type="checkbox"
-                                    onclick="getId_for_offen(<?= $zu_spaet_offene_tasks2[' NoteId']; ?>)"
+                                    onclick="getId_for_offen(<?= $zu_spaet_offene_tasks2['NoteId']; ?>)"
                                     class='offene_tasks'></td>
 
                             <td style='background-color:lightcoral;'><?= $zu_spaet_offene_tasks2['titel'];?></td>
@@ -113,8 +114,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         all</button>
                     <?php } /* Erledigte Aufgaben */ if (count($erledigte_tasks)> 0){?>
                     <p>Erledigte Aufgaben (<?= count($erledigte_tasks); ?>)</p>
-
-
                     <table>
 
                         <tr>
@@ -132,8 +131,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                         <?php
 foreach ($erledigte_tasks as $erledigte_tasks2){?>
                         <tr>
-                            <td><input type='checkbox'
-                                    onclick="getId_for_erledigt(<?= $erledigte_tasks2[' NoteId']; ?>)"
+                            <td><input type='checkbox' onclick="getId_for_erledigt(<?= $erledigte_tasks2['NoteId']; ?>)"
                                     class='erledigte_tasks'></td>
                             <td class='erledigt_titel'><del><?= $erledigte_tasks2['titel'];?></del></td>
                             <td class='erledigt_notiz'><del><?= $erledigte_tasks2['notiz']?></del></td>
@@ -154,6 +152,9 @@ foreach ($erledigte_tasks as $erledigte_tasks2){?>
                     <?php } }
                 else{ ?>
                     <h1 style='color: red'>Es wurde noch keine Aufgabe hinzugefügt</h1>
+
+                    <button class="ersteHinzufuegen" onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Aufgabe
+                        hinzufügen</button>
                     <?php }?>
                 </main>
             </td>
@@ -163,12 +164,9 @@ foreach ($erledigte_tasks as $erledigte_tasks2){?>
 
     <script>
     function openBearbeiten() {
-        console.log(<?= $changeId_offenEinzel; ?>);
-        showEditPage(<?= $changeId_offen; ?>)
         editmodal.style.display = 'block';
     }
     </script>
-
 
     <?php
     include("editNote.view.php");

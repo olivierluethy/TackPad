@@ -4,7 +4,7 @@
     <div class="modal-content">
         <form action="create" method="POST" id="createForm">
             <div class="modal-header">
-                <span onclick="dispose()" class="close">&times;</span>
+                <span class="close">&times;</span>
                 <h2>Notiz hinzufügen</h2>
             </div>
             <div class="modal-body">
@@ -41,7 +41,7 @@
             <div class="modal-footer">
                 <div class="select-button">
                     <button class="hinzufuegen" type="form-submit">Hinzufügen</button>
-                    <button class="verwerfen" type="reset" onclick="dispose()">Verwerfen</button>
+                    <button class="verwerfen" type="reset">Verwerfen</button>
                 </div>
             </div>
         </form>

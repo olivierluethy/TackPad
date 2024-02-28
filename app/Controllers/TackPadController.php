@@ -10,20 +10,16 @@ class TackPadController
         $notiz = new Notiz();
 
         /* Alle Aufgaben */
-        $alle_tasks = $notiz -> tackpad();
-        $alle_tasks = $alle_tasks -> fetchAll();
+        $alle_tasks = $notiz -> tackpad()-> fetchAll();
 
         /* Nicht zu späte und nicht erledigte Aufgaben */
-        $nicht_zu_spaet_offene_tasks = $notiz -> getNotLateButOpenTasks();
-        $nicht_zu_spaet_offene_tasks = $nicht_zu_spaet_offene_tasks -> fetchAll();
+        $nicht_zu_spaet_offene_tasks = $notiz -> getNotLateButOpenTasks()-> fetchAll();
 
         /* Zu späte und nicht erledigte Aufgaben */
-        $zu_spaet_offene_tasks = $notiz -> getLateAndOpenTasks();
-        $zu_spaet_offene_tasks = $zu_spaet_offene_tasks -> fetchAll();
+        $zu_spaet_offene_tasks = $notiz -> getLateAndOpenTasks() -> fetchAll();
 
         /* Erledigte Aufgaben */
-        $erledigte_tasks = $notiz -> getDoneTasks();
-        $erledigte_tasks = $erledigte_tasks -> fetchAll();
+        $erledigte_tasks = $notiz -> getDoneTasks()-> fetchAll();
 
         require 'app/Views/index.view.php';
     }
@@ -63,8 +59,6 @@ class TackPadController
         $notiz->removeNotiz($id);
         
         header('Location: http://localhost/TackPad/');
-
-        require 'app/Views/tackpad.view.php';
 	}
 
     public function deleteAllNichtZuSpaetOffeneTasks(){
@@ -89,8 +83,7 @@ class TackPadController
         $id = $_GET['id'];
 
         /* Infos von Aufgabe */
-        $getInfosFromTask = $notiz -> getInfosFromTask($id);
-        $getInfosFromTask = $getInfosFromTask -> fetchAll();
+        $getInfosFromTask = $notiz -> getInfosFromTask($id)-> fetchAll();
 
         require 'app/Views/index.view.php';
         require 'app/Views/editNote.view.php';

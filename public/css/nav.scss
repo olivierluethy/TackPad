@@ -1,37 +1,74 @@
 .sidenav {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: lightgray;
-    overflow-x: hidden;
-    transition-duration: 0.4s;
-    padding-top: 40px;
-    box-shadow: 10px 0 5px -2px #888;
-    overflow-y: hidden;
-    a{
-        padding: 8px 8px 8px 32px;
-        text-decoration: none;
-        font-size: 25px;
-        color: #818181;
-        display: block;
-        transition: 0.3s;
-        &:hover {
-            color: #f1f1f1;
-        }
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #333; /* Updated color for a sleek look */
+  overflow-x: hidden;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4); /* Updated shadow for depth */
+  overflow-y: auto; /* Allow vertical scrolling if needed */
+
+  /* Center content horizontally and vertically */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  /* Style the links inside the sidenav */
+  a {
+    padding: 10px 20px; /* Padding for links */
+    text-decoration: none;
+    font-size: 30px; /* Adjust font size */
+    color: #fff; /* Text color */
+    display: block;
+    transition: 0.3s; /* Smooth transition on hover */
+    cursor: pointer;
+
+    &:hover {
+      background-color: #555; /* Darker background color on hover */
     }
-    .closebtn {
-        position: absolute;
-        top: 0;
-        right: 25px;
-        font-size: 36px;
-        margin-left: 50px;
-      }
   }
-  
-  @media screen and (max-height: 450px) {
-    .sidenav {padding-top: 15px;}
-    .sidenav a {font-size: 18px;}
+
+  img {
+    width: 50%;
+    margin-bottom: 20px; /* Add spacing below the image */
   }
+
+  h1,
+  h2 {
+    color: #fff; /* Text color */
+    padding: 10px 20px; /* Padding for headings */
+  }
+
+  h1 {
+    font-size: 50px; /* Adjust font size */
+    margin-bottom: 10px; /* Add space below the heading */
+    box-shadow: 1px 1px 80px 0px rgba(255, 255, 255, 0.75);
+    -webkit-box-shadow: 1px 1px 80px 0px rgba(255, 255, 255, 0.75);
+    -moz-box-shadow: 1px 1px 80px 0px rgba(255, 255, 255, 0.75);
+    background-color: white;
+    color: black;
+  }
+
+  h2 {
+    font-size: 18px; /* Adjust font size */
+    margin-bottom: 20px; /* Add more space below the heading */
+  }
+}
+
+/* Style the close button */
+.closebtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  color: #fff; /* Text color */
+  text-decoration: none;
+  transition: 0.3s; /* Smooth transition on hover */
+  &:hover {
+    color: #ccc; /* Lighter text color on hover */
+  }
+}
