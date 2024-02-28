@@ -5,20 +5,20 @@ $routes = [
 	/* Hauptseiten */
 	'' => 'TackPadController@index',
 	'home' => 'TackPadController@index',
-	'tackpad' => 'TackPadController@tackpad',
-	'about' => 'TackPadController@about',
 
 	/* Informationen hinzufügen */
 	'create' => 'TackPadController@create',
 
 	/* Informationen löschen */
 	'delete' => 'TackPadController@delete',
-	'deleteAll' => 'TackPadController@deleteAll',
+	'deleteAllNichtZuSpaetOffeneTasks' => 'TackPadController@deleteAllNichtZuSpaetOffeneTasks',
 
 	/* Informationen bearbeiten */
-	'edit' => 'TackPadController@update',
+	'showEditPage' => 'TackPadController@showEditPage',
 	'erledigt' => 'TackPadController@erledigt',
 	'nichtmehrerledigt' => 'TackPadController@nichtmehrerledigt',
+
+	'getInfoFromId' => 'TackPadController@allInfoFromId',
 
 	/* Login */
 	'login' => 'TackPadController@login',

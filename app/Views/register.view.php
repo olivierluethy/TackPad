@@ -108,7 +108,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <link rel="stylesheet" type="text/css" href="public/css/login.css">
 </head>
 <body>
-    <div class="wrapperSignIn">
+    <div class="wrapper">
         <h2>Sign Up</h2>
         <p>Please fill this form to create an account.</p>
         <form action="register" method="post">
