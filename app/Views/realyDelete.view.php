@@ -5,7 +5,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <span class="close">&times;</span>
-            <h2>Wollen Sie es wirklich löschen?</h2>
+            <h2>Do you really want to delete it?</h2>
         </div>
         <div class="modal-body">
             <button onclick="deleteNote()" class="yesButton"><i class="fas fa-check"></i>&nbsp;Yes</button>

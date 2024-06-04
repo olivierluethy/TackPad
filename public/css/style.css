@@ -22,6 +22,13 @@ body table th,
 body table td {
   width: 10%;
 }
+body table input[type=checkbox] {
+  width: 25px;
+  height: 25px;
+}
+body table input[type=checkbox]:hover {
+  cursor: pointer;
+}
 body table tr td .options {
   position: sticky;
   top: 0;
@@ -74,15 +81,6 @@ body table tr td main table th {
   background-color: white;
   padding: 15px;
 }
-body table tr td main table td input[type=checkbox],
-body table tr td main table th input[type=checkbox] {
-  width: 25px;
-  height: 25px;
-}
-body table tr td main table td input[type=checkbox]:hover,
-body table tr td main table th input[type=checkbox]:hover {
-  cursor: pointer;
-}
 body table tr td main table td input[type=checkbox] {
   width: 25px;
   height: 25px;
@@ -133,6 +131,11 @@ body table tr td main table .aufgabe_nicht_zu_spaet:hover {
   transition: 500ms;
   cursor: pointer;
   transform: scale(1.1);
+}
+body table tr td main table .aufgabe_nicht_zu_spaet .selectAllContainer {
+  background-color: blue;
+  display: flex;
+  align-items: center;
 }
 body table tr td main table .aufgabe_zu_spaet {
   background-color: lightcoral;
@@ -317,7 +320,7 @@ body .modal .modal-content .modal-body table {
 body .modal .modal-content .modal-body table label {
   float: right;
 }
-body .modal .modal-content .modal-body table input {
+body .modal .modal-content .modal-body table select, body .modal .modal-content .modal-body table input {
   width: 90%;
   padding: 12px 20px;
   margin: 8px 0;

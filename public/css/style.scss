@@ -18,6 +18,13 @@ body {
       width: 10%;
     }
     width: 100%;
+    input[type="checkbox"] {
+      width: 25px;
+      height: 25px;
+      &:hover {
+        cursor: pointer;
+      }
+    }
     tr {
       td {
         .options {
@@ -70,13 +77,6 @@ body {
               text-align: left;
               background-color: white;
               padding: 15px;
-              input[type="checkbox"] {
-                width: 25px;
-                height: 25px;
-                &:hover {
-                  cursor: pointer;
-                }
-              }
             }
             td {
               input[type="checkbox"] {
@@ -129,6 +129,11 @@ body {
                 transition: 500ms;
                 cursor: pointer;
                 transform: scale(1.1);
+              }
+              .selectAllContainer{
+                background-color: blue;
+                display: flex;
+                align-items: center;
               }
             }
             .aufgabe_zu_spaet {
@@ -317,7 +322,7 @@ body {
           label {
             float: right;
           }
-          input {
+          select, input {
             width: 90%;
             padding: 12px 20px;
             margin: 8px 0;

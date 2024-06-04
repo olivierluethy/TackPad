@@ -2,7 +2,7 @@
 <br />
 <p align="center">
   <a href="github.com/Olivier_Luethy/TackPad.git">
-    <img src="assets/favicon.ico" alt="Logo" width="80" height="80">
+    <img src="assets/favicon.ico" alt="Logo" width="200" height="200">
   </a>
 
   <h3 align="center">TackPad</h3>
@@ -53,11 +53,11 @@ But one thing I can say is that I was able to do everything I planned before I s
 
 ## Installation Guide
 
-1. First you need to install git on your local machine. To do this, go to this [website] (https://git-scm.com/downloads).
+1. First you need to install git on your local machine. To do this, go to this [website](https://git-scm.com/downloads).
 2. Go to your windows explorer and find a good place to store this project.
 3. Now right click on your folder or location and click on "Git Bash Here".
 4. Finally you will see something that looks like a windows command prompt. When it does, all you have to do is type
    ```sh
-   git clone http://192.168.100.57:3000/Olivier_Luethy/TackPad.git
+   git clone https://github.com/olivierluethy/TackPad.git
    ```
 5. Once you have successfully cloned the project, you will need a local database. I used [XAMPP](https://www.apachefriends.org/de/index.html). If you want to use it too, please make sure you download the latest version. Otherwise it won't work as expected.

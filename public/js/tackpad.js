@@ -18,6 +18,7 @@ function editNote(id) {
 }
 
 function realyDeleteNote() {
+  var deletemodal = document.getElementById("deleteModal");
   deletemodal.style.display = "block";
 }
 
@@ -30,8 +31,13 @@ function deleteNote() {
     idToDelete = changeId_offenEinzel;
   }
 
+  console.log("Delete Note Function Called");
+  console.log("ID to delete:", idToDelete);
+
   if (idToDelete) {
     location.href = "delete?id=" + idToDelete;
+  } else {
+    console.log("No ID to delete");
   }
 }
 
@@ -40,29 +46,31 @@ function erledigt() {
 }
 
 function checkAllOffeneTasks(source) {
-  checkboxes = document.getElementsByClassName("offene_tasks");
-  for (var i = 0, n = checkboxes.length; i < n; i++) {
+  let checkboxes = document.getElementsByClassName("offene_tasks");
+  for (let i = 0, n = checkboxes.length; i < n; i++) {
     checkboxes[i].checked = source.checked;
   }
 
-  if (document.getElementById("checkAllOffeneTasks").checked) {
+  if (source.checked) {
     document.getElementById("deleteAllOffeneTasks").style.display = "block";
   } else {
     document.getElementById("deleteAllOffeneTasks").style.display = "none";
   }
+  toggleActionButtons();
 }
 
 function checkAllErledigteTasks(source) {
-  checkboxes = document.getElementsByClassName("erledigte_tasks");
-  for (var i = 0, n = checkboxes.length; i < n; i++) {
+  let checkboxes = document.getElementsByClassName("erledigte_tasks");
+  for (let i = 0, n = checkboxes.length; i < n; i++) {
     checkboxes[i].checked = source.checked;
   }
 
-  if (document.getElementById("checkAllErledigteTasks").checked) {
+  if (source.checked) {
     document.getElementById("deleteAllErledigteTasks").style.display = "block";
   } else {
     document.getElementById("deleteAllErledigteTasks").style.display = "none";
   }
+  toggleActionButtons();
 }
 
 function deleteAllNichtZuSpaetOffeneTasks() {
@@ -82,129 +90,67 @@ function openModal() {
 }
 
 function getId_for_offen(id) {
-  counter_offen = 0;
-  if (changeId_offenEinzel) {
-    /* Check if id is already in array */
-    if (changeId_offen.includes(id)) {
-      let Index = changeId_offen.indexOf(id);
-      changeId_offen.splice(Index, 1);
-    } else {
-      changeId_offen.push(id);
-    }
-  } else {
-    changeId_offenEinzel = id;
-  }
-
-  elements_offen = document.getElementsByClassName("offene_tasks");
-  for (var i = 0; i < elements_offen.length; i++) {
-    if (elements_offen[i].checked == true) {
-      counter_offen++;
-    }
-  }
-  if (elements_offen.length == counter_offen) {
-    document.getElementById("checkAllOffeneTasks").checked = true;
-    document.getElementById("deleteAllOffeneTasks").style.display = "block";
-  } else {
-    document.getElementById("checkAllOffeneTasks").checked = false;
-    document.getElementById("deleteAllOffeneTasks").style.display = "none";
-  }
-  if (counter_offen == 1) {
-    document.getElementById("bearbeiten").style.display = "inline-block";
-    document.getElementById("loeschen").style.display = "inline-block";
-    document.getElementById("freigeben").style.display = "inline-block";
-    document.getElementById("erledigt").style.display = "inline-block";
-  } else if (counter_offen > 1) {
-    document.getElementById("bearbeiten").style.display = "none";
-    document.getElementById("erledigt").style.display = "none";
-  } else if (counter_offen == 0) {
-    document.getElementById("bearbeiten").style.display = "none";
-    document.getElementById("loeschen").style.display = "none";
-    document.getElementById("freigeben").style.display = "none";
-    document.getElementById("erledigt").style.display = "none";
-  }
+  toggleTaskSelection(id, "offene_tasks", changeId_offen);
 }
 
 function getId_for_erledigt(id) {
-  counter_erledigt = 0;
+  toggleTaskSelection(id, "erledigte_tasks", changeId_erledigt);
+}
 
-  if (changeId_erledigtEinzel) {
-    /* Check if id is already in array */
-    if (changeId_erledigt.includes(id)) {
-      let Index = changeId_erledigt.indexOf(id);
-      changeId_erledigt.splice(Index, 1);
-    } else {
-      changeId_erledigt.push(id);
-    }
+function toggleTaskSelection(id, taskClass, idArray) {
+  if (idArray.includes(id)) {
+    idArray.splice(idArray.indexOf(id), 1);
   } else {
-    changeId_erledigtEinzel = id;
+    idArray.push(id);
   }
 
-  elements_erledigt = document.getElementsByClassName("erledigte_tasks");
-  for (var i = 0; i < elements_erledigt.length; i++) {
-    if (elements_erledigt[i].checked == true) {
-      counter_erledigt++;
+  let elements = document.getElementsByClassName(taskClass);
+  let counter = 0;
+  for (let i = 0; i < elements.length; i++) {
+    if (elements[i].checked) {
+      counter++;
     }
   }
-  if (elements_erledigt.length == counter_erledigt) {
-    document.getElementById("checkAllErledigteTasks").checked = true;
-    document.getElementById("deleteAllErledigteTasks").style.display = "block";
+
+  let allSelected = elements.length === counter;
+  let checkAllElement = taskClass === "offene_tasks" ? "checkAllOffeneTasks" : "checkAllErledigteTasks";
+  document.getElementById(checkAllElement).checked = allSelected;
+
+  if (taskClass === "offene_tasks") {
+    changeId_offenEinzel = idArray.length === 1 ? idArray[0] : 0;
+    counter_offen = counter;
   } else {
-    document.getElementById("checkAllErledigteTasks").checked = false;
-    document.getElementById("deleteAllErledigteTasks").style.display = "none";
+    changeId_erledigtEinzel = idArray.length === 1 ? idArray[0] : 0;
+    counter_erledigt = counter;
   }
 
-  if (counter_erledigt == 1) {
-    document.getElementById("bearbeiten").style.display = "inline-block";
-    document.getElementById("loeschen").style.display = "inline-block";
-    document.getElementById("freigeben").style.display = "inline-block";
-  } else if (counter_erledigt > 1) {
-    document.getElementById("bearbeiten").style.display = "none";
-    document.getElementById("erledigt").style.display = "none";
-  } else if (counter_erledigt == 0) {
-    document.getElementById("bearbeiten").style.display = "none";
-    document.getElementById("loeschen").style.display = "none";
-    document.getElementById("freigeben").style.display = "none";
+  toggleActionButtons();
+}
+
+function toggleActionButtons() {
+  let totalSelected = document.querySelectorAll('.offene_tasks:checked, .erledigte_tasks:checked').length;
+  let singleSelected = totalSelected === 1;
+  let multipleSelected = totalSelected > 1;
+
+  document.getElementById("bearbeiten").style.display = singleSelected ? "inline-block" : "none";
+  document.getElementById("loeschen").style.display = totalSelected ? "inline-block" : "none";
+  document.getElementById("freigeben").style.display = singleSelected ? "inline-block" : "none";
+  document.getElementById("erledigt").style.display = singleSelected ? "inline-block" : "none";
+
+  if (multipleSelected) {
     document.getElementById("erledigt").style.display = "none";
   }
 }
 
-// // Function to handle modal closing
-// function closeModal(modal) {
-//   modal.style.display = "none";
-// }
+// Get the modal
+let modal = document.getElementById("addModal");
 
-// // Function to set up modal closing event handlers
-// function setupModalClose(modal, modalCloseIndex) {
-//   // Get the <span> element that closes the modal
-//   var closeSpan = modal.getElementsByClassName("close")[modalCloseIndex];
-
-//   // When the user clicks on <span> (x), close the modal
-//   closeSpan.onclick = function () {
-//     closeModal(modal);
-//   };
-
-//   // When the user clicks anywhere outside of the modal, close it
-//   window.onclick = function (event) {
-//     if (event.target == modal) {
-//       closeModal(modal);
-//     }
-//   };
-// }
-
-// // Delete Modal
-// var deleteModal = document.getElementById("deleteModal");
-// setupModalClose(deleteModal, 0);
-
-// // Add Modal
-// var addModal = document.getElementById("addModal");
-// setupModalClose(addModal, 0);
-
-// // Edit Modal
-// var editModal = document.getElementById("editModal");
-// setupModalClose(editModal, 0);
+function openBearbeiten() {
+  editmodal.style.display = 'block';
+}
 
 // Function to display a modal
-function displayModal(modal) {
+function displayModal() {
   modal.style.display = "block";
 }
 
@@ -218,10 +164,15 @@ function closeModal(modal) {
   hideModal(modal);
 }
 
-// Function to set up close behavior for a modal
-function setupModalClose(modal) {
+// Function to handle modal closing
+function closeModal(modal) {
+  modal.style.display = "none";
+}
+
+// Function to set up modal closing event handlers
+function setupModalClose(modal, modalCloseIndex) {
   // Get the <span> element that closes the modal
-  var closeSpan = modal.getElementsByClassName("close")[0];
+  var closeSpan = modal.getElementsByClassName("close")[modalCloseIndex];
 
   // When the user clicks on <span> (x), close the modal
   closeSpan.onclick = function () {
@@ -236,14 +187,14 @@ function setupModalClose(modal) {
   };
 }
 
-// Setup modal close behavior for delete modal
+// Delete Modal
 var deleteModal = document.getElementById("deleteModal");
-setupModalClose(deleteModal);
+setupModalClose(deleteModal, 0);
 
-// Setup modal close behavior for add modal
+// Add Modal
 var addModal = document.getElementById("addModal");
-setupModalClose(addModal);
+setupModalClose(addModal, 0);
 
-// Setup modal close behavior for edit modal
+// Edit Modal
 var editModal = document.getElementById("editModal");
-setupModalClose(editModal);
+setupModalClose(editModal, 0);

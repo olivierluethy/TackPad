@@ -5,34 +5,31 @@
         <form action="create" method="POST" id="createForm">
             <div class="modal-header">
                 <span class="close">&times;</span>
-                <h2>Notiz hinzufügen</h2>
+                <h2>Add note</h2>
             </div>
             <div class="modal-body">
                 <table>
                     <tr>
-                        <td><label for="fname">Titel:</label></td>
+                        <td><label for="fname">Title:</label></td>
                         <td><input type="text" id="titel" name="titel"></td>
                     </tr>
                     <tr>
-                        <td><label for="lname">Aufgabe:</label></td>
+                        <td><label for="lname">Task:</label></td>
                         <td><input type="text" id="aufgabe" name="aufgabe"></td>
                     </tr>
                     <tr>
-                        <td><label for="lname">Datum:</label></td>
+                        <td><label for="lname">Date:</label></td>
                         <td><input type="date" id="datum" name="datum"></td>
                     </tr>
                     <tr>
-                        <td><label for="lname">Priorität:</label></td>
+                        <td><label for="lname">Priority:</label></td>
                         <td>
-                            <select name="prioritaet" id="prioritaet">
-                                <option value="">
-                                    <--- Select --->
-                                </option>
-                                <option value="1">Unglaublich wichtig</option>
-                                <option value="2">Sehr wichtig</option>
-                                <option value="3">Wichtig</option>
-                                <option value="4">Mässig wichtig</option>
-                                <option value="5">Nicht wichtig</option>
+                            <select name="priority" id="priority">
+                                <option value="1">Incredibly important</option>
+                                <option value="2">Very important</option>
+                                <option value="3">Important</option>
+                                <option value="4">Moderately important</option>
+                                <option value="5">Not important</option>
                             </select>
                         </td>
                     </tr>
@@ -40,8 +37,8 @@
             </div>
             <div class="modal-footer">
                 <div class="select-button">
-                    <button class="hinzufuegen" type="form-submit">Hinzufügen</button>
-                    <button class="verwerfen" type="reset">Verwerfen</button>
+                    <button class="hinzufuegen" type="form-submit">Add</button>
+                    <button class="verwerfen" type="reset">Discard</button>
                 </div>
             </div>
         </form>

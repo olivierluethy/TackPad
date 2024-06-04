@@ -7,6 +7,12 @@ class TackPadController
         // Initialize the session
         session_start();
 
+        // Check if the user is logged in, if not then redirect to login page
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            header("location: index");
+            exit;
+        }
+
         $notiz = new Notiz();
 
         /* Alle Aufgaben */
@@ -21,15 +27,23 @@ class TackPadController
         /* Erledigte Aufgaben */
         $erledigte_tasks = $notiz -> getDoneTasks()-> fetchAll();
 
+        $anzahl_offen = count($zu_spaet_offene_tasks) + count($nicht_zu_spaet_offene_tasks);
+
         require 'app/Views/index.view.php';
     }
 
     /* Aufgabe hinzufügen */
     public function create(){
-        $notiz = new Notiz();
-
         // Initialize the session
         session_start();
+
+        // Check if the user is logged in, if not then redirect to login page
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            header("location: index");
+            exit;
+        }
+
+        $notiz = new Notiz();
 
         $title = '';
         $pdo = connectDatabase();
@@ -49,11 +63,17 @@ class TackPadController
 
     /* Aufgabe löschen */
 	public function delete(){
-        $notiz = new Notiz();
-
         // Initialize the session
         session_start();
+
+        // Check if the user is logged in, if not then redirect to login page
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            header("location: index");
+            exit;
+        }
         
+        $notiz = new Notiz();
+
 		$id = $_GET['id'];
 
         $notiz->removeNotiz($id);
@@ -62,10 +82,16 @@ class TackPadController
 	}
 
     public function deleteAllNichtZuSpaetOffeneTasks(){
-        $notiz = new Notiz();
-
         // Initialize the session
         session_start();
+
+        // Check if the user is logged in, if not then redirect to login page
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            header("location: index");
+            exit;
+        }
+
+        $notiz = new Notiz();
 
         $notiz->removeAllNichtZuSpaetOffeneTasks();
 
@@ -75,10 +101,16 @@ class TackPadController
     }
 
     public function showEditPage(){
-        $notiz = new Notiz();
-
         // Initialize the session
         session_start();
+
+        // Check if the user is logged in, if not then redirect to login page
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            header("location: index");
+            exit;
+        }
+
+        $notiz = new Notiz();
 
         $id = $_GET['id'];
 
@@ -90,10 +122,16 @@ class TackPadController
     }
 
     public function erledigt(){
-        $notiz = new Notiz();
-
         // Initialize the session
         session_start();
+
+        // Check if the user is logged in, if not then redirect to login page
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            header("location: index");
+            exit;
+        }
+
+        $notiz = new Notiz();
 
         $id = $_GET['id'];
 
