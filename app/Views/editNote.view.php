@@ -2,34 +2,43 @@
 <div id="editModal" class="modal">
     <!-- Modal content -->
     <div class="modal-content">
-        <form action="" method="post">
+        <form id="editForm" action="" method="post">
             <div class="modal-header">
                 <span class="close">&times;</span>
-                <h2>Notiz bearbeiten</h2>
+                <h2>Edit Task</h2>
             </div>
             <div class="modal-body">
                 <table>
                     <tr>
-                        <td><label for="fname">Titel:</label></td>
-                        <td><input type="text" id="fname" name="titel" value="<?= $getInfosFromTask[0][1]?>"></td>
+                        <td><label for="fname">Title:</label></td>
+                        <td><input type="text" id="titel" name="titel"></td>
                     </tr>
                     <tr>
-                        <td><label for="lname">Aufgabe:</label></td>
-                        <td><input type="text" id="lname" name="aufgabe" value="<?= $getInfosFromTask[0][2]?>"></td>
-                    <tr>
-                        <td><label for="lname">Datum:</label></td>
-                        <td><input type="date" id="lname" name="date" value="<?= $getInfosFromTask[0][3]?>"></td>
+                        <td><label for="lname">Task:</label></td>
+                        <td><input type="text" id="aufgabe" name="aufgabe"></td>
                     </tr>
                     <tr>
-                        <td><label for="lname">Priorität:</label></td>
-                        <td><input type="text" id="lname" name="prioritaet" value="<?= $getInfosFromTask[0][4]?>"></td>
+                        <td><label for="lname">Date:</label></td>
+                        <td><input type="date" id="datum" name="datum"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="lname">Priority:</label></td>
+                        <td>
+                            <select name="priority" id="priority">
+                                <option value="0">Incredibly important</option>
+                                <option value="1">Very important</option>
+                                <option value="2">Important</option>
+                                <option value="3">Moderately important</option>
+                                <option value="4">Not important</option>
+                            </select>
+                        </td>
                     </tr>
                 </table>
             </div>
             <div class="modal-footer">
                 <div class="submit">
-                    <button class="hinzufuegen" type="submit">Hinzufügen</button>
-                    <button class="verwerfen">Verwerfen</button>
+                    <button class="hinzufuegen" type="submit">Edit</button>
+                    <button class="verwerfen" type="reset">Disgard</button>
                 </div>
             </div>
         </form>

@@ -11,14 +11,14 @@
   <p align="center">
     Here I'll explain how I developed the note-taking application called TackPad.
     <br />
-    <a href="github.com/Olivier_Luethy/TackPad.git/README.md"><strong>Explore the docs »</strong></a>
+    <a href="github.com/olivierluethy/TackPad/blob/master/README.md"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="github.com/Olivier_Luethy/TackPad.git">View Demo</a>
+    <a href="https://github.com/olivierluethy/TackPad/">View Demo</a>
     ·
-    <a href="github.com/Olivier_Luethy/TackPad.git/issues">Report Bug</a>
+    <a href="https://github.com/olivierluethy/TackPad/issues">Report Bug</a>
     ·
-    <a href="github.com/Olivier_Luethy/TackPad.git/issues">Request Feature</a>
+    <a href="https://github.com/olivierluethy/TackPad/issues">Request Feature</a>
   </p>
 </p>
 

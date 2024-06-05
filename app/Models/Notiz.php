@@ -17,6 +17,23 @@ class Notiz
 		return $statement;
 	}
 
+	public function edit($titel, $notiz, $datum, $prioritaet, $id){
+		$statement = $this->db->prepare('UPDATE notes SET titel = :titel, notiz = :notiz, date_to_complete = :date_to_complete, prioritaet = :prioritaet WHERE NoteId = :id');
+		$statement->bindParam(':titel', $titel, PDO::PARAM_STR);
+		$statement->bindParam(':notiz', $notiz, PDO::PARAM_STR);
+		$statement->bindParam(':date_to_complete', $datum, PDO::PARAM_STR);
+		$statement->bindParam(':prioritaet', $prioritaet, PDO::PARAM_STR);
+		$statement->bindParam(':id', $id, PDO::PARAM_STR);
+		$statement->execute();
+	}
+
+	public function getInfosFromTask($id){
+		$statement = $this->db->prepare('SELECT * FROM notes WHERE NoteId = :id');
+		$statement->bindParam(':id', $id);
+        $statement->execute();
+		return $statement;
+	}
+
 	/* Nicht zu späte und nicht erledigte Aufgaben */
 	public function getNotLateButOpenTasks(){
 		$statement = $this->db->prepare("SELECT * FROM notes WHERE status = 0 AND fk_usersId = :id AND NOT date_to_complete + INTERVAL 1 DAY < NOW() ORDER BY prioritaet, NOT date_to_complete + INTERVAL 1 DAY < NOW()");
@@ -98,12 +115,5 @@ class Notiz
 		$statement = $this->db->prepare('DELETE FROM notes WHERE fk_usersId = :id');
 		$statement->bindParam(':id', $id);
         $statement->execute();
-	}
-
-	public function getInfosFromTask($id){
-		$statement = $this->db->prepare('SELECT * FROM notes WHERE NoteId = :id');
-		$statement->bindParam(':id', $id);
-        $statement->execute();
-		return $statement;
 	}
 }

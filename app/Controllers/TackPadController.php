@@ -100,25 +100,65 @@ class TackPadController
         require 'app/Views/tackpad.view.php';
     }
 
-    public function showEditPage(){
+    public function showEditPage() {
         // Initialize the session
         session_start();
-
+    
         // Check if the user is logged in, if not then redirect to login page
         if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             header("location: login");
             exit;
         }
+    
+        $notiz = new Notiz();
+    
+        // Fetch all tasks
+        $alle_tasks = $notiz->tackpad()->fetchAll();
+    
+        require 'app/Views/index.view.php';
+    }
+
+    // Method to handle AJAX request for fetching task data
+    public function getTaskData() {
+        // Initialize the session
+        session_start();
+
+        // Check if the user is logged in
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            header("HTTP/1.1 401 Unauthorized");
+            exit;
+        }
 
         $notiz = new Notiz();
+        $id = $_POST['id'];
 
-        $id = $_GET['id'];
+        // Fetch task data
+        $taskData = $notiz->getInfosFromTask($id)->fetch();
 
-        /* Infos von Aufgabe */
-        $getInfosFromTask = $notiz -> getInfosFromTask($id)-> fetchAll();
+        echo json_encode($taskData);
+    }
 
-        require 'app/Views/index.view.php';
-        require 'app/Views/editNote.view.php';
+    public function edit(){
+        session_start();
+        // Check if the user is logged in
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            header("HTTP/1.1 401 Unauthorized");
+            exit;
+        }
+
+        $notiz = new Notiz();
+        $id = $_GET["id"];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $titel = $_POST['titel'];
+            $aufgabe = $_POST['aufgabe'];
+            $datum = $_POST['datum'];
+            $prioritaet = $_POST['priority'];
+
+            $notiz->edit($titel, $aufgabe, $datum, $prioritaet, $id);
+
+            header('Location: http://localhost/TackPad/');
+        }
     }
 
     public function erledigt(){

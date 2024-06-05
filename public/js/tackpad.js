@@ -4,6 +4,7 @@ let changeId_erledigt = [];
 let changeId_erledigtEinzel = 0;
 let counter_offen = 0;
 let counter_erledigt = 0;
+let currentId = 0;
 
 function erledigen(id) {
   location.href = "erledigt?id=" + id;
@@ -90,10 +91,12 @@ function openModal() {
 }
 
 function getId_for_offen(id) {
+  currentId = id;
   toggleTaskSelection(id, "offene_tasks", changeId_offen);
 }
 
 function getId_for_erledigt(id) {
+  currentId = id;
   toggleTaskSelection(id, "erledigte_tasks", changeId_erledigt);
 }
 
@@ -145,8 +148,12 @@ function toggleActionButtons() {
 // Get the modal
 let modal = document.getElementById("addModal");
 
+
+let editmodal = document.getElementById("editModal");
 function openBearbeiten() {
   editmodal.style.display = 'block';
+
+  openEditModal(currentId);
 }
 
 // Function to display a modal
@@ -198,3 +205,44 @@ setupModalClose(addModal, 0);
 // Edit Modal
 var editModal = document.getElementById("editModal");
 setupModalClose(editModal, 0);
+
+// JavaScript to handle edit button click
+function openEditModal(taskId) {
+  $.ajax({
+      url: 'getTaskData',
+      type: 'POST',
+      data: {id: taskId},
+      success: function(response) {
+        var task = JSON.parse(response);
+        $('#editModal input[name="titel"]').val(task.titel);
+        $('#editModal input[name="aufgabe"]').val(task.notiz);
+        $('#datum').val(task.date_to_complete);
+
+        // Convert task.prioritaet to an integer
+        var priorityValue = parseInt(task.prioritaet);
+
+        // Set the value of the priority select field
+        $('#priority').val(priorityValue);
+        $('#priority option[value="' + task.prioritaet + '"]').prop('selected', true);
+
+        // Update the form action with the taskId
+        $('#editForm').attr('action', 'edit?id=' + task.NoteId);
+
+        $('#editModal').show();        
+      }
+  });
+}
+
+$(document).ready(function() {
+  // Close modal when the close button is clicked
+  $('.close').click(function() {
+      $('#editModal').hide();
+  });
+
+  // Close modal when clicking outside of the modal
+  $(window).click(function(event) {
+      if (event.target.id == 'editModal') {
+          $('#editModal').hide();
+      }
+  });
+});
