@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script defer src="public/js/tackpad.js"></script>
+    <script defer src="public/js/clientSideValidationNotice.js"></script>
 </head>
 
 <body>

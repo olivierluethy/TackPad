@@ -25,6 +25,7 @@
                         <td><label for="lname">Priority:</label></td>
                         <td>
                             <select name="priority" id="priority">
+                                <option value=""></option>
                                 <option value="1">Incredibly important</option>
                                 <option value="2">Very important</option>
                                 <option value="3">Important</option>

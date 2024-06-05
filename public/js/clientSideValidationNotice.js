@@ -1,49 +1,33 @@
-// Clientside Validierung
-window.addEventListener("load", function() {
-
-    document.getElementById('createForm').addEventListener('submit', function(evt) {
-        console.log("It workds");
-
-        var errors = false;
-        var warnings = document.querySelectorAll(".warning");
-        if (warnings != null) {
-            warnings.forEach(element => {
-                element.remove();
-            });
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById('createForm');
+  
+    if (!form) return;
+  
+    form.addEventListener('submit', (evt) => {
+      console.log("Validation initiated");
+  
+      const warnings = document.querySelectorAll(".warning");
+      warnings.forEach(warning => warning.remove());
+  
+      let hasErrors = false;
+      const validations = [
+        { selector: '#titel', message: 'Please enter a title' },
+        { selector: '#aufgabe', message: 'Please enter a task' },
+        { selector: '#datum', message: 'Please select a date' },
+        { selector: '#priority', message: 'Please select a priority' }
+      ];
+  
+      validations.forEach(({ selector, message }) => {
+        const element = document.querySelector(selector);
+        if (element && element.value.trim() === '') {
+          element.insertAdjacentHTML("afterend", `<label class="warning" style="color: red;">${message}</label>`);
+          hasErrors = true;
         }
-
-
-        if (document.querySelector('#titel') != null) {
-            if (document.querySelector('#titel').value.trim() === '') {
-                document.querySelector('#titel').insertAdjacentHTML("afterend", "<label class=\"warning\"> Bitte geben Sie einen Titel ein</label>");
-                errors = true;
-            }
-        }
-
-        if (document.querySelector('#aufgabe') != null) {
-            if (document.querySelector('#aufgabe').value.trim() === '') {
-                document.querySelector('#aufgabe').insertAdjacentHTML("afterend", "<label class=\"warning\"> Bitte geben Sie eine Aufgabe ein</label>");
-                errors = true;
-            }
-        }
-
-        if (document.querySelector('#datum') != null) {
-            if (document.querySelector('#datum').value.trim() === '') {
-                document.querySelector('#datum').insertAdjacentHTML("afterend", "<label class=\"warning\"> Bitte wählen Sie ein Datum aus</label>");
-                errors = true;
-            }
-        }
-
-        if (document.querySelector('#prioritaet') != null) {
-            if (document.querySelector('#prioritaet').value.trim() === '') {
-                document.querySelector('#prioritaet').insertAdjacentHTML("afterend", "<label class=\"warning\"> Bitte wählen Sie eine Priorität aus</label>");
-                errors = true;
-            }
-        }
-
-        if (errors) {
-            evt.preventDefault();
-        }
-
+      });
+  
+      if (hasErrors) {
+        evt.preventDefault();
+      }
     });
-});
+  });
+  
