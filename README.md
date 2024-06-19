@@ -32,32 +32,63 @@
     <li>
       <a href="#installation-guide">Installation Guide</a>
     </li>
+    <li>
+      <a href="#installation-guide">License</a>
+    </li>
+    <li>
+      <a href="#contributing">Contributing</a>
+    </li>
   </ol>
 </details>
 
-<!-- ABOUT THE PROJECT -->
-
 ## About The Project
 
-I always wanted to make a notes app, but for a long time I had trouble figuring out how to make something like that. Once I took a course and maybe it changed my whole coding experience, but I don't know.
+I have always had the ambition to create a note-taking application, but for a long time I struggled to figure out how to approach building one. Taking a coding course transformed my skills and inspired me to finally start this project.
 
-After the course I started to build the notes application. But first I thought about what the application should know or what kind of skills it should have.
-When I finalized each kind of use case, I finally started coding. It went pretty fast and wasn't as difficult as I expected.
+Once I had mapped out the use cases and features I needed for the application, I began the development phase. Surprisingly, the process was smoother and less challenging than I expected.
 
-But when I finished coding the project and put everything on github, I started thinking more and more about how I could make the application better. So I decided to add a login system so that everyone can create an account and see only their own notes and not anything from other people.
+After completing the first version and publishing it to GitHub, I started thinking about how to improve the application. This led to the decision to implement a login system to ensure that users can securely access their own notes without seeing other people's data.
 
-Let's see what the project will do in the future😁.
-But one thing I can say is that I was able to do everything I planned before I started coding!
+I am excited about the future of this project and look forward to seeing how it evolves. One thing is for sure - I have accomplished everything I set out to do when I first started the project!
 
-<!-- INSTALLATION -->
+Future Mission: This application should have end-to-end encryption so that no bulk text gets into the database, only the hash.
 
 ## Installation Guide
 
-1. First you need to install git on your local machine. To do this, go to this [website](https://git-scm.com/downloads).
-2. Go to your windows explorer and find a good place to store this project.
-3. Now right click on your folder or location and click on "Git Bash Here".
-4. Finally you will see something that looks like a windows command prompt. When it does, all you have to do is type
-   ```sh
-   git clone https://github.com/olivierluethy/TackPad.git
-   ```
-5. Once you have successfully cloned the project, you will need a local database. I used [XAMPP](https://www.apachefriends.org/de/index.html). If you want to use it too, please make sure you download the latest version. Otherwise it won't work as expected.
+1. **Install Git:**
+   - Download and install Git on your local machine from [here](https://git-scm.com/downloads).
+
+2. **Clone the Project:**
+   - Choose a suitable location on your computer.
+   - Right-click on the folder and select "Git Bash Here".
+   - In the command prompt window, type:
+     ```sh
+     git clone https://github.com/olivierluethy/TackPad.git
+     ```
+
+3. **Setup Local Database:**
+   - You will need a local database to run the application. I recommend using [XAMPP](https://www.apachefriends.org/index.html).
+   - Ensure you download and install the latest version for compatibility.
+
+4. **Run the Application:**
+   - Follow the setup instructions provided with the project to configure and run it locally.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+Please make sure to update tests as appropriate and adhere to the [coding conventions](CONTRIBUTING.md).
+
+By contributing to this project, you agree to abide by the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+
