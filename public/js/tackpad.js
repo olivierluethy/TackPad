@@ -7,86 +7,128 @@ let counter_erledigt = 0;
 let currentId = 0;
 
 function checkAllOffeneTasks(source) {
-  let checkboxes = document.getElementsByClassName("offene_tasks");
-  for (let i = 0, n = checkboxes.length; i < n; i++) {
-    checkboxes[i].checked = source.checked;
-  }
+    checkboxes = document.getElementsByClassName('offene_tasks');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
 
-  if (source.checked) {
-    document.getElementById("deleteAllOffeneTasks").style.display = "block";
-  } else {
-    document.getElementById("deleteAllOffeneTasks").style.display = "none";
-    document.getElementById("loeschen").style.display="none";
-  }
-  toggleActionButtons();
+    if (document.getElementById("checkAllOffeneTasks").checked) {
+        document.getElementById("deleteAllOffeneTasks").style.display = "block";
+    } else {
+        document.getElementById("deleteAllOffeneTasks").style.display = "none";
+    }
 }
 
 function checkAllErledigteTasks(source) {
-  let checkboxes = document.getElementsByClassName("erledigte_tasks");
-  for (let i = 0, n = checkboxes.length; i < n; i++) {
-    checkboxes[i].checked = source.checked;
-  }
+    checkboxes = document.getElementsByClassName('erledigte_tasks');
+    for (var i = 0, n = checkboxes.length; i < n; i++) {
+        checkboxes[i].checked = source.checked;
+    }
 
-  if (source.checked) {
-    document.getElementById("deleteAllErledigteTasks").style.display = "block";
-  } else {
-    document.getElementById("deleteAllErledigteTasks").style.display = "none";
-    document.getElementById("loeschen").style.display="none";
-  }
-  toggleActionButtons();
+    if (document.getElementById("checkAllErledigteTasks").checked) {
+        document.getElementById("deleteAllErledigteTasks").style.display = "block";
+    } else {
+        document.getElementById("deleteAllErledigteTasks").style.display = "none";
+    }
 }
 
 function getId_for_offen(id) {
-  currentId = id;
-  toggleTaskSelection(id, "offene_tasks", changeId_offen);
+    currentId = id;
+    counter_offen = 0;
+    if (changeId_offenEinzel) {
+        /* Check if id is already in array */
+        if (changeId_offen.includes(id)) {
+            let Index = changeId_offen.indexOf(id);
+            changeId_offen.splice(Index, 1);
+        } else {
+            changeId_offen.push(id);
+        }
+    } else {
+        changeId_offenEinzel = id;
+    }
+
+    elements_offen = document.getElementsByClassName("offene_tasks");
+    for (var i = 0; i < elements_offen.length; i++) {
+        if (elements_offen[i].checked == true) {
+            counter_offen++;
+        }
+    }
+    if (elements_offen.length == counter_offen) {
+        document.getElementById("checkAllOffeneTasks").checked = true;
+        document.getElementById("deleteAllOffeneTasks").style.display = "block";
+        document.getElementById("bearbeiten").style.display = "none";
+        document.getElementById("loeschen").style.display = "none";
+    } else if (counter_offen == 1) {
+        document.getElementById("deleteAllOffeneTasks").style.display = "none";
+        document.getElementById("bearbeiten").style.display = "inline-block";
+        document.getElementById("loeschen").style.display = "inline-block";
+        document.getElementById("freigeben").style.display = "inline-block";
+        document.getElementById("erledigt").style.display = "inline-block";
+    } else if (counter_offen > 1) {
+        document.getElementById("checkAllOffeneTasks").checked = false;
+        document.getElementById("deleteAllOffeneTasks").style.display = "none";
+        document.getElementById("bearbeiten").style.display = "none";
+        document.getElementById("erledigt").style.display = "none";
+        document.getElementById("freigeben").style.display = "none";
+        document.getElementById("loeschen").style.display = "inline-block";
+    } else if (counter_offen == 0) {
+        document.getElementById("deleteAllOffeneTasks").style.display = "none";
+        document.getElementById("bearbeiten").style.display = "none";
+        document.getElementById("loeschen").style.display = "none";
+        document.getElementById("freigeben").style.display = "none";
+        document.getElementById("erledigt").style.display = "none";
+    } else {
+        document.getElementById("checkAllOffeneTasks").checked = false;
+        document.getElementById("deleteAllOffeneTasks").style.display = "none";
+    }
 }
 
 function getId_for_erledigt(id) {
-  currentId = id;
-  toggleTaskSelection(id, "erledigte_tasks", changeId_erledigt);
-}
-
-function toggleTaskSelection(id, taskClass, idArray) {
-  if (idArray.includes(id)) {
-    idArray.splice(idArray.indexOf(id), 1);
-  } else {
-    idArray.push(id);
-  }
-
-  let elements = document.getElementsByClassName(taskClass);
-  let counter = 0;
-  for (let i = 0; i < elements.length; i++) {
-    if (elements[i].checked) {
-      counter++;
+    currentId = id;
+    counter_erledigt = 0;
+    /* Check if id is already in array */
+    if (changeId_erledigt.includes(id)) {
+        let Index = changeId_erledigt.indexOf(id);
+        changeId_erledigt.splice(Index, 1);
+    } else {
+        changeId_erledigt.push(id);
     }
-  }
-
-  let allSelected = elements.length === counter;
-  let checkAllElement = taskClass === "offene_tasks" ? "checkAllOffeneTasks" : "checkAllErledigteTasks";
-  document.getElementById(checkAllElement).checked = allSelected;
-
-  if (taskClass === "offene_tasks") {
-    changeId_offenEinzel = idArray.length === 1 ? idArray[0] : 0;
-    counter_offen = counter;
-  } else {
-    changeId_erledigtEinzel = idArray.length === 1 ? idArray[0] : 0;
-    counter_erledigt = counter;
-  }
-
-  toggleActionButtons();
-}
-
-function toggleActionButtons() {
-  let totalSelected = document.querySelectorAll('.offene_tasks:checked, .erledigte_tasks:checked').length;
-  let singleSelected = totalSelected === 1;
-  let multipleSelected = totalSelected > 1;
-
-  document.getElementById("bearbeiten").style.display = singleSelected ? "inline-block" : "none";
-  document.getElementById("loeschen").style.display = totalSelected ? "inline-block" : "none";
-  document.getElementById("freigeben").style.display = singleSelected ? "inline-block" : "none";
-  document.getElementById("erledigt").style.display = singleSelected ? "inline-block" : "none";
-
-  if (multipleSelected) {
-    document.getElementById("erledigt").style.display = "none";
-  }
+    elements_erledigt = document.getElementsByClassName("erledigte_tasks");
+    for (var i = 0; i < elements_erledigt.length; i++) {
+        if (elements_erledigt[i].checked == true) {
+            counter_erledigt++;
+            console.log("Eins erledigt!");
+        }
+    }
+    if (elements_erledigt.length == counter_erledigt) {
+      document.getElementById("checkAllErledigteTasks").checked = true;
+      document.getElementById("deleteAllErledigteTasks").style.display = "block";
+      document.getElementById("bearbeiten").style.display = "none";
+      document.getElementById("loeschen").style.display = "none";
+      document.getElementById("freigeben").style.display = "none";
+      document.getElementById("erledigt").style.display = "none";
+    } else if (counter_erledigt == 1) {
+      document.getElementById("checkAllErledigteTasks").checked = false;
+      document.getElementById("deleteAllErledigteTasks").style.display = "none";
+      document.getElementById("bearbeiten").style.display = "inline-block";
+      document.getElementById("loeschen").style.display = "inline-block";
+      document.getElementById("freigeben").style.display = "inline-block";
+      document.getElementById("erledigt").style.display = "inline-block";
+    } else if (counter_erledigt > 1) {
+      document.getElementById("checkAllErledigteTasks").checked = false;
+      document.getElementById("deleteAllErledigteTasks").style.display = "none";
+      document.getElementById("bearbeiten").style.display = "none";
+      document.getElementById("erledigt").style.display = "none";
+      document.getElementById("freigeben").style.display = "none";
+      document.getElementById("loeschen").style.display = "inline-block";
+    } else if (counter_erledigt == 0) {
+      document.getElementById("deleteAllErledigteTasks").style.display = "none";
+      document.getElementById("bearbeiten").style.display = "none";
+      document.getElementById("loeschen").style.display = "none";
+      document.getElementById("freigeben").style.display = "none";
+      document.getElementById("erledigt").style.display = "none";
+    } else {
+      document.getElementById("checkAllErledigteTasks").checked = false;
+      document.getElementById("deleteAllErledigteTasks").style.display = "none";
+    }
 }
