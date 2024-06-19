@@ -19,14 +19,14 @@ function openEditModal(taskId) {
         var task = JSON.parse(response);
         $('#editModal input[name="titel"]').val(task.titel);
         $('#editModal input[name="aufgabe"]').val(task.notiz);
-        $('#datum').val(task.date_to_complete);
+        $('#datum_edit').val(task.date_to_complete);
 
         // Convert task.prioritaet to an integer
         var priorityValue = parseInt(task.prioritaet);
 
         // Set the value of the priority select field
-        $('#priority').val(priorityValue);
-        $('#priority option[value="' + task.prioritaet + '"]').prop('selected', true);
+        $('#priority_edit').val(priorityValue);
+        $('#priority_edit option[value="' + task.prioritaet + '"]').prop('selected', true);
 
         // Update the form action with the taskId
         $('#editForm').attr('action', 'edit?id=' + task.NoteId);
