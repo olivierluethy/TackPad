@@ -63,7 +63,7 @@ class Notiz
 		$titel = htmlspecialchars($_POST['titel']);
 		$aufgabe = htmlspecialchars($_POST['aufgabe']);
 		$datum = htmlspecialchars($_POST['datum']);
-		$prioritaet = htmlspecialchars($_POST['prioritaet']);
+		$prioritaet = htmlspecialchars($_POST['priority']);
 
 		$statement = $this->db->prepare("INSERT INTO `notes` (titel, notiz, status, date_to_complete, prioritaet, fk_usersId) VALUES (:titel, :aufgabe, :status, :date_to_complete, :prioritaet, :fk_usersId)");
 		$statement->bindParam(':titel', $titel, PDO::PARAM_STR);

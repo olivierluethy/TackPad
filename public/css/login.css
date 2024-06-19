@@ -1,0 +1,17 @@
+body {
+  animation: bgcolor 10s infinite;
+  animation-direction: alternate;
+}
+body .wrapper {
+  width: 350px;
+  padding: 20px;
+  border: 2px solid hsl(197, 100%, 23%);
+  border-radius: 10px;
+  box-shadow: 2px 3px 5px gray;
+  background-color: white;
+  position: block;
+  margin-top: 21rem;
+  margin-left: auto;
+  margin-right: auto;
+  font: 14px sans-serif;
+}/*# sourceMappingURL=login.css.map */

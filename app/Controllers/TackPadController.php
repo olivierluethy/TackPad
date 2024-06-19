@@ -45,15 +45,12 @@ class TackPadController
 
         $notiz = new Notiz();
 
-        $title = '';
-        $pdo = connectDatabase();
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $titel = $_POST['titel'];
-            $aufgabe = $_POST['aufgabe'];
+            $titel = e($_POST['titel']);
+            $aufgabe = e($_POST['aufgabe']);
             $status = 0;
-            $datum = $_POST['datum'];
-            $prioritaet = $_POST['prioritaet'];
+            $datum = e($_POST['datum']);
+            $prioritaet = e($_POST['priority']);
 
             $notiz->createNotiz($titel, $aufgabe, $status, $datum, $prioritaet, $_SESSION['id']);
 
@@ -74,7 +71,7 @@ class TackPadController
         
         $notiz = new Notiz();
 
-		$id = $_GET['id'];
+		$id = e($_GET['id']);
 
         $notiz->removeNotiz($id);
         
@@ -130,7 +127,7 @@ class TackPadController
         }
 
         $notiz = new Notiz();
-        $id = $_POST['id'];
+        $id = e($_POST['id']);
 
         // Fetch task data
         $taskData = $notiz->getInfosFromTask($id)->fetch();
@@ -147,13 +144,13 @@ class TackPadController
         }
 
         $notiz = new Notiz();
-        $id = $_GET["id"];
+        $id = e($_GET["id"]);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $titel = $_POST['titel'];
-            $aufgabe = $_POST['aufgabe'];
-            $datum = $_POST['datum'];
-            $prioritaet = $_POST['priority'];
+            $titel = e($_POST['titel']);
+            $aufgabe = e($_POST['aufgabe']);
+            $datum = e($_POST['datum']);
+            $prioritaet = e($_POST['priority']);
 
             $notiz->edit($titel, $aufgabe, $datum, $prioritaet, $id);
 
@@ -173,7 +170,7 @@ class TackPadController
 
         $notiz = new Notiz();
 
-        $id = $_GET['id'];
+        $id = e($_GET['id']);
 
         $notiz->istErledigt($id);
 
@@ -189,7 +186,7 @@ class TackPadController
     }
 
     public function config(){
-        require 'app/Views/config.php';
+        require 'core/db_config.php';
     }
 
     public function register(){

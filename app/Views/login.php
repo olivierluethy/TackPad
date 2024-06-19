@@ -9,7 +9,19 @@ if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
 }
 
 // Include config file
-require_once "config.php";
+include __DIR__ . '/../../core/db_config.php';
+
+// Use the $link variable for your query
+if ($link) {
+    $stmt = mysqli_prepare($link, 'SELECT id, email, password FROM users WHERE email = ?');
+    if ($stmt) {
+        // Bind parameters, execute, etc.
+    } else {
+        echo "ERROR: Could not prepare the statement. " . mysqli_error($link);
+    }
+} else {
+    die("ERROR: Database connection not established.");
+}
 
 // Define variables and initialize with empty values
 $email = $password = "";

@@ -18,7 +18,7 @@
     <script defer src="public/js/doneNote.js"></script>
     <script defer src="public/js/editNotice.js"></script>
     <script defer src="public/js/modal.js"></script>
-    <script defer src="public/js/clientSideValidationNotice.js"></script>
+    <script defer src="public/js/inputValidation.js"></script>
 </head>
 
 <body>

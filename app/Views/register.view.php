@@ -1,6 +1,6 @@
 <?php
 // Include config file
-require_once "config.php";
+include __DIR__ . '/../../core/db_config.php';
  
 // Define variables and initialize with empty values
 $email = $password = $confirm_password = "";
