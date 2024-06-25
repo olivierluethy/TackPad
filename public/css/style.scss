@@ -3,6 +3,9 @@ body {
   padding: 0;
   background-color: black;
   font-family: "Inconsolata", monospace;
+  .main{
+    
+  }
   .navi {
     font-size: 35px;
     cursor: pointer;
@@ -176,23 +179,6 @@ body {
                 background-color: white;
                 color: #06145b;
               }
-            }
-          }
-          .ersteHinzufuegen {
-            background-color: white;
-            border: 2px solid white;
-            color: black;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.5s ease;
-            &:hover {
-              background-color: black;
-              color: white;
-              transition-duration: 0.4s;
             }
           }
         }
@@ -380,6 +366,28 @@ body {
             }
           }
         }
+      }
+    }
+  }
+  .noData{
+    text-align: center;
+    h1 {
+      color: red;
+    }
+    button {
+      background-color: white;
+      border: 2px solid white;
+      color: black;
+      padding: 15px 32px;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.5s ease;
+      &:hover {
+        background-color: black;
+        color: white;
+        transition-duration: 0.4s;
       }
     }
   }

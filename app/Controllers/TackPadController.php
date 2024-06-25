@@ -15,6 +15,9 @@ class TackPadController
 
         $notiz = new Notiz();
 
+        // Get username from session email
+        $username = $notiz -> getUsernameFromEmail($_SESSION["email"]);
+
         /* Alle Aufgaben */
         $alle_tasks = $notiz -> tackpad()-> fetchAll();
 

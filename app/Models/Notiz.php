@@ -9,8 +9,8 @@ class Notiz
 	}
 
 	// TackPad Ansicht
+	/* Alle Aufgaben */
 	public function tackpad(){
-		/* Alle Aufgaben */
 		$statement = $this->db->prepare("SELECT * FROM notes WHERE fk_usersId = :id");
 		$statement->bindParam(':id', $_SESSION['id'], PDO::PARAM_STR);
 		$statement->execute();
@@ -33,6 +33,15 @@ class Notiz
         $statement->execute();
 		return $statement;
 	}
+
+	// Function to extract and clean username from email
+    public function getUsernameFromEmail($email) {
+        $username = explode('@', $email)[0]; // Extract username
+        if (strpos($username, '.') !== false) {
+            $username = substr($username, 0, strpos($username, '.')); // Remove second part if dot exists
+        }
+        return ucfirst($username); // Capitalize first letter
+    }
 
 	/* Nicht zu späte und nicht erledigte Aufgaben */
 	public function getNotLateButOpenTasks(){

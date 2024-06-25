@@ -178,23 +178,6 @@ body table tr td main form .hinzufuegen:hover {
   background-color: white;
   color: #06145b;
 }
-body table tr td main .ersteHinzufuegen {
-  background-color: white;
-  border: 2px solid white;
-  color: black;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.5s ease;
-}
-body table tr td main .ersteHinzufuegen:hover {
-  background-color: black;
-  color: white;
-  transition-duration: 0.4s;
-}
 body #deleteAllOffeneTasks,
 body #deleteAllErledigteTasks {
   background-color: white;
@@ -376,6 +359,28 @@ body .modal .modal-content .modal-footer .select-button .verwerfen {
 body .modal .modal-content .modal-footer .select-button .verwerfen:hover {
   background-color: white;
   color: red;
+}
+body .noData {
+  text-align: center;
+}
+body .noData h1 {
+  color: red;
+}
+body .noData button {
+  background-color: white;
+  border: 2px solid white;
+  color: black;
+  padding: 15px 32px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.5s ease;
+}
+body .noData button:hover {
+  background-color: black;
+  color: white;
+  transition-duration: 0.4s;
 }
 @keyframes animatetop {
   from {

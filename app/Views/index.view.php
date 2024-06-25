@@ -27,7 +27,7 @@
         <a class="closebtn" onclick="closeNav()">&times;</a>
         <img src="assets/icon.png" alt="">
         <h1>TackPad</h1>
-        <h2>Hello <?= ucfirst(explode('.', htmlspecialchars($_SESSION["email"]))[0]) ?>!</h2>
+        <h2>Hello <?= $username ?>!</h2>
         <a href="logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</a>
     </div>
     <span class='navi' onclick="openNav()">&#9776;</span>
@@ -123,8 +123,10 @@
                     <?php } 
                     // Display message if no tasks are available
                     } else { ?>
-                    <h1 style='color: red'>No task added yet</h1>
-                    <button class="ersteHinzufuegen" onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Add task</button>
+                    <div class="noData">
+                    <h1>No tasks added yet</h1>
+                    <button title="Add a task" onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Add task</button>
+                    </div>
                     <?php } ?>
                 </main>
             </td>
