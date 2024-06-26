@@ -96,18 +96,31 @@ function checkAllErledigteTasks(source) {
 function getId_for_offen(id) {
     currentId = id;
     counter_offen = 0;
-    if (changeId_offenEinzel) {
-        /* Check if id is already in array */
-        if (changeId_offen.includes(id)) {
-            let Index = changeId_offen.indexOf(id);
-            changeId_offen.splice(Index, 1);
+
+    if (changeId_offen.length > 0) {
+        // If the array has more than one id, handle multiple ids
+        const index = changeId_offen.indexOf(id);
+        if (index !== -1) {
+            changeId_offen.splice(index, 1); // Remove id from array
         } else {
-            changeId_offen.push(id);
+            changeId_offen.push(id); // Add id to array
+        }
+    } else if (changeId_offenEinzel) {
+        // If changeId_offenEinzel is set, move it to changeId_offen and handle multiple ids
+        changeId_offen.push(changeId_offenEinzel);
+        changeId_offenEinzel = null;
+        
+        const index = changeId_offen.indexOf(id);
+        if (index !== -1) {
+            changeId_offen.splice(index, 1); // Remove id from array
+        } else {
+            changeId_offen.push(id); // Add id to array
         }
     } else {
+        // If no ids are set, assign the id to changeId_offenEinzel
         changeId_offenEinzel = id;
     }
-
+    
     elements_offen = document.getElementsByClassName("offene_tasks");
     for (var i = 0; i < elements_offen.length; i++) {
         if (elements_offen[i].checked == true) {
@@ -121,7 +134,7 @@ function getId_for_offen(id) {
         document.getElementById("loeschen").style.display = "inline-block";
         document.getElementById("freigeben").style.display = "inline-block";
         document.getElementById("erledigt").style.display = "inline-block";
-    } else if (elements_offen.length == counter_offen && counter_offen != 1) {
+    } else if (elements_offen.length == counter_offen && counter_offen > 1) {
         document.getElementById("checkAllOffeneTasks").checked = true;
         document.getElementById("deleteAllOffeneTasks").style.display = "block";
         document.getElementById("bearbeiten").style.display = "none";
@@ -156,13 +169,31 @@ function getId_for_offen(id) {
 function getId_for_erledigt(id) {
     currentId = id;
     counter_erledigt = 0;
-    /* Check if id is already in array */
-    if (changeId_erledigt.includes(id)) {
-        let Index = changeId_erledigt.indexOf(id);
-        changeId_erledigt.splice(Index, 1);
+    
+    if (changeId_erledigt.length > 0) {
+        // If the array has more than one id, handle multiple ids
+        const index = changeId_erledigt.indexOf(id);
+        if (index !== -1) {
+            changeId_erledigt.splice(index, 1); // Remove id from array
+        } else {
+            changeId_erledigt.push(id); // Add id to array
+        }
+    } else if (changeId_erledigtEinzel) {
+        // If changeId_offenEinzel is set, move it to changeId_offen and handle multiple ids
+        changeId_erledigt.push(changeId_erledigtEinzel);
+        changeId_erledigtEinzel = null;
+        
+        const index = changeId_erledigt.indexOf(id);
+        if (index !== -1) {
+            changeId_erledigt.splice(index, 1); // Remove id from array
+        } else {
+            changeId_erledigt.push(id); // Add id to array
+        }
     } else {
-        changeId_erledigt.push(id);
+        // If no ids are set, assign the id to changeId_offenEinzel
+        changeId_erledigtEinzel = id;
     }
+
     elements_erledigt = document.getElementsByClassName("erledigte_tasks");
     for (var i = 0; i < elements_erledigt.length; i++) {
         if (elements_erledigt[i].checked == true) {
@@ -175,7 +206,7 @@ function getId_for_erledigt(id) {
         document.getElementById("loeschen").style.display = "inline-block";
         document.getElementById("freigeben").style.display = "inline-block";
         document.getElementById("erledigt").style.display = "inline-block";
-    } else if (elements_erledigt.length == counter_erledigt && counter_erledigt != 1) {
+    } else if (elements_erledigt.length == counter_erledigt && counter_erledigt > 1) {
         document.getElementById("checkAllErledigteTasks").checked = true;
         document.getElementById("deleteAllErledigteTasks").style.display = "block";
         document.getElementById("bearbeiten").style.display = "none";
