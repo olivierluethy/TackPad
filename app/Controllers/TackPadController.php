@@ -79,7 +79,7 @@ class TackPadController
 
             $notiz->createNotiz($titel, $aufgabe, $status, $datum, $prioritaet, $_SESSION['id']);
 
-            header('Location: http://localhost/TackPad/');
+            header('Location: https://TackPad.ch/');
         }
     }
 
@@ -100,7 +100,7 @@ class TackPadController
 
         $notiz->removeNotiz($id);
         
-        header('Location: http://localhost/TackPad/');
+        header('Location: https://TackPad.ch/');
 	}
 
     public function deleteAllDone(){
@@ -117,7 +117,7 @@ class TackPadController
 
         $notiz->deleteAllDone();
 
-        header('Location: http://localhost/TackPad/');
+        header('Location: https://TackPad.ch/');
 
         require 'app/Views/tackpad.view.php';
     }
@@ -136,7 +136,7 @@ class TackPadController
 
         $notiz->deleteAllOpen();
 
-        header('Location: http://localhost/TackPad/');
+        header('Location: https://TackPad.ch/');
 
         require 'app/Views/tackpad.view.php';
     }
@@ -157,7 +157,7 @@ class TackPadController
 
         $notiz->deleteMultiple($id);
 
-        header('Location: http://localhost/TackPad/');
+        header('Location: https://TackPad.ch/');
 
         require 'app/Views/tackpad.view.php';
     }
@@ -219,7 +219,7 @@ class TackPadController
 
             $notiz->edit($titel, $aufgabe, $datum, $prioritaet, $id);
 
-            header('Location: http://localhost/TackPad/');
+            header('Location: https://TackPad.ch/');
         }
     }
 
@@ -239,7 +239,7 @@ class TackPadController
 
         $notiz->istErledigt($id);
 
-        header('Location: http://localhost/TackPad/');
+        header('Location: https://TackPad.ch/');
     }
 
     public function login(){
