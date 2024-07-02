@@ -37,6 +37,10 @@ function dispose() {
     addmodal.style.display = "none";
 }
 
+function closeReallyDelete(){
+    document.getElementById("deleteModal").style.display="none";
+}
+
 // Get the modal
 var deletemodal = document.getElementById("deleteModal");
 // Get the modal

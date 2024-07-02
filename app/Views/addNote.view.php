@@ -1,6 +1,4 @@
-<!-- The Modal -->
 <div id="addModal" class="modal">
-    <!-- Modal content -->
     <div class="modal-content">
         <form id="addForm" action="create" method="POST">
             <div class="modal-header">

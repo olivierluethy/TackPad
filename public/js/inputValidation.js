@@ -4,8 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!editForm) return;
 
   editForm.addEventListener('submit', (evt) => {
-      console.log("Validation initiated");
-
       // Remove existing warning messages
       const warnings = editForm.querySelectorAll(".warning");
       warnings.forEach(warning => warning.remove());
@@ -36,8 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!addForm) return;
 
   addForm.addEventListener('submit', (evt) => {
-      console.log("Validation initiated");
-
       // Remove existing warning messages
       const warnings = addForm.querySelectorAll(".warning");
       warnings.forEach(warning => warning.remove());

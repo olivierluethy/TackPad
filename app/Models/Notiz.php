@@ -18,6 +18,12 @@ class Notiz
 	}
 
 	public function edit($titel, $notiz, $datum, $prioritaet, $id){
+		$titel = htmlspecialchars($_POST['titel']);
+		$notiz = htmlspecialchars($_POST['aufgabe']);
+		$datum = htmlspecialchars($_POST['datum']);
+		$prioritaet = htmlspecialchars($_POST['priority']);
+		$id = htmlspecialchars($id);
+
 		$statement = $this->db->prepare('UPDATE notes SET titel = :titel, notiz = :notiz, date_to_complete = :date_to_complete, prioritaet = :prioritaet WHERE NoteId = :id');
 		$statement->bindParam(':titel', $titel, PDO::PARAM_STR);
 		$statement->bindParam(':notiz', $notiz, PDO::PARAM_STR);
@@ -28,6 +34,7 @@ class Notiz
 	}
 
 	public function getInfosFromTask($id){
+		$id = htmlspecialchars($id);
 		$statement = $this->db->prepare('SELECT * FROM notes WHERE NoteId = :id');
 		$statement->bindParam(':id', $id);
         $statement->execute();
@@ -85,17 +92,24 @@ class Notiz
 	}
 
 	public function removeNotiz($id){
+		$id = htmlspecialchars($id);
 		$statement = $this->db->prepare('DELETE FROM `notes` WHERE NoteId = :id');
         $statement->bindParam(':id', $id);
         $statement->execute();
 	}
 
-	public function removeAllNichtZuSpaetOffeneTasks(){
-		$statement = $this->db->prepare('DELETE FROM `notes` WHERE status = 0 AND NOT date_to_complete + INTERVAL 1 DAY < NOW()');
+	public function deleteAllDone(){
+		$statement = $this->db->prepare('DELETE FROM `notes` WHERE status = 1');
+        $statement->execute();
+	}
+
+	public function deleteAllOpen(){
+		$statement = $this->db->prepare('DELETE FROM `notes` WHERE status = 0');
         $statement->execute();
 	}
 
 	public function istErledigt($id){
+		$id = htmlspecialchars($id);
 		$statement = $this->db->prepare('UPDATE `notes` SET notes.status = 1, notes.date_when_completed = CURRENT_TIMESTAMP, notes.last_change = CURRENT_TIMESTAMP WHERE NoteId = :id');
         $statement->bindParam(':id', $id);
         $statement->execute();
@@ -105,6 +119,7 @@ class Notiz
 		$titel = htmlspecialchars($_POST['title']);
 		$notice = htmlspecialchars($_POST['notice']);
 		$date = htmlspecialchars($_POST['date']);
+		$id = htmlspecialchars($id);
 
 		$statement = $this->db->prepare('UPDATE notes SET titel = :titel, notiz = :notiz, date_to_complete = :date WHERE NoteId = :id');
 		$statement->bindParam(':titel', $titel);
@@ -115,12 +130,14 @@ class Notiz
 	}
 
 	public function istnichtmehrerledigt($id){
+		$id = htmlspecialchars($id);
 		$statement = $this->db->prepare('UPDATE `notes` SET status = 0 WHERE NoteId = :id');
         $statement->bindParam(':id', $id);
         $statement->execute();
 	}
 
 	public function deleteEvery($id){
+		$id = htmlspecialchars($id);
 		$statement = $this->db->prepare('DELETE FROM notes WHERE fk_usersId = :id');
 		$statement->bindParam(':id', $id);
         $statement->execute();

@@ -47,8 +47,8 @@
                         <button id='erledigt' onclick='erledigt()' title="Mark your task as done"><i class='fas fa-check'></i>&nbsp;Done</button>
                         <button id='freigeben' title="Release your task to someone else"><i class='fas fa-share'></i>&nbsp;Release</button>
 
-                        <button id='deleteAllErledigteTasks' onclick='deleteAll()'><i class='fas fa-trash-alt'></i> Delete all</button>
-                        <button id='deleteAllOffeneTasks' onclick='deleteAll()'><i class='fas fa-trash-alt'></i> Delete all</button>
+                        <button id='deleteAllErledigteTasks' title="Delete all your finished tasks" onclick='deleteAllDone()'><i class='fas fa-trash-alt'></i> Delete all</button>
+                        <button id='deleteAllOffeneTasks' title="Delete all your open tasks" onclick='deleteAllOpen()'><i class='fas fa-trash-alt'></i> Delete all</button>
                     </div>
 
                     <?php
@@ -138,7 +138,7 @@
     <?php
     include("editNote.view.php");
     include("addNote.view.php");
-    include("realyDelete.view.php");
+    include("reallyDelete.view.php");
     ?>
 </body>
 

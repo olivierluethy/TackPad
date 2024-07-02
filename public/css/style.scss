@@ -3,9 +3,6 @@ body {
   padding: 0;
   background-color: black;
   font-family: "Inconsolata", monospace;
-  .main{
-    
-  }
   .navi {
     font-size: 35px;
     cursor: pointer;
@@ -198,6 +195,7 @@ body {
     cursor: pointer;
     transition: 0.5s ease;
     display: none;
+    margin-top: 5px;
     &:hover {
       background-color: black;
       color: white;
@@ -411,5 +409,68 @@ body {
       top: 0;
       opacity: 1;
     }
+  }
+}
+@media only screen and (max-width: 600px) {
+  body {
+    font-size: 14px;
+  }
+
+  .navi {
+    font-size: 25px;
+    left: 10px;
+    top: 5px;
+  }
+
+  table, th, td {
+    width: 100%;
+  }
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+  }
+
+  .options {
+    font-size: 18px;
+    padding: 2px;
+    width: 100%;
+  }
+
+  button {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+
+  form input {
+    width: 80%;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .hinzufuegen {
+    font-size: 14px;
+    padding: 12px 24px;
+  }
+
+  .modal-content {
+    width: 100%;
+  }
+
+  .modal-body .yesButton,
+  .modal-body .noButton {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+
+  .modal-footer .hinzufuegen,
+  .modal-footer .verwerfen {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+
+  .noData button {
+    padding: 12px 24px;
+    font-size: 14px;
   }
 }

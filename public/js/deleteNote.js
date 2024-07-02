@@ -48,6 +48,10 @@ function deleteNote() {
     }
 }
 
-function deleteAllNichtZuSpaetOffeneTasks() {
-    location.href = "deleteAllNichtZuSpaetOffeneTasks";
+function deleteAllDone(){
+    location.href = "deleteAllDone";
+}
+
+function deleteAllOpen(){
+    location.href = "deleteAllOpen";
 }

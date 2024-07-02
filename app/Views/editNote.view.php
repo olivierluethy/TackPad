@@ -1,6 +1,4 @@
-<!-- The Modal -->
 <div id="editModal" class="modal">
-    <!-- Modal content -->
     <div class="modal-content">
         <form id="editForm" action="" method="post">
             <div class="modal-header">
