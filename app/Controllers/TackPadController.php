@@ -141,6 +141,27 @@ class TackPadController
         require 'app/Views/tackpad.view.php';
     }
 
+    public function deleteMultiple(){
+        // Initialize the session
+        session_start();
+
+        // Check if the user is logged in, if not then redirect to login page
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            header("location: login");
+            exit;
+        }
+
+        $notiz = new Notiz();
+
+        $id = e($_GET['ids']);
+
+        $notiz->deleteMultiple($id);
+
+        header('Location: http://localhost/TackPad/');
+
+        require 'app/Views/tackpad.view.php';
+    }
+
     public function showEditPage() {
         // Initialize the session
         session_start();

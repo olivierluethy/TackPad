@@ -142,4 +142,23 @@ class Notiz
 		$statement->bindParam(':id', $id);
         $statement->execute();
 	}
+
+	public function deleteMultiple($ids){
+		// Überprüfen, ob $ids ein String ist und in ein Array umwandeln
+		if (is_string($ids)) {
+			$ids = explode(',', $ids);
+		}
+	
+		// Verhindern von SQL-Injection durch Bereinigung der Eingabe
+		$cleaned_ids = array_map('htmlspecialchars', $ids);
+	
+		// Erstellen eines Platzhalter-Strings für die SQL-Abfrage
+		$placeholders = implode(',', array_fill(0, count($cleaned_ids), '?'));
+	
+		// Vorbereitung der SQL-Abfrage
+		$statement = $this->db->prepare("DELETE FROM notes WHERE NoteId IN ($placeholders)");
+	
+		// Ausführen der Abfrage mit den bereinigten IDs als Parameter
+		$statement->execute($cleaned_ids);
+	}	
 }

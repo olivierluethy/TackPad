@@ -30,19 +30,29 @@ function realyDeleteNote() {
 }
 
 function deleteNote() {
-    let idToDelete;
+    let idsToDelete = [];
 
     if (changeId_erledigtEinzel) {
-        idToDelete = changeId_erledigtEinzel;
+        idsToDelete.push(changeId_erledigtEinzel);
     } else if (changeId_offenEinzel) {
-        idToDelete = changeId_offenEinzel;
+        idsToDelete.push(changeId_offenEinzel);
+    }
+
+    if (changeId_erledigt && changeId_erledigt.length > 0) {
+        idsToDelete = idsToDelete.concat(changeId_erledigt);
+    }
+
+    if (changeId_offen && changeId_offen.length > 0) {
+        idsToDelete = idsToDelete.concat(changeId_offen);
     }
 
     console.log("Delete Note Function Called");
-    console.log("ID to delete:", idToDelete);
+    console.log("IDs to delete:", idsToDelete);
 
-    if (idToDelete) {
-        location.href = "delete?id=" + idToDelete;
+    if (idsToDelete.length === 1) {
+        location.href = "delete?id=" + idsToDelete[0];
+    } else if (idsToDelete.length > 1) {
+        location.href = "deleteMultiple?ids=" + idsToDelete.join(',');
     } else {
         console.log("No ID to delete");
     }
