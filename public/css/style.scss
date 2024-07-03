@@ -202,29 +202,18 @@ body {
       transition-duration: 0.4s;
     }
   }
-  /* The Modal (background) */
   .modal {
     display: none;
-    /* Hidden by default */
     position: fixed;
-    /* Stay in place */
     z-index: 1;
-    /* Sit on top */
     padding-top: 100px;
-    /* Location of the box */
     left: 0;
     top: 0;
     width: 100%;
-    /* Full width */
     height: 100%;
-    /* Full height */
     overflow: auto;
-    /* Enable scroll if needed */
     background-color: rgb(0, 0, 0);
-    /* Fallback color */
     background-color: rgba(0, 0, 0, 0.4);
-    /* Black w/ opacity */
-    /* Modal Content */
     .modal-content {
       position: relative;
       background-color: #fefefe;
@@ -411,66 +400,58 @@ body {
     }
   }
 }
-@media only screen and (max-width: 600px) {
+@media (max-width: 829px) {
   body {
     font-size: 14px;
-  }
-
-  .navi {
-    font-size: 25px;
-    left: 10px;
-    top: 5px;
-  }
-
-  table, th, td {
-    width: 100%;
-  }
-
-  input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-  }
-
-  .options {
-    font-size: 18px;
-    padding: 2px;
-    width: 100%;
-  }
-
-  button {
-    padding: 12px 24px;
-    font-size: 14px;
-  }
-
-  form input {
-    width: 80%;
-    height: 40px;
-    font-size: 18px;
-  }
-
-  .hinzufuegen {
-    font-size: 14px;
-    padding: 12px 24px;
-  }
-
-  .modal-content {
-    width: 100%;
-  }
-
-  .modal-body .yesButton,
-  .modal-body .noButton {
-    padding: 12px 24px;
-    font-size: 14px;
-  }
-
-  .modal-footer .hinzufuegen,
-  .modal-footer .verwerfen {
-    padding: 12px 24px;
-    font-size: 14px;
-  }
-
-  .noData button {
-    padding: 12px 24px;
-    font-size: 14px;
+    .navi {
+      font-size: 25px;
+      left: 10px;
+      top: 5px;
+    }
+    table, th, td {
+      width: 100%;
+    }
+    table {
+      font-size: 1.1rem;
+      tr {
+        td {
+          main {
+            margin-left: -0.5rem;
+            .options{
+              background-color: transparent;
+              button{
+                margin-top: 0.2rem;
+                margin-left: 2.5rem;
+                padding: 4px 4px;
+              }
+            }
+            table{
+              td, th{
+                padding: 0;
+              }
+              td{
+                input[type="checkbox"]{
+                  width: 40px;
+                  height: 40px;
+                }
+              }
+            }
+            input[type="checkbox"] {
+              width: 40px;
+              height: 40px;
+            }
+          }
+        }
+      }
+    }
+    .modal{
+      width: 100%;
+      .modal-content{
+        width: 50%;
+        .modal-body{
+          padding: 0px;
+        }
+      }
+    }
   }
 }
