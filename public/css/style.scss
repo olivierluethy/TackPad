@@ -404,9 +404,9 @@ body {
   body {
     font-size: 14px;
     .navi {
-      font-size: 25px;
+      font-size: 50px;
       left: 10px;
-      top: 5px;
+      top: -2px;
     }
     table, th, td {
       width: 100%;
@@ -416,13 +416,14 @@ body {
       tr {
         td {
           main {
-            margin-left: -0.5rem;
+            margin-left: 0.5rem;
             .options{
+              margin-left: 5rem;
               background-color: transparent;
               button{
-                margin-top: 0.2rem;
-                margin-left: 2.5rem;
-                padding: 4px 4px;
+                font-size: 25px;
+                margin-top: 0.4rem;
+                padding: 8px 25px;
               }
             }
             table{

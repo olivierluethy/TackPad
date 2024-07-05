@@ -34,7 +34,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <div class="submit">
+                <div class="select-button">
                     <button class="hinzufuegen" type="submit">Edit</button>
                     <button class="verwerfen" type="reset">Discard</button>
                 </div>

@@ -388,9 +388,9 @@ body .noData button:hover {
     font-size: 14px;
   }
   body .navi {
-    font-size: 25px;
+    font-size: 50px;
     left: 10px;
-    top: 5px;
+    top: -2px;
   }
   body table, body th, body td {
     width: 100%;
@@ -399,15 +399,16 @@ body .noData button:hover {
     font-size: 1.1rem;
   }
   body table tr td main {
-    margin-left: -0.5rem;
+    margin-left: 0.5rem;
   }
   body table tr td main .options {
+    margin-left: 5rem;
     background-color: transparent;
   }
   body table tr td main .options button {
-    margin-top: 0.2rem;
-    margin-left: 2.5rem;
-    padding: 4px 4px;
+    font-size: 25px;
+    margin-top: 0.4rem;
+    padding: 8px 25px;
   }
   body table tr td main table td, body table tr td main table th {
     padding: 0;

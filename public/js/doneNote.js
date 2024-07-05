@@ -1,11 +1,7 @@
-function erledigen(id) {
+function erledigen() {
     location.href = "erledigt?id=" + id;
-  }
+}
   
-  function nichtMehrErledigt(id) {
-    location.href = "nichtmehrerledigt?id=" + id;
-  }
-  
-  function erledigt() {
-    location.href = "erledigt?id=" + changeId_offenEinzel;
-  }
+function nichtMehrErledigt(id) {
+  location.href = "nichtmehrerledigt?id=" + id;
+}

@@ -136,29 +136,22 @@ class Notiz
         $statement->execute();
 	}
 
-	public function deleteEvery($id){
-		$id = htmlspecialchars($id);
-		$statement = $this->db->prepare('DELETE FROM notes WHERE fk_usersId = :id');
-		$statement->bindParam(':id', $id);
-        $statement->execute();
-	}
-
-	public function deleteMultiple($ids){
-		// Überprüfen, ob $ids ein String ist und in ein Array umwandeln
+	public function delete($ids) {
+		// Check if $ids is a string and convert it to an array
 		if (is_string($ids)) {
 			$ids = explode(',', $ids);
 		}
 	
-		// Verhindern von SQL-Injection durch Bereinigung der Eingabe
+		// Prevent SQL injection by sanitizing the input
 		$cleaned_ids = array_map('htmlspecialchars', $ids);
 	
-		// Erstellen eines Platzhalter-Strings für die SQL-Abfrage
+		// Create a placeholder string for the SQL query
 		$placeholders = implode(',', array_fill(0, count($cleaned_ids), '?'));
 	
-		// Vorbereitung der SQL-Abfrage
+		// Prepare the SQL query
 		$statement = $this->db->prepare("DELETE FROM notes WHERE NoteId IN ($placeholders)");
 	
-		// Ausführen der Abfrage mit den bereinigten IDs als Parameter
+		// Execute the query with the sanitized IDs as parameters
 		$statement->execute($cleaned_ids);
 	}	
 }

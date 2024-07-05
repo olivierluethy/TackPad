@@ -17,7 +17,7 @@
     <script defer src="public/js/tackpad.js"></script>
     <script defer src="public/js/deleteNote.js"></script>
     <script defer src="public/js/doneNote.js"></script>
-    <script defer src="public/js/editNotice.js"></script>
+    <script defer src="public/js/editNote.js"></script>
     <script defer src="public/js/modal.js"></script>
     <script defer src="public/js/inputValidation.js"></script>
 </head>
