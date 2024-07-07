@@ -129,7 +129,7 @@ body table tr td main table .aufgabe_nicht_zu_spaet:hover {
   box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
   transition: 500ms;
   cursor: pointer;
-  transform: scale(1.1);
+  transform: scale(1.02);
 }
 body table tr td main table .aufgabe_nicht_zu_spaet .selectAllContainer {
   background-color: blue;
@@ -144,7 +144,7 @@ body table tr td main table .aufgabe_zu_spaet:hover {
   box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
   transition: 500ms;
   cursor: pointer;
-  transform: scale(1.1);
+  transform: scale(1.02);
 }
 body table tr td main form {
   margin-top: 0.2rem;
@@ -403,7 +403,6 @@ body .noData button:hover {
   }
   body table tr td main .options {
     margin-left: 5rem;
-    background-color: transparent;
   }
   body table tr td main .options button {
     font-size: 25px;

@@ -128,7 +128,7 @@ body {
                 box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
                 transition: 500ms;
                 cursor: pointer;
-                transform: scale(1.1);
+                transform: scale(1.02);
               }
               .selectAllContainer{
                 background-color: blue;
@@ -143,7 +143,7 @@ body {
                 box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
                 transition: 500ms;
                 cursor: pointer;
-                transform: scale(1.1);
+                transform: scale(1.02);
               }
             }
           }
@@ -419,7 +419,6 @@ body {
             margin-left: 0.5rem;
             .options{
               margin-left: 5rem;
-              background-color: transparent;
               button{
                 font-size: 25px;
                 margin-top: 0.4rem;

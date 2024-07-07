@@ -108,12 +108,30 @@ class Notiz
         $statement->execute();
 	}
 
-	public function istErledigt($id){
-		$id = htmlspecialchars($id);
-		$statement = $this->db->prepare('UPDATE `notes` SET notes.status = 1, notes.date_when_completed = CURRENT_TIMESTAMP, notes.last_change = CURRENT_TIMESTAMP WHERE NoteId = :id');
-        $statement->bindParam(':id', $id);
-        $statement->execute();
-	}
+	public function istErledigt($ids) {
+		// Check if $ids is a string and convert it to an array
+		if (is_string($ids)) {
+			$ids = explode(',', $ids);
+		}
+	
+		// Prevent SQL injection by sanitizing the input
+		$cleaned_ids = array_map('intval', $ids); // Assuming NoteId is an integer field
+	
+		// Create a placeholder string for the SQL query
+		$placeholders = implode(',', array_fill(0, count($cleaned_ids), '?'));
+	
+		// Prepare the SQL statement
+		$sql = "UPDATE `notes` 
+				SET `status` = 1, 
+					`date_when_completed` = CURRENT_TIMESTAMP, 
+					`last_change` = CURRENT_TIMESTAMP 
+				WHERE `NoteId` IN ($placeholders)";
+		
+		$statement = $this->db->prepare($sql);
+	
+		// Execute the statement with the cleaned IDs as parameters
+		$statement->execute($cleaned_ids);
+	}	
 
 	public function renewNotiz($titel, $notice, $date, $id){
 		$titel = htmlspecialchars($_POST['title']);

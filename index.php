@@ -22,7 +22,7 @@ $routes = [
 	/* Informationen bearbeiten */
 	'showEditPage' => 'TackPadController@showEditPage',
 	'erledigt' => 'TackPadController@erledigt',
-	'nichtmehrerledigt' => 'TackPadController@nichtmehrerledigt',
+	'unerledigt' => 'TackPadController@unerledigt',
 
 	'getInfoFromId' => 'TackPadController@allInfoFromId',
 

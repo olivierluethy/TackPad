@@ -103,6 +103,23 @@ class TackPadController
         header('Location: home');
 	}
 
+    public function unerledigt(){
+        // Initialize the session
+        session_start();
+
+        // Check if the user is logged in, if not then redirect to login page
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            header("location: login");
+            exit;
+        }
+
+        $notiz = new Notiz();
+
+		$ids = e($_GET['id']);
+
+        $notiz->undone($ids);
+    }
+
     public function deleteAllDone(){
         // Initialize the session
         session_start();
@@ -309,7 +326,7 @@ class TackPadController
                                     $_SESSION["istAdmin"] = $istAdmin;
     
                                     // Redirect user to home page
-                                    header("location: /home");
+                                    header("location: home");
                                     exit();
                                 } else {
                                     // Display an error message if password is not valid
