@@ -39,7 +39,8 @@ body {
           #bearbeiten,
           #loeschen,
           #erledigt,
-          #freigeben {
+          #freigeben,
+          #undo {
             display: none;
           }
           button {
@@ -123,13 +124,6 @@ body {
             }
             .aufgabe_nicht_zu_spaet {
               background-color: lightgreen;
-              transition: 500ms;
-              &:hover {
-                box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
-                transition: 500ms;
-                cursor: pointer;
-                transform: scale(1.02);
-              }
               .selectAllContainer{
                 background-color: blue;
                 display: flex;
@@ -138,13 +132,6 @@ body {
             }
             .aufgabe_zu_spaet {
               background-color: lightcoral;
-              transition: 500ms;
-              &:hover {
-                box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
-                transition: 500ms;
-                cursor: pointer;
-                transform: scale(1.02);
-              }
             }
           }
           form {
@@ -416,7 +403,7 @@ body {
       tr {
         td {
           main {
-            margin-left: 0.5rem;
+            margin-left: -0.7rem;
             .options{
               margin-left: 5rem;
               button{

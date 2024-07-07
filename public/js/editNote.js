@@ -3,10 +3,20 @@ var editModal = document.getElementById("editModal");
 setupModalClose(editModal, 0);
 
 let editmodal = document.getElementById("editModal");
-function openBearbeiten() {
-  editmodal.style.display = 'block';
 
-  openEditModal(currentId);
+function openBearbeiten() {
+    let OpenIds = changeId_offen.join(',');
+    let DoneIds = changeId_erledigt.join(',');
+
+    if (OpenIds.length > 0) {
+      openEditModal(OpenIds);
+    } else if (DoneIds.length > 0){
+      openEditModal(DoneIds);
+    } else{
+      alert("Please select at least one task!")
+      return
+    }
+    editmodal.style.display = 'block';
 }
 
 // JavaScript to handle edit button click

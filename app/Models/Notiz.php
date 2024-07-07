@@ -147,11 +147,23 @@ class Notiz
 		$statement->execute();
 	}
 
-	public function istnichtmehrerledigt($id){
-		$id = htmlspecialchars($id);
-		$statement = $this->db->prepare('UPDATE `notes` SET status = 0 WHERE NoteId = :id');
-        $statement->bindParam(':id', $id);
-        $statement->execute();
+	public function undone($ids){
+		// Check if $ids is a string and convert it to an array
+		if (is_string($ids)) {
+			$ids = explode(',', $ids);
+		}
+	
+		// Prevent SQL injection by sanitizing the input
+		$cleaned_ids = array_map('htmlspecialchars', $ids);
+	
+		// Create a placeholder string for the SQL query
+		$placeholders = implode(',', array_fill(0, count($cleaned_ids), '?'));
+	
+		// Prepare the SQL query
+		$statement = $this->db->prepare("UPDATE `notes` SET status = 0 WHERE NoteId IN ($placeholders)");
+	
+		// Execute the query with the sanitized IDs as parameters
+		$statement->execute($cleaned_ids);
 	}
 
 	public function delete($ids) {

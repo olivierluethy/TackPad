@@ -47,6 +47,7 @@
                         <button id='loeschen' onclick='realyDeleteNote()' title="Delete your task"><i class='fas fa-trash'></i>&nbsp;Delete</button>
                         <button id='erledigt' onclick='erledigt()' title="Mark your task as done"><i class='fas fa-check'></i>&nbsp;Done</button>
                         <button id='freigeben' title="Release your task to someone else"><i class='fas fa-share'></i>&nbsp;Release</button>
+                        <button id='undo' title="Undo your task if you haven't finished it yet" onclick='undone()'><i class='fas fa-undo'></i>&nbsp;Undo</button>
 
                         <button id='deleteAllErledigteTasks' title="Delete all your finished tasks" onclick='realyDeleteNote()'><i class='fas fa-trash-alt'></i> Delete all</button>
                         <button id='deleteAllOffeneTasks' title="Delete all your open tasks" onclick='realyDeleteNote()'><i class='fas fa-trash-alt'></i> Delete all</button>
@@ -74,9 +75,9 @@
                             <td style='background-color:lightgreen;'><input type='checkbox' onclick="getId_for_offen(<?= $task['NoteId']; ?>)" class='offene_tasks'></td>
                             <td style='background-color:lightgreen;'><?= $task['titel']; ?></td>
                             <td style='background-color:lightgreen;'><?= $task['notiz']; ?></td>
-                            <td style='background-color:lightgreen;'><?= date('d.m.Y', strtotime($task['date_to_complete'])); ?></td>
+                            <td style='background-color:lightgreen;'><?= date('dS M Y', strtotime($task['date_to_complete'])); ?></td>
                             <td style='background-color:lightgreen;'><?= $task['prioritaet']; ?></td>
-                            <td style='background-color:lightgreen;'><?= $task['last_change']; ?></td>
+                            <td style='background-color:lightgreen;'><?= date('dS M Y', strtotime($task['last_change'])); ?></td>
                         </tr>
                         <?php } 
                         // Display late open tasks
@@ -85,9 +86,9 @@
                             <td style="background-color:lightcoral;"><input type="checkbox" onclick="getId_for_offen(<?= $task['NoteId']; ?>)" class='offene_tasks'></td>
                             <td style='background-color:lightcoral;'><?= $task['titel']; ?></td>
                             <td style='background-color:lightcoral;'><?= $task['notiz']; ?></td>
-                            <td style='background-color:lightcoral;'><?= date('d.m.Y', strtotime($task['date_to_complete'])); ?></td>
+                            <td style='background-color:lightcoral;'><?= date('dS M Y', strtotime($task['date_to_complete'])); ?></td>
                             <td style='background-color:lightcoral;'><?= $task['prioritaet']; ?></td>
-                            <td style='background-color:lightcoral;'><?= $task['last_change']; ?></td>
+                            <td style='background-color:lightcoral;'><?= date('dS M Y', strtotime($task['last_change'])); ?></td>
                         </tr>
                         <?php } ?>
                     </table>
@@ -113,10 +114,10 @@
                             <td><input type='checkbox' onclick="getId_for_erledigt(<?= $task['NoteId']; ?>)" class='erledigte_tasks'></td>
                             <td class='erledigt_titel'><del><?= $task['titel']; ?></del></td>
                             <td class='erledigt_notiz'><del><?= $task['notiz']; ?></del></td>
-                            <td class='erledigt_datum'><del><?= date('d.m.Y', strtotime($task['date_to_complete'])); ?></del></td>
+                            <td class='erledigt_datum'><del><?= date('dS M Y', strtotime($task['date_to_complete'])); ?></del></td>
                             <td class='erledigt_priority'><del><?= $task['prioritaet']; ?></del></td>
-                            <td class='erledigt_completed_at'><del><?= $task['date_when_completed']; ?></del></td>
-                            <td class='erledigt_lastchange'><del><?= $task['last_change']; ?></del></td>
+                            <td class='erledigt_completed_at'><del><?= date('dS M Y', strtotime($task['date_when_completed'])); ?></del></td>
+                            <td class='erledigt_lastchange'><del><?= date('dS M Y', strtotime($task['last_change'])); ?></del></td>
                         </tr>
                         <?php } ?>
                     </table>

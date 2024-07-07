@@ -118,6 +118,8 @@ class TackPadController
 		$ids = e($_GET['id']);
 
         $notiz->undone($ids);
+
+        header('Location: home');
     }
 
     public function deleteAllDone(){

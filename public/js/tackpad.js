@@ -2,7 +2,6 @@ let changeId_offen = [];
 let changeId_erledigt = [];
 let counter_offen = 0;
 let counter_erledigt = 0;
-let currentId = 0;
 
 function checkAllOffeneTasks(source) {
     var checkboxes = document.getElementsByClassName('offene_tasks');
@@ -129,32 +128,14 @@ function getId_for_offen(id) {
 }
 
 function getId_for_erledigt(id) {
-    currentId = id;
-    var counter_erledigt = 0;
-
-    if (changeId_erledigt.length > 0) {
-        // If the array has more than one id, handle multiple ids
-        const index = changeId_erledigt.indexOf(id);
-        if (index !== -1) {
-            changeId_erledigt.splice(index, 1); // Remove id from array
-        } else {
-            changeId_erledigt.push(id); // Add id to array
-        }
-    } else if (changeId_erledigtEinzel) {
-        // If changeId_offenEinzel is set, move it to changeId_offen and handle multiple ids
-        changeId_erledigt.push(changeId_erledigtEinzel);
-        changeId_erledigtEinzel = null;
-        
-        const index = changeId_erledigt.indexOf(id);
-        if (index !== -1) {
-            changeId_erledigt.splice(index, 1); // Remove id from array
-        } else {
-            changeId_erledigt.push(id); // Add id to array
-        }
+    if (changeId_erledigt.indexOf(id) !== -1) {
+        // ID ist bereits im Array, also entfernen wir sie
+        changeId_erledigt.splice(changeId_erledigt.indexOf(id), 1);
     } else {
-        // If no ids are set, assign the id to changeId_offenEinzel
-        changeId_erledigtEinzel = id;
+        // ID ist nicht im Array, also fügen wir sie hinzu
+        changeId_erledigt.push(id);
     }
+    var counter_erledigt = 0;
 
     var checkboxes = document.getElementsByClassName('erledigte_tasks');
 
@@ -169,21 +150,21 @@ function getId_for_erledigt(id) {
         document.getElementById("bearbeiten").style.display = "inline-block";
         document.getElementById("loeschen").style.display = "inline-block";
         document.getElementById("freigeben").style.display = "inline-block";
-        document.getElementById("erledigt").style.display = "inline-block";
+        document.getElementById("undo").style.display = "inline-block";
         document.getElementById("deleteAllErledigteTasks").style.display = "none";
     } else if (counter_erledigt > 1) {
         document.getElementById("checkAllErledigteTasks").checked = false;
         document.getElementById("bearbeiten").style.display = "none";
         document.getElementById("loeschen").style.display = "none";
         document.getElementById("freigeben").style.display = "none";
-        document.getElementById("erledigt").style.display = "inline-block";
+        document.getElementById("undo").style.display = "inline-block";
         document.getElementById("deleteAllErledigteTasks").style.display = "inline-block";
     } else {
         document.getElementById("checkAllErledigteTasks").checked = false;
         document.getElementById("bearbeiten").style.display = "none";
         document.getElementById("loeschen").style.display = "none";
         document.getElementById("freigeben").style.display = "none";
-        document.getElementById("erledigt").style.display = "none";
+        document.getElementById("undo").style.display = "none";
         document.getElementById("deleteAllErledigteTasks").style.display = "none";
     }
 
