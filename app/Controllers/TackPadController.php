@@ -172,20 +172,45 @@ class TackPadController
     public function getTaskData() {
         // Initialize the session
         session_start();
-
+    
         // Check if the user is logged in
         if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
             header("HTTP/1.1 401 Unauthorized");
             exit;
         }
-
+    
+        require_once __DIR__ . '/../../vendor/autoload.php'; // Pfad anpassen, falls notwendig
+    
+        // Laden der .env-Datei
+        $dotenv = Dotenv::createImmutable(__DIR__ . '/../../'); // Pfad anpassen, falls notwendig
+        $dotenv->load();
+    
+        // Hole den Verschlüsselungsschlüssel aus der .env-Datei
+        $encryption_key = getenv('ENCRYPTION_KEY');
+    
         $notiz = new Notiz();
         $id = e($_POST['id']);
-
+    
         // Fetch task data
         $taskData = $notiz->getInfosFromTask($id)->fetch();
-
-        echo json_encode($taskData);
+    
+        // Entschlüsselung der Daten
+        $decrypted_title = $notiz->decrypt($taskData['titel'], $encryption_key, base64_decode($taskData['iv']));
+        $decrypted_task = $notiz->decrypt($taskData['notiz'], $encryption_key, base64_decode($taskData['iv']));
+        $decrypted_date = $notiz->decrypt($taskData['date_to_complete'], $encryption_key, base64_decode($taskData['iv']));
+        $decrypted_priority = $notiz->decrypt($taskData['prioritaet'], $encryption_key, base64_decode($taskData['iv']));
+    
+        // Erstellen eines entschlüsselten Datensatzes
+        $decryptedTaskData = [
+            'titel' => $decrypted_title,
+            'notiz' => $decrypted_task,
+            'date_to_complete' => $decrypted_date,
+            'priority' => $decrypted_priority,
+            'id' => $id
+        ];
+    
+        // JSON-Encode der entschlüsselten Daten
+        echo json_encode($decryptedTaskData);
     }
 
     public function edit(){

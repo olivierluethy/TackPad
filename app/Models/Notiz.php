@@ -63,6 +63,14 @@ class Notiz
 		$statement->execute();
 	}	
 
+	public function decrypt($data, $key, $iv) {
+		$decrypted = openssl_decrypt($data, 'aes-256-cbc', $key, 0, $iv);
+		if ($decrypted === false) {
+			return 'Decryption error'; // Fehlerhinweis bei Fehlschlag
+		}
+		return $decrypted;
+	}
+
 	public function edit($titel, $notiz, $datum, $prioritaet, $id){
 		$titel = htmlspecialchars($_POST['titel']);
 		$notiz = htmlspecialchars($_POST['aufgabe']);
@@ -81,23 +89,33 @@ class Notiz
 
 		// Hole den Verschlüsselungsschlüssel aus der .env-Datei
 		$encryption_key = getenv('ENCRYPTION_KEY');
-	
-		// Daten verschlüsseln
-		$encrypted_titel = $this->encrypt($titel, $encryption_key, $iv);
-		$encrypted_aufgabe = $this->encrypt($aufgabe, $encryption_key, $iv);
-		$encrypted_prioritaet = $this->encrypt($prioritaet, $encryption_key, $iv);
-		$encrypted_status = $this->encrypt($status, $encryption_key, $iv);
-		$encrypted_datum = $this->encrypt($datum, $encryption_key, $iv);
-	
+
 		// IV kodieren, damit es in der Datenbank gespeichert werden kann
 		$iv_base64 = base64_encode($iv);
 
-		$statement = $this->db->prepare('UPDATE notes SET titel = :titel, notiz = :notiz, date_to_complete = :date_to_complete, prioritaet = :prioritaet WHERE NoteId = :id');
-		$statement->bindParam(':titel', $titel, PDO::PARAM_STR);
-		$statement->bindParam(':notiz', $notiz, PDO::PARAM_STR);
-		$statement->bindParam(':date_to_complete', $datum, PDO::PARAM_STR);
-		$statement->bindParam(':prioritaet', $prioritaet, PDO::PARAM_STR);
-		$statement->bindParam(':id', $id, PDO::PARAM_STR);
+		// Holen des IV-Werts aus der Datenbank
+		$statement = $this->db->prepare('SELECT `iv`, `status` FROM `notes` WHERE `NoteId` = :id');
+		$statement->bindParam(':id', $id);
+		$statement->execute();
+		$status_row = $statement->fetch(PDO::FETCH_ASSOC);
+
+		$status = $this->decrypt($status_row['status'], $encryption_key, base64_decode($status_row['iv']));
+	
+		// Daten verschlüsseln
+		$encrypted_titel = $this->encrypt($titel, $encryption_key, base64_decode($iv_base64));
+		$encrypted_aufgabe = $this->encrypt($notiz, $encryption_key, base64_decode($iv_base64));
+		$encrypted_prioritaet = $this->encrypt($prioritaet, $encryption_key, base64_decode($iv_base64));
+		$encrypted_datum = $this->encrypt($datum, $encryption_key, base64_decode($iv_base64));
+		$encrypted_status = $this->encrypt($status, $encryption_key, base64_decode($iv_base64));
+
+		$statement = $this->db->prepare('UPDATE notes SET titel = :titel, notiz = :notiz, prioritaet = :prioritaet, status = :status, date_to_complete = :date_to_complete, iv = :iv WHERE NoteId = :id');
+		$statement->bindParam(':titel', $encrypted_titel, PDO::PARAM_STR);
+		$statement->bindParam(':notiz', $encrypted_aufgabe, PDO::PARAM_STR);
+		$statement->bindParam(':prioritaet', $encrypted_prioritaet, PDO::PARAM_STR);
+		$statement->bindParam(':status', $encrypted_status, PDO::PARAM_STR);
+		$statement->bindParam(':date_to_complete', $encrypted_datum, PDO::PARAM_STR);
+		$statement->bindParam(':iv', $iv_base64, PDO::PARAM_STR);
+		$statement->bindParam(':id', $id, PDO::PARAM_INT);  // Wenn NoteId ein numerischer Wert ist, verwenden Sie PDO::PARAM_INT
 		$statement->execute();
 	}
 
@@ -258,7 +276,7 @@ class Notiz
 			$statement->execute();
 			$iv_row = $statement->fetch(PDO::FETCH_ASSOC);
 		
-			// Überprüfen, ob ein IV-Wert gefunden wurde
+			// Überprüfen, ob ein IV-Wert gefunden wurde damit alle Werte gelesen werden können, da titel, notiz und prioritaet schon mit der iv Verschlüsselt wurden
 			if (isset($iv_row['iv'])) {
 				// Encrypt values using the same iv
 				$encrypted_status = $this->encrypt($status, $encryption_key, base64_decode($iv_row['iv']));

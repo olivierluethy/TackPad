@@ -32,14 +32,14 @@ function openEditModal(taskId) {
         $('#datum_edit').val(task.date_to_complete);
 
         // Convert task.prioritaet to an integer
-        var priorityValue = parseInt(task.prioritaet);
+        var priorityValue = parseInt(task.priority);
 
         // Set the value of the priority select field
         $('#priority_edit').val(priorityValue);
         $('#priority_edit option[value="' + task.prioritaet + '"]').prop('selected', true);
 
         // Update the form action with the taskId
-        $('#editForm').attr('action', 'edit?id=' + task.NoteId);
+        $('#editForm').attr('action', 'edit?id=' + task.id);
 
         $('#editModal').show();        
       }
