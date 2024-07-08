@@ -61,20 +61,29 @@ function decrypt($data, $key, $iv) {
         <?php 
         $has_open_tasks = false;
         $has_completed_tasks = false;
+        $open_tasks_counter = 0;
+        $done_tasks_counter = 0;
 
         // Überprüfung, ob es offene und/oder abgeschlossene Aufgaben gibt
         foreach ($alle_tasks as $task) {
             $decrypted_status = decrypt($task['status'], $encryption_key, base64_decode($task['iv']));
             if ($decrypted_status === '0') {
                 $has_open_tasks = true;
+                $open_tasks_counter++;
             } elseif ($decrypted_status === '1') {
                 $has_completed_tasks = true;
+                $done_tasks_counter++;
             }
         }
         ?>
 
         <?php if ($has_open_tasks) : ?>
-        <h1>Open Tasks</h1>
+            <?php
+            if ($open_tasks_counter > 1) {
+                echo "<h1>Open Tasks ({$open_tasks_counter})</h1>";
+            } elseif ($open_tasks_counter === 1) {
+                echo "<h1>Open Task ({$open_tasks_counter})</h1>";
+            } ?>
         <table>
             <tr>
                 <th><input id='checkAllOffeneTasks' type='checkbox' onclick='checkAllOffeneTasks(this)' title='Select All'></th>
@@ -92,7 +101,7 @@ function decrypt($data, $key, $iv) {
                     $decrypted_notiz = decrypt($task['notiz'], $encryption_key, $iv);
                     $decrypted_prioritaet = decrypt($task['prioritaet'], $encryption_key, $iv);
                     $decrypted_date_to_complete = decrypt($task['date_to_complete'], $encryption_key, $iv);
-                    $is_past_due = strtotime($decrypted_date_to_complete) > time();
+                    $is_past_due = strtotime($decrypted_date_to_complete) < time();
                     $row_class = $is_past_due ? 'zu_spaet' : 'nicht_zu_spaet';
                     $background_color = $is_past_due ? 'lightcoral' : 'lightgreen';
                     ?>
@@ -111,7 +120,14 @@ function decrypt($data, $key, $iv) {
         <?php endif; ?>
 
         <?php if ($has_completed_tasks) : ?>
-        <h1>Completed Tasks</h1>
+
+        <?php
+            if ($done_tasks_counter > 1) {
+                echo "<h1>Completed Tasks ({$done_tasks_counter})</h1>";
+            } elseif ($done_tasks_counter === 1) {
+                echo "<h1>Completed Task ({$done_tasks_counter})</h1>";
+            } ?>
+            
         <table>
             <tr>
                 <th><input id='checkAllErledigteTasks' type='checkbox' onclick='checkAllErledigteTasks(this)' title='Select All'></th>

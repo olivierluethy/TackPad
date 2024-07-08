@@ -3,6 +3,9 @@ body {
   padding: 0;
   background-color: black;
   font-family: "Inconsolata", monospace;
+  overflow-x: hidden;
+  /* Styling for options bar */
+  /* Styling for main content */
   /* Add Animation */
 }
 body .navi {
@@ -13,24 +16,27 @@ body .navi {
   left: 17px;
   top: 5px;
 }
-body main .options {
+body .options {
   position: sticky;
   top: 0;
-  margin-left: 5rem;
+  margin: 0 auto; /* Center horizontally */
   padding: 2px;
   font-size: 20px;
-  width: 100%;
+  width: 50%; /* Adjust width as needed */
+  max-width: 800px; /* Optional: Set maximum width */
   background-color: black;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  /* Hide specific buttons */
+  /* Button styles */
 }
-body main .options #bearbeiten,
-body main .options #loeschen,
-body main .options #erledigt,
-body main .options #freigeben,
-body main .options #undo {
+body .options #bearbeiten,
+body .options #loeschen,
+body .options #erledigt,
+body .options #freigeben,
+body .options #undo {
   display: none;
 }
-body main .options button {
+body .options button {
   background-color: white;
   border: 1px solid white;
   color: black;
@@ -42,39 +48,65 @@ body main .options button {
   transition-duration: 0.4s;
   border-radius: 10px;
   cursor: pointer;
+  /* Button hover effect */
 }
-body main .options button:hover {
+body .options button:hover {
   background-color: black;
   color: white;
 }
-body main main {
+body main {
   display: block;
   margin-left: 3rem;
-}
-body main main h1,
-body main main p {
   color: white;
+  /* Text color for headers and paragraphs */
+  /* Table styling */
+  /* Form styling */
 }
-body main main table {
-  width: 100%;
+body main h1,
+body main p {
+  color: white;
+  text-align: center;
+}
+body main table {
+  width: 50%;
   border-collapse: collapse;
-  box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 2px 18px 0px rgba(255, 255, 255, 0.5);
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 5rem;
+  /* Table cell styles */
+  /* Specific styles for cells with input type checkbox */
+  /* Specific styles for cells with input type checkbox */
+  /* Edit button style */
+  /* Delete button style */
+  /* Styles for tasks not overdue */
+  /* Styles for overdue tasks */
 }
-body main main table td,
-body main main table th {
-  border: 1px solid #ddd;
+body main table td,
+body main table th {
+  color: black;
+  border: 1px solid black;
   text-align: left;
   background-color: white;
   padding: 15px;
 }
-body main main table td input[type=checkbox] {
+body main table td input[type=checkbox] {
   width: 25px;
   height: 25px;
+  /* Checkbox hover effect */
 }
-body main main table td input[type=checkbox]:hover {
+body main table td input[type=checkbox]:hover {
   cursor: pointer;
 }
-body main main table td .edit {
+body main table th input[type=checkbox] {
+  width: 25px;
+  height: 25px;
+  /* Checkbox hover effect */
+}
+body main table th input[type=checkbox]:hover {
+  cursor: pointer;
+}
+body main table .edit {
   background-color: #4caf50;
   border: 2px solid #4caf50;
   color: white;
@@ -85,14 +117,14 @@ body main main table td .edit {
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
-  transition: 0.5s ease;
+  /* Edit button hover effect */
 }
-body main main table td .edit:hover {
+body main table .edit:hover {
   background-color: white;
   color: #4caf50;
-  transition-duration: 0.4s;
+  transition: 0.5s ease;
 }
-body main main table td .delete {
+body main table .delete {
   background-color: red;
   border: 2px solid red;
   color: white;
@@ -102,38 +134,43 @@ body main main table td .delete {
   display: inline-block;
   font-size: 16px;
   cursor: pointer;
-  transition: 0.5s ease;
+  /* Delete button hover effect */
 }
-body main main table td .delete:hover {
+body main table .delete:hover {
   background-color: white;
   color: red;
+  transition: 0.5s ease;
 }
-body main main table .aufgabe_nicht_zu_spaet {
+body main table .aufgabe_nicht_zu_spaet {
   background-color: lightgreen;
+  /* Select all container style */
 }
-body main main table .aufgabe_nicht_zu_spaet .selectAllContainer {
+body main table .aufgabe_nicht_zu_spaet .selectAllContainer {
   background-color: blue;
   display: flex;
   align-items: center;
 }
-body main main table .aufgabe_zu_spaet {
+body main table .aufgabe_zu_spaet {
   background-color: lightcoral;
 }
-body main main form {
+body main form {
   margin-top: 0.2rem;
+  /* Input field style */
+  /* Margin adjustment for elements with IDs */
+  /* Add task button style */
 }
-body main main form input {
+body main form input {
   width: 20%;
   height: 47px;
   font-size: 20px;
   border: 2px solid black;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
-body main main form #aufgabe,
-body main main form #date {
+body main form #aufgabe,
+body main form #date {
   margin-left: 1em;
 }
-body main main form .hinzufuegen {
+body main form .hinzufuegen {
   background-color: #06145b;
   border: 2px solid #06145b;
   color: white;
@@ -146,7 +183,7 @@ body main main form .hinzufuegen {
   box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
   cursor: pointer;
 }
-body main main form .hinzufuegen:hover {
+body main form .hinzufuegen:hover {
   background-color: white;
   color: #06145b;
 }
@@ -365,31 +402,40 @@ body .noData button:hover {
     left: 10px;
     top: -2px;
   }
-  body table, body th, body td {
+  body main {
+    margin-left: -0.5rem;
+  }
+  body main .options {
+    margin-top: 0.3rem;
+    margin-left: 5rem;
     width: 100%;
   }
-  body table {
-    font-size: 1.1rem;
-  }
-  body table tr td main {
-    margin-left: -0.7rem;
-  }
-  body table tr td main .options {
-    margin-left: 5rem;
-  }
-  body table tr td main .options button {
-    font-size: 25px;
+  body main .options button {
+    font-size: 20px;
     margin-top: 0.4rem;
-    padding: 8px 25px;
+    padding: 8px 15px;
   }
-  body table tr td main table td, body table tr td main table th {
-    padding: 0;
+  body main table {
+    width: 100%;
+    font-size: 1rem;
+    border-collapse: collapse;
   }
-  body table tr td main table td input[type=checkbox] {
+  body main table tr {
+    font-size: 0.9rem;
+  }
+  body main table tr th {
+    padding: 0px;
+    text-align: left;
+  }
+  body main table tr th input[type=checkbox] {
     width: 40px;
     height: 40px;
   }
-  body table tr td main input[type=checkbox] {
+  body main table tr td {
+    padding: 0px;
+    text-align: left;
+  }
+  body main table tr td input[type=checkbox] {
     width: 40px;
     height: 40px;
   }
