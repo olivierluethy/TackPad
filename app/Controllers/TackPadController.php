@@ -361,23 +361,30 @@ class TackPadController
             if (empty(trim($_POST['email']))) {
                 $email_err = "Bitte geben Sie eine E-Mail-Adresse ein.";
             } else {
-                $email = trim($_POST['email']);
+                $email = strtolower(trim($_POST['email'])); // Email to lowercase
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $email_err = "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
                 } else {
                     // Prepare a select statement to check if the email already exists
-                    $sql = "SELECT id FROM users WHERE email = ?";
-                    if ($stmt = mysqli_prepare($link, $sql)) {
-                        mysqli_stmt_bind_param($stmt, "s", $email);
-                        if (mysqli_stmt_execute($stmt)) {
-                            mysqli_stmt_store_result($stmt);
-                            if (mysqli_stmt_num_rows($stmt) == 1) {
-                                $email_err = "Diese E-Mail-Adresse ist bereits vergeben.";
+                    $sql = "SELECT email, salt FROM users";
+                    if ($result = mysqli_query($link, $sql)) {
+                        $email_exists = false;
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            $stored_email_hash = $row['email'];
+                            $stored_salt = $row['salt'];
+                            $check_email_hash = hash_hmac('sha256', $email, $stored_salt);
+                            if ($stored_email_hash === $check_email_hash) {
+                                $email_exists = true;
+                                break;
                             }
-                        } else {
-                            echo "Oops! Something went wrong. Please try again later.";
                         }
-                        mysqli_stmt_close($stmt);
+                        mysqli_free_result($result);
+    
+                        if ($email_exists) {
+                            $email_err = "Diese E-Mail-Adresse ist bereits vergeben.";
+                        }
+                    } else {
+                        echo "Oops! Something went wrong. Please try again later.";
                     }
                 }
             }
