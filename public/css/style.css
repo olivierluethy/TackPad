@@ -13,38 +13,24 @@ body .navi {
   left: 17px;
   top: 5px;
 }
-body table {
-  width: 100%;
-}
-body table table,
-body table th,
-body table td {
-  width: 10%;
-}
-body table input[type=checkbox] {
-  width: 25px;
-  height: 25px;
-}
-body table input[type=checkbox]:hover {
-  cursor: pointer;
-}
-body table tr td .options {
+body main .options {
   position: sticky;
   top: 0;
+  margin-left: 5rem;
   padding: 2px;
   font-size: 20px;
   width: 100%;
   background-color: black;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
-body table tr td .options #bearbeiten,
-body table tr td .options #loeschen,
-body table tr td .options #erledigt,
-body table tr td .options #freigeben,
-body table tr td .options #undo {
+body main .options #bearbeiten,
+body main .options #loeschen,
+body main .options #erledigt,
+body main .options #freigeben,
+body main .options #undo {
   display: none;
 }
-body table tr td .options button {
+body main .options button {
   background-color: white;
   border: 1px solid white;
   color: black;
@@ -57,38 +43,38 @@ body table tr td .options button {
   border-radius: 10px;
   cursor: pointer;
 }
-body table tr td .options button:hover {
+body main .options button:hover {
   background-color: black;
   color: white;
 }
-body table tr td main {
+body main main {
   display: block;
   margin-left: 3rem;
 }
-body table tr td main h1,
-body table tr td main p {
+body main main h1,
+body main main p {
   color: white;
 }
-body table tr td main table {
+body main main table {
   width: 100%;
   border-collapse: collapse;
   box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
 }
-body table tr td main table td,
-body table tr td main table th {
+body main main table td,
+body main main table th {
   border: 1px solid #ddd;
   text-align: left;
   background-color: white;
   padding: 15px;
 }
-body table tr td main table td input[type=checkbox] {
+body main main table td input[type=checkbox] {
   width: 25px;
   height: 25px;
 }
-body table tr td main table td input[type=checkbox]:hover {
+body main main table td input[type=checkbox]:hover {
   cursor: pointer;
 }
-body table tr td main table td .edit {
+body main main table td .edit {
   background-color: #4caf50;
   border: 2px solid #4caf50;
   color: white;
@@ -101,12 +87,12 @@ body table tr td main table td .edit {
   cursor: pointer;
   transition: 0.5s ease;
 }
-body table tr td main table td .edit:hover {
+body main main table td .edit:hover {
   background-color: white;
   color: #4caf50;
   transition-duration: 0.4s;
 }
-body table tr td main table td .delete {
+body main main table td .delete {
   background-color: red;
   border: 2px solid red;
   color: white;
@@ -118,36 +104,36 @@ body table tr td main table td .delete {
   cursor: pointer;
   transition: 0.5s ease;
 }
-body table tr td main table td .delete:hover {
+body main main table td .delete:hover {
   background-color: white;
   color: red;
 }
-body table tr td main table .aufgabe_nicht_zu_spaet {
+body main main table .aufgabe_nicht_zu_spaet {
   background-color: lightgreen;
 }
-body table tr td main table .aufgabe_nicht_zu_spaet .selectAllContainer {
+body main main table .aufgabe_nicht_zu_spaet .selectAllContainer {
   background-color: blue;
   display: flex;
   align-items: center;
 }
-body table tr td main table .aufgabe_zu_spaet {
+body main main table .aufgabe_zu_spaet {
   background-color: lightcoral;
 }
-body table tr td main form {
+body main main form {
   margin-top: 0.2rem;
 }
-body table tr td main form input {
+body main main form input {
   width: 20%;
   height: 47px;
   font-size: 20px;
   border: 2px solid black;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
-body table tr td main form #aufgabe,
-body table tr td main form #date {
+body main main form #aufgabe,
+body main main form #date {
   margin-left: 1em;
 }
-body table tr td main form .hinzufuegen {
+body main main form .hinzufuegen {
   background-color: #06145b;
   border: 2px solid #06145b;
   color: white;
@@ -160,7 +146,7 @@ body table tr td main form .hinzufuegen {
   box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
   cursor: pointer;
 }
-body table tr td main form .hinzufuegen:hover {
+body main main form .hinzufuegen:hover {
   background-color: white;
   color: #06145b;
 }

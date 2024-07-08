@@ -1,4 +1,5 @@
 <?php
+use Dotenv\Dotenv;
 
 class TackPadController
 {
@@ -15,6 +16,15 @@ class TackPadController
     
         try {
             $notiz = new Notiz();
+
+            require_once __DIR__ . '/../../vendor/autoload.php'; // Pfad anpassen, falls notwendig
+
+            // Laden der .env-Datei
+            $dotenv = Dotenv::createImmutable(__DIR__ . '/../../'); // Pfad anpassen, falls notwendig
+            $dotenv->load();
+
+            // Hole den Verschlüsselungsschlüssel aus der .env-Datei
+            $encryption_key = getenv('ENCRYPTION_KEY');
     
             // Get username from session email
             $username = $notiz->getUsernameFromEmail($_SESSION["email"]);
@@ -27,26 +37,6 @@ class TackPadController
             if ($alle_tasks === false) {
                 throw new Exception('Failed to fetch all tasks');
             }
-    
-            // Nicht zu späte und nicht erledigte Aufgaben
-            $nicht_zu_spaet_offene_tasks = $notiz->getNotLateButOpenTasks()->fetchAll();
-            if ($nicht_zu_spaet_offene_tasks === false) {
-                throw new Exception('Failed to fetch not late but open tasks');
-            }
-    
-            // Zu späte und nicht erledigte Aufgaben
-            $zu_spaet_offene_tasks = $notiz->getLateAndOpenTasks()->fetchAll();
-            if ($zu_spaet_offene_tasks === false) {
-                throw new Exception('Failed to fetch late and open tasks');
-            }
-    
-            // Erledigte Aufgaben
-            $erledigte_tasks = $notiz->getDoneTasks()->fetchAll();
-            if ($erledigte_tasks === false) {
-                throw new Exception('Failed to fetch done tasks');
-            }
-    
-            $anzahl_offen = count($zu_spaet_offene_tasks) + count($nicht_zu_spaet_offene_tasks);
     
             require 'app/Views/index.view.php';
     
@@ -77,7 +67,7 @@ class TackPadController
             $datum = e($_POST['datum']);
             $prioritaet = e($_POST['priority']);
 
-            $notiz->createNotiz($titel, $aufgabe, $status, $datum, $prioritaet, $_SESSION['id']);
+            $notiz->createNotiz($titel, $aufgabe, $prioritaet, $status, $datum, $_SESSION['id']);
 
             header('Location: home');
         }
@@ -154,27 +144,6 @@ class TackPadController
         $notiz = new Notiz();
 
         $notiz->deleteAllOpen();
-
-        header('Location: home');
-
-        require 'app/Views/tackpad.view.php';
-    }
-
-    public function deleteMultiple(){
-        // Initialize the session
-        session_start();
-
-        // Check if the user is logged in, if not then redirect to login page
-        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-            header("location: login");
-            exit;
-        }
-
-        $notiz = new Notiz();
-
-        $id = e($_GET['ids']);
-
-        $notiz->deleteMultiple($id);
 
         header('Location: home');
 
@@ -260,7 +229,7 @@ class TackPadController
 
         header('Location: home');
     }
-
+    
     public function login() {
         // Initialize the session
         session_start();
@@ -282,70 +251,59 @@ class TackPadController
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Check if email is empty
             if (empty(trim($_POST["email"]))) {
-                $email_err = "Please enter email.";
+                $email_err = "Bitte geben Sie eine E-Mail-Adresse ein.";
             } else {
                 $email = trim($_POST["email"]);
             }
     
             // Check if password is empty
             if (empty(trim($_POST["password"]))) {
-                $password_err = "Please enter your password.";
+                $password_err = "Bitte geben Sie Ihr Passwort ein.";
             } else {
                 $password = trim($_POST["password"]);
             }
     
             // Validate credentials
             if (empty($email_err) && empty($password_err)) {
-                // Prepare a select statement
-                $sql = "SELECT id, email, username, istAdmin, password FROM users WHERE email = ?";
+                // Prepare a select statement to get salt and email hash
+                $sql = "SELECT id, email, password, salt FROM users";
     
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    // Bind variables to the prepared statement as parameters
-                    mysqli_stmt_bind_param($stmt, "s", $param_email);
+                if ($result = mysqli_query($link, $sql)) {
+                    $found = false;
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $generated_hash = hash_hmac('sha256', $email, $row['salt']);
     
-                    // Set parameters
-                    $param_email = $email;
+                        if ($generated_hash === $row['email']) {
+                            $found = true;
+                            if (password_verify($password, $row['password'])) {
+                                // Password is correct, start a new session
+                                session_start();
     
-                    // Attempt to execute the prepared statement
-                    if (mysqli_stmt_execute($stmt)) {
-                        // Store result
-                        mysqli_stmt_store_result($stmt);
+                                // Store data in session variables
+                                $_SESSION["loggedin"] = true;
+                                $_SESSION["id"] = $row['id'];
+                                $_SESSION["email"] = $email;
+                                $_SESSION["email_hash"] = $row['email'];
     
-                        // Check if email exists, if yes then verify password
-                        if (mysqli_stmt_num_rows($stmt) == 1) {
-                            // Bind result variables
-                            mysqli_stmt_bind_result($stmt, $id, $email, $username, $istAdmin, $hashed_password);
-                            if (mysqli_stmt_fetch($stmt)) {
-                                if (password_verify($password, $hashed_password)) {
-                                    // Password is correct, so start a new session
-                                    session_start();
-    
-                                    // Store data in session variables
-                                    $_SESSION["loggedin"] = true;
-                                    $_SESSION["id"] = $id;
-                                    $_SESSION["email"] = $email;
-                                    $_SESSION["username"] = $username;
-                                    $_SESSION["istAdmin"] = $istAdmin;
-    
-                                    // Redirect user to home page
-                                    header("location: home");
-                                    exit();
-                                } else {
-                                    // Display an error message if password is not valid
-                                    $password_err = "The password you entered was not valid.";
-                                }
+                                // Redirect user to home page
+                                header("location: home");
+                                exit();
+                            } else {
+                                // Display an error message if password is not valid
+                                $password_err = "Das Passwort ist nicht gültig.";
                             }
-                        } else {
-                            // Display an error message if email doesn't exist
-                            $email_err = "No account found with that email.";
                         }
-                    } else {
-                        echo "Oops! Something went wrong. Please try again later.";
                     }
-    
-                    // Close statement
-                    mysqli_stmt_close($stmt);
+                    if (!$found) {
+                        // Display an error message if email doesn't exist
+                        $email_err = "Kein Konto mit dieser E-Mail-Adresse gefunden.";
+                    }
+                } else {
+                    echo "Oops! Something went wrong. Please try again later.";
                 }
+    
+                // Free result set
+                mysqli_free_result($result);
             }
     
             // Close connection
@@ -354,7 +312,7 @@ class TackPadController
     
         // Load login view with appropriate error messages
         require 'app/Views/login.php';
-    }    
+    }
 
     public function logout(){
         require 'app/Views/logout.php';
@@ -420,11 +378,17 @@ class TackPadController
     
             // Check input errors before inserting in database
             if (empty($email_err) && empty($password_err) && empty($confirm_password_err)) {
+                // Generate salt
+                $salt = bin2hex(random_bytes(16)); // 16 bytes = 128 bits
+                // Hash the email with the salt
+                $email_hash = hash_hmac('sha256', $email, $salt);
+                // Hash the password
+                $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
+    
                 // Prepare an insert statement
-                $sql = "INSERT INTO users (email, password) VALUES (?, ?)";
+                $sql = "INSERT INTO users (email, password, salt) VALUES (?, ?, ?)";
                 if ($stmt = mysqli_prepare($link, $sql)) {
-                    $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
-                    mysqli_stmt_bind_param($stmt, "ss", $email, $param_password);
+                    mysqli_stmt_bind_param($stmt, "sss", $email_hash, $param_password, $salt);
                     if (mysqli_stmt_execute($stmt)) {
                         // Redirect to login page
                         header("location: login");

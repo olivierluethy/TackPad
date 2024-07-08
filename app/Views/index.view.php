@@ -1,3 +1,15 @@
+<?php
+// Funktion zur Entschlüsselung
+function decrypt($data, $key, $iv) {
+    $decrypted = openssl_decrypt($data, 'aes-256-cbc', $key, 0, $iv);
+    if ($decrypted === false) {
+        return 'Decryption error'; // Fehlerhinweis bei Fehlschlag
+    }
+    return $decrypted;
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="de">
 
@@ -28,113 +40,120 @@
         <a class="closebtn" onclick="closeNav()">&times;</a>
         <img src="assets/icon.png" alt="">
         <h1>TackPad</h1>
-        <h2>Hello <?= $username ?>!</h2>
+        <h2>Hello <?= htmlspecialchars($username); ?>!</h2>
         <a href="logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</a>
     </div>
     <span class='navi' onclick="openNav()">&#9776;</span>
 
-    <table>
-        <tr>
-            <td></td>
-            <td>
-                <main>
-                    <?php
-                    // Check if there are any tasks
-                    if (count($alle_tasks) > 0) {?>
-                    <div class='options'>
-                        <button onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Add</button>
-                        <button id='bearbeiten' onclick='openBearbeiten()' title="Edit your task"><i class='fas fa-edit'></i>&nbsp;Edit</button>
-                        <button id='loeschen' onclick='realyDeleteNote()' title="Delete your task"><i class='fas fa-trash'></i>&nbsp;Delete</button>
-                        <button id='erledigt' onclick='erledigt()' title="Mark your task as done"><i class='fas fa-check'></i>&nbsp;Done</button>
-                        <button id='freigeben' title="Release your task to someone else"><i class='fas fa-share'></i>&nbsp;Release</button>
-                        <button id='undo' title="Undo your task if you haven't finished it yet" onclick='undone()'><i class='fas fa-undo'></i>&nbsp;Undo</button>
+    <main>
+        <?php if (count($alle_tasks) > 0) : ?>
+        <div class='options'>
+            <button onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Add</button>
+            <button id='bearbeiten' onclick='openBearbeiten()' title="Edit your task"><i class='fas fa-edit'></i>&nbsp;Edit</button>
+            <button id='loeschen' onclick='realyDeleteNote()' title="Delete your task"><i class='fas fa-trash'></i>&nbsp;Delete</button>
+            <button id='erledigt' onclick='erledigt()' title="Mark your task as done"><i class='fas fa-check'></i>&nbsp;Done</button>
+            <button id='undo' title="Undo your task if you haven't finished it yet" onclick='undone()'><i class='fas fa-undo'></i>&nbsp;Undo</button>
+            <button id='freigeben' title="Release your task to someone else"><i class='fas fa-share'></i>&nbsp;Release</button>
+            <button id='deleteAllErledigteTasks' title="Delete all your finished tasks" onclick='realyDeleteNote()'><i class='fas fa-trash-alt'></i> Delete all</button>
+            <button id='deleteAllOffeneTasks' title="Delete all your open tasks" onclick='realyDeleteNote()'><i class='fas fa-trash-alt'></i> Delete all</button>
+        </div>
 
-                        <button id='deleteAllErledigteTasks' title="Delete all your finished tasks" onclick='realyDeleteNote()'><i class='fas fa-trash-alt'></i> Delete all</button>
-                        <button id='deleteAllOffeneTasks' title="Delete all your open tasks" onclick='realyDeleteNote()'><i class='fas fa-trash-alt'></i> Delete all</button>
-                    </div>
+        <?php 
+        $has_open_tasks = false;
+        $has_completed_tasks = false;
 
-                    <?php
-                    // Display open tasks if there are any
-                    if ($anzahl_offen > 0) {
+        // Überprüfung, ob es offene und/oder abgeschlossene Aufgaben gibt
+        foreach ($alle_tasks as $task) {
+            $decrypted_status = decrypt($task['status'], $encryption_key, base64_decode($task['iv']));
+            if ($decrypted_status === '0') {
+                $has_open_tasks = true;
+            } elseif ($decrypted_status === '1') {
+                $has_completed_tasks = true;
+            }
+        }
+        ?>
+
+        <?php if ($has_open_tasks) : ?>
+        <h1>Open Tasks</h1>
+        <table>
+            <tr>
+                <th><input id='checkAllOffeneTasks' type='checkbox' onclick='checkAllOffeneTasks(this)' title='Select All'></th>
+                <th>Title</th>
+                <th>Task</th>
+                <th>Date</th>
+                <th>Priority</th>
+                <th>Changed</th>
+            </tr>
+            <?php foreach ($alle_tasks as $task) :
+                $decrypted_status = decrypt($task['status'], $encryption_key, base64_decode($task['iv']));
+                if ($decrypted_status === '0') :
+                    $iv = base64_decode($task['iv']);
+                    $decrypted_titel = decrypt($task['titel'], $encryption_key, $iv);
+                    $decrypted_notiz = decrypt($task['notiz'], $encryption_key, $iv);
+                    $decrypted_prioritaet = decrypt($task['prioritaet'], $encryption_key, $iv);
+                    $decrypted_date_to_complete = decrypt($task['date_to_complete'], $encryption_key, $iv);
+                    $is_past_due = strtotime($decrypted_date_to_complete) > time();
+                    $row_class = $is_past_due ? 'zu_spaet' : 'nicht_zu_spaet';
+                    $background_color = $is_past_due ? 'lightcoral' : 'lightgreen';
                     ?>
-                    <h1>Tasks</h1>
-                    <p>Open Tasks (<?= $anzahl_offen ?>)</p>
-                    <table>
-                        <tr>
-                            <th><input id='checkAllOffeneTasks' type='checkbox' onclick='checkAllOffeneTasks(this)' title='Select All'></th>
-                            <th>Title</th>
-                            <th>Task</th>
-                            <th>Date</th>
-                            <th>Priority</th>
-                            <th>Changed</th>
-                        </tr>
-                        <?php
-                        // Display not too late open tasks
-                        foreach ($nicht_zu_spaet_offene_tasks as $task) { ?>
-                        <tr class="aufgabe_nicht_zu_spaet">
-                            <td style='background-color:lightgreen;'><input type='checkbox' onclick="getId_for_offen(<?= $task['NoteId']; ?>)" class='offene_tasks'></td>
-                            <td style='background-color:lightgreen;'><?= $task['titel']; ?></td>
-                            <td style='background-color:lightgreen;'><?= $task['notiz']; ?></td>
-                            <td style='background-color:lightgreen;'><?= date('dS M Y', strtotime($task['date_to_complete'])); ?></td>
-                            <td style='background-color:lightgreen;'><?= $task['prioritaet']; ?></td>
-                            <td style='background-color:lightgreen;'><?= date('dS M Y', strtotime($task['last_change'])); ?></td>
-                        </tr>
-                        <?php } 
-                        // Display late open tasks
-                        foreach ($zu_spaet_offene_tasks as $task) { ?>
-                        <tr class='aufgabe_zu_spaet'>
-                            <td style="background-color:lightcoral;"><input type="checkbox" onclick="getId_for_offen(<?= $task['NoteId']; ?>)" class='offene_tasks'></td>
-                            <td style='background-color:lightcoral;'><?= $task['titel']; ?></td>
-                            <td style='background-color:lightcoral;'><?= $task['notiz']; ?></td>
-                            <td style='background-color:lightcoral;'><?= date('dS M Y', strtotime($task['date_to_complete'])); ?></td>
-                            <td style='background-color:lightcoral;'><?= $task['prioritaet']; ?></td>
-                            <td style='background-color:lightcoral;'><?= date('dS M Y', strtotime($task['last_change'])); ?></td>
-                        </tr>
-                        <?php } ?>
-                    </table>
-                    <br>
-                    <?php } 
-                    // Display completed tasks if there are any
-                    if (count($erledigte_tasks) > 0) { ?>
-                    <p>Done Tasks (<?= count($erledigte_tasks); ?>)</p>
-                    <table>
-                        <tr>
-                            <th><input id='checkAllErledigteTasks' type='checkbox' onclick='checkAllErledigteTasks(this)' title='Select All'></th>
-                            <th>Title</th>
-                            <th>Task</th>
-                            <th>Date</th>
-                            <th>Priority</th>
-                            <th>Completed on</th>
-                            <th>Changed</th>
-                        </tr>
-                        <?php
-                        // Display completed tasks
-                        foreach ($erledigte_tasks as $task) { ?>
-                        <tr>
-                            <td><input type='checkbox' onclick="getId_for_erledigt(<?= $task['NoteId']; ?>)" class='erledigte_tasks'></td>
-                            <td class='erledigt_titel'><del><?= $task['titel']; ?></del></td>
-                            <td class='erledigt_notiz'><del><?= $task['notiz']; ?></del></td>
-                            <td class='erledigt_datum'><del><?= date('dS M Y', strtotime($task['date_to_complete'])); ?></del></td>
-                            <td class='erledigt_priority'><del><?= $task['prioritaet']; ?></del></td>
-                            <td class='erledigt_completed_at'><del><?= date('dS M Y', strtotime($task['date_when_completed'])); ?></del></td>
-                            <td class='erledigt_lastchange'><del><?= date('dS M Y', strtotime($task['last_change'])); ?></del></td>
-                        </tr>
-                        <?php } ?>
-                    </table>
-                    <br>
-                    <?php } 
-                    // Display message if no tasks are available
-                    } else { ?>
-                    <div class="noData">
-                    <h1>No tasks added yet</h1>
-                    <button title="Add a task" onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Add task</button>
-                    </div>
-                    <?php } ?>
-                </main>
-            </td>
-            <td></td>
-        </tr>
-    </table>
+            <tr class="<?= $row_class ?>">
+                <td style='background-color:<?= $background_color ?>;'>
+                    <input type='checkbox' onclick="getId_for_offen(<?= htmlspecialchars($task['NoteId']); ?>)" class='offene_tasks'>
+                </td>
+                <td style='background-color:<?= $background_color ?>;'><?= htmlspecialchars($decrypted_titel); ?></td>
+                <td style='background-color:<?= $background_color ?>;'><?= htmlspecialchars($decrypted_notiz); ?></td>
+                <td style='background-color:<?= $background_color ?>;'><?= date('dS M Y', strtotime($decrypted_date_to_complete)); ?></td>
+                <td style='background-color:<?= $background_color ?>;'><?= htmlspecialchars($decrypted_prioritaet); ?></td>
+                <td style='background-color:<?= $background_color ?>;'><?= date('dS M Y', strtotime($task['last_change'])); ?></td>
+            </tr>
+            <?php endif; endforeach; ?>
+        </table>
+        <?php endif; ?>
+
+        <?php if ($has_completed_tasks) : ?>
+        <h1>Completed Tasks</h1>
+        <table>
+            <tr>
+                <th><input id='checkAllErledigteTasks' type='checkbox' onclick='checkAllErledigteTasks(this)' title='Select All'></th>
+                <th>Title</th>
+                <th>Task</th>
+                <th>Date</th>
+                <th>Priority</th>
+                <th>Completed on</th>
+                <th>Changed</th>
+            </tr>
+            <?php foreach ($alle_tasks as $task) :
+                $decrypted_status = decrypt($task['status'], $encryption_key, base64_decode($task['iv']));
+                if ($decrypted_status === '1') :
+                    $iv = base64_decode($task['iv']);
+                    $decrypted_titel = decrypt($task['titel'], $encryption_key, $iv);
+                    $decrypted_notiz = decrypt($task['notiz'], $encryption_key, $iv);
+                    $decrypted_prioritaet = decrypt($task['prioritaet'], $encryption_key, $iv);
+                    $decrypted_date_to_complete = decrypt($task['date_to_complete'], $encryption_key, $iv);
+                    $decrypted_date_when_completed = decrypt($task['date_when_completed'], $encryption_key, $iv);
+                    ?>
+            <tr class="erledigt">
+                <td style='background-color:lightgrey;'>
+                    <input type='checkbox' onclick="getId_for_erledigt(<?= htmlspecialchars($task['NoteId']); ?>)" class='erledigte_tasks'>
+                </td>
+                <td style='background-color:lightgrey;'><del><?= htmlspecialchars($decrypted_titel); ?></del></td>
+                <td style='background-color:lightgrey;'><del><?= htmlspecialchars($decrypted_notiz); ?></del></td>
+                <td style='background-color:lightgrey;'><del><?= date('dS M Y', strtotime($decrypted_date_to_complete)); ?></del></td>
+                <td style='background-color:lightgrey;'><del><?= htmlspecialchars($decrypted_prioritaet); ?></del></td>
+                <td style='background-color:lightgrey;'><del><?= date('dS M Y', strtotime($decrypted_date_when_completed)); ?></del></td>
+                <td style='background-color:lightgrey;'><del><?= date('dS M Y', strtotime($task['last_change'])); ?></del></td>
+            </tr>
+            <?php endif; endforeach; ?>
+        </table>
+        <?php endif; ?>
+
+        <?php else : ?>
+        <div class="noData">
+            <h1>No tasks added yet</h1>
+            <button title="Add a task" onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Add task</button>
+        </div>
+        <?php endif; ?>
+    </main>
 
     <!-- Include modals and additional views -->
     <?php

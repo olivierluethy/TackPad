@@ -11,26 +11,12 @@ body {
     left: 17px;
     top: 5px;
   }
-  table {
-    table,
-    th,
-    td {
-      width: 10%;
-    }
-    width: 100%;
-    input[type="checkbox"] {
-      width: 25px;
-      height: 25px;
-      &:hover {
-        cursor: pointer;
-      }
-    }
-    tr {
-      td {
+  main {
         .options {
           position: -webkit-sticky;
           position: sticky;
           top: 0;
+          margin-left: 5rem;
           padding: 2px;
           font-size: 20px;
           width: 100%;
@@ -167,8 +153,6 @@ body {
           }
         }
       }
-    }
-  }
   #deleteAllOffeneTasks,
   #deleteAllErledigteTasks {
     background-color: white;
