@@ -69,8 +69,77 @@ Future Mission: This application should have end-to-end encryption so that no bu
 3. **Setup Local Database:**
    - You will need a local database to run the application. I recommend using [XAMPP](https://www.apachefriends.org/index.html).
    - Ensure you download and install the latest version for compatibility.
+  
+4. **Download Composer:**
 
-4. **Run the Application:**
+To manage your project dependencies, including the Dotenv package, you need to have Composer installed on your system. Composer is a dependency manager for PHP that allows you to declare the libraries your project depends on and manages (installs/updates) them for you.
+
+### Installing Composer
+
+1. **Download Composer:**
+
+   You can download Composer by visiting the official Composer [download page](https://getcomposer.org/download/).
+
+2. **Install Composer:**
+
+   Follow the installation instructions provided for your operating system on the Composer download page. The installation process may vary slightly depending on whether you are using Windows, macOS, or Linux.
+
+### Installing Dotenv Package
+
+Once Composer is installed, you can use it to install the Dotenv package, which allows you to load environment variables from a `.env` file into your PHP application.
+
+1. **Navigate to your project directory:**
+
+   Open your terminal or command prompt and navigate to the root directory of your PHP project.
+
+   ```sh
+   cd /path/to/your/project
+   ```
+
+2. **Require the Dotenv package:**
+
+   Run the following command to require the Dotenv package using Composer:
+
+   ```sh
+   composer require vlucas/phpdotenv
+   ```
+
+   This command will download the Dotenv package and add it to your project's `composer.json` file.
+
+### Using Dotenv in Your Project
+
+After installing the Dotenv package, you need to initialize it in your project to start using environment variables from the `.env` file.
+
+1. **Create a `.env` file:**
+
+   In the root directory of your project, create a `.env` file and add your environment variables to it. For example:
+
+   ```env
+   APP_ENV=local
+   APP_DEBUG=true
+   DATABASE_URL=mysql://user:password@localhost/database
+   ```
+
+2. **Load the .env file in your PHP script:**
+
+   In your PHP script (e.g., `index.php` or `config.php`), load the `.env` file using the Dotenv package:
+
+   ```php
+   <?php
+   require __DIR__ . '/vendor/autoload.php';
+
+   $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+   $dotenv->load();
+
+   // Now you can access the environment variables
+   $appEnv = getenv('APP_ENV');
+   $appDebug = getenv('APP_DEBUG');
+   $databaseUrl = getenv('DATABASE_URL');
+   ```
+
+By following these steps, you will have Composer installed and be able to use the Dotenv package to manage your environment variables efficiently.
+
+6. **Run the Application:**
    - Follow the setup instructions provided with the project to configure and run it locally.
 
 ## License
@@ -87,8 +156,6 @@ Contributions are what make the open-source community such an amazing place to l
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-Please make sure to update tests as appropriate and adhere to the [coding conventions](CONTRIBUTING.md).
+Please be sure to update tests as appropriate and adhere to the [Coding Conventions](CONTRIBUTING.md).
 
 By contributing to this project, you agree to abide by the [Code of Conduct](CODE_OF_CONDUCT.md).
-
-
