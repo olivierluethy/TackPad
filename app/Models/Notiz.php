@@ -81,10 +81,10 @@ class Notiz
 		// Initialisierungsvektor (IV) generieren
 		$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));
 	
-		require_once __DIR__ . '/../../vendor/autoload.php'; // Pfad anpassen, falls notwendig
+		require_once __DIR__ . '/../../vendor/autoload.php';
 
 		// Laden der .env-Datei
-		$dotenv = Dotenv::createImmutable(__DIR__ . '/../../'); // Pfad anpassen, falls notwendig
+		$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
 		$dotenv->load();
 
 		// Hole den Verschlüsselungsschlüssel aus der .env-Datei
@@ -115,7 +115,7 @@ class Notiz
 		$statement->bindParam(':status', $encrypted_status, PDO::PARAM_STR);
 		$statement->bindParam(':date_to_complete', $encrypted_datum, PDO::PARAM_STR);
 		$statement->bindParam(':iv', $iv_base64, PDO::PARAM_STR);
-		$statement->bindParam(':id', $id, PDO::PARAM_INT);  // Wenn NoteId ein numerischer Wert ist, verwenden Sie PDO::PARAM_INT
+		$statement->bindParam(':id', $id, PDO::PARAM_INT);
 		$statement->execute();
 	}
 

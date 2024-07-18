@@ -278,7 +278,7 @@ class TackPadController
             if (empty(trim($_POST["email"]))) {
                 $email_err = "Bitte geben Sie eine E-Mail-Adresse ein.";
             } else {
-                $email = trim($_POST["email"]);
+                $email = strtolower(trim($_POST["email"]));
             }
     
             // Check if password is empty
