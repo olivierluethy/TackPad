@@ -34,9 +34,9 @@ $routes = [
 ];
 
 $db = [
-    'name'     => DB_NAME,
-    'username' => DB_USERNAME,
-    'password' => DB_PASSWORD,
+	'name' => DB_NAME,
+	'username' => DB_USERNAME,
+	'password' => DB_PASSWORD,
 ];
 
 $router = new Router($routes);
