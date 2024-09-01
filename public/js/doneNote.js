@@ -5,30 +5,26 @@ function erledigt() {
     type: "GET",
     url: "erledigt",
     data: { id: ids },
-    success: function (response) {
+    success: function(response) {
       if (response.success) {
-        response.ids.forEach(function (id) {
+        response.ids.forEach(function(id) {
           // Aufgabe aus der offenen Tabelle entfernen
           $("#open-tasks-container tr")
-            .filter(function () {
-              return (
-                $(this).find('input[type="checkbox"]').attr("onclick") ===
-                "getId_for_offen(" + id + ")"
-              );
+            .filter(function() {
+              return $(this).find('input[type="checkbox"]').attr("onclick") === "getId_for_offen(" + id + ")";
             })
             .remove();
-
+    
           // Aufgabe zur erledigten Tabelle hinzufügen
-          // Hier kannst du entweder eine AJAX-Antwort verwenden oder die Aufgabe direkt erstellen
-          // Hier als Platzhalter
           $("#completed-tasks-container").append(generateCompletedTaskRow(id));
         });
-        alert("Tasks marked as done successfully.");
+        $("#open-tasks-container").load(location.href + " #open-tasks-container"); // Teil der Seite neu laden
+        $("#completed-tasks-container").load(location.href + " #completed-tasks-container"); // Teil der Seite neu laden
       } else {
         alert("Error: " + response.error);
       }
     },
-    error: function (xhr, status, error) {
+    error: function(xhr, status, error) {
       console.error(xhr.responseText);
       alert("An error occurred while updating the task status.");
     },
@@ -58,7 +54,7 @@ function undone() {
           // Aufgabe zur offenen Tabelle hinzufügen
           // Hier kannst du entweder eine AJAX-Antwort verwenden oder die Aufgabe direkt erstellen
           // Hier als Platzhalter
-          $("#open-tasks-container").append(generateOpenTaskRow(id));
+          $("#open-tasks-container tr").append(generateOpenTaskRow(id));
         });
         alert("Tasks marked as undone successfully.");
       } else {
@@ -72,21 +68,30 @@ function undone() {
   });
 }
 
-// Platzhalter-Funktion zum Erzeugen von HTML für erledigte Aufgaben
 function generateCompletedTaskRow(id) {
-  // Hier solltest du die Aufgabe vom Server laden oder in der Antwort speichern
-  // Beispielhafte Zeile (du musst die tatsächlichen Daten und IDs einfügen)
-  return `<tr class="erledigt">
-            <td style='background-color:lightgrey;'>
-              <input type='checkbox' onclick="getId_for_erledigt(${id})" class='erledigte_tasks'>
-            </td>
-            <td style='background-color:lightgrey;'><del>Title for ${id}</del></td>
-            <td style='background-color:lightgrey;'><del>Task details for ${id}</del></td>
-            <td style='background-color:lightgrey;'><del>Date for ${id}</del></td>
-            <td style='background-color:lightgrey;'><del>Priority for ${id}</del></td>
-            <td style='background-color:lightgrey;'><del>Completed on ${id}</del></td>
-            <td style='background-color:lightgrey;'><del>Changed ${id}</del></td>
-          </tr>`;
+  // Hole die Daten der Aufgabe aus der "open-tasks-container"-Tabelle
+  var taskRow = $("#open-tasks-container tr").filter(function() {
+    return $(this).find('input[type="checkbox"]').attr("onclick") === "getId_for_offen(" + id + ")";
+  });
+
+  // Hole die Daten der Aufgabe
+  var title = taskRow.find("td:nth-child(2)").text();
+  var task = taskRow.find("td:nth-child(3)").text();
+  var date = taskRow.find("td:nth-child(4)").text();
+  var priority = taskRow.find("td:nth-child(5)").text();
+  var changed = taskRow.find("td:nth-child(6)").text();
+
+  // Erstelle eine neue Zeile für die "completed-tasks-container"-Tabelle
+  var newRow = $("<tr class='erledigt'>");
+  newRow.append("<td style='background-color:lightgrey;'><input type='checkbox' onclick='getId_for_erledigt(" + id + ")' class='erledigte_tasks'></td>");
+  newRow.append("<td style='background-color:lightgrey;'><del>" + title + "</del></td>");
+  newRow.append("<td style='background-color:lightgrey;'><del>" + task + "</del></td>");
+  newRow.append("<td style='background-color:lightgrey;'><del>" + date + "</del></td>");
+  newRow.append("<td style='background-color:lightgrey;'><del>" + priority + "</del></td>");
+  newRow.append("<td style='background-color:lightgrey;'><del>" + new Date().toLocaleDateString() + "</del></td>");
+  newRow.append("<td style='background-color:lightgrey;'><del>" + changed + "</del></td>");
+
+  return newRow;
 }
 
 // Platzhalter-Funktion zum Erzeugen von HTML für offene Aufgaben

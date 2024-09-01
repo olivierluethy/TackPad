@@ -219,6 +219,10 @@ class Notiz
 		$date_when_completed = time();
 		$last_change = time();
 
+		// Initialisierung von Erfolgs- und Fehlermeldungen
+		$updated_ids = [];
+		$errors = [];
+
 		foreach ($cleaned_ids as $id) {
 			try {
 				// Holen des IV-Werts aus der Datenbank
