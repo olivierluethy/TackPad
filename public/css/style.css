@@ -12,9 +12,9 @@ body .navi {
   font-size: 35px;
   cursor: pointer;
   color: white;
-  position: absolute;
+  position: sticky;
   left: 17px;
-  top: 5px;
+  top: 8px;
 }
 body .options {
   position: sticky;

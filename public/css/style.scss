@@ -8,13 +8,13 @@ body {
     font-size: 35px;
     cursor: pointer;
     color: white;
-    position: absolute;
+    position: sticky;
     left: 17px;
-    top: 5px;
+    top: 8px;
   }
 
-/* Styling for options bar */
-.options {
+  /* Styling for options bar */
+  .options {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
@@ -32,182 +32,182 @@ body {
     #erledigt,
     #freigeben,
     #undo {
-        display: none;
+      display: none;
     }
 
     /* Button styles */
     button {
-        background-color: white;
-        border: 1px solid white;
+      background-color: white;
+      border: 1px solid white;
+      color: black;
+      padding: 16px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      transition-duration: 0.4s;
+      border-radius: 10px;
+      cursor: pointer;
+
+      /* Button hover effect */
+      &:hover {
+        background-color: black;
+        color: white;
+      }
+    }
+  }
+
+  /* Styling for main content */
+  main {
+    display: block;
+    margin-left: 3rem;
+    color: white;
+
+    /* Text color for headers and paragraphs */
+    h1,
+    p {
+      color: white;
+      text-align: center;
+    }
+
+    /* Table styling */
+    table {
+      width: 50%;
+      border-collapse: collapse;
+      box-shadow: 0px 2px 18px 0px rgba(255, 255, 255, 0.5);
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 5rem;
+
+      /* Table cell styles */
+      td,
+      th {
         color: black;
-        padding: 16px 32px;
+        border: 1px solid black;
+        text-align: left;
+        background-color: white;
+        padding: 15px;
+      }
+
+      /* Specific styles for cells with input type checkbox */
+      td input[type="checkbox"] {
+        width: 25px;
+        height: 25px;
+
+        /* Checkbox hover effect */
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      /* Specific styles for cells with input type checkbox */
+      th input[type="checkbox"] {
+        width: 25px;
+        height: 25px;
+
+        /* Checkbox hover effect */
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      /* Edit button style */
+      .edit {
+        background-color: #4caf50;
+        border: 2px solid #4caf50;
+        color: white;
+        padding: 15px 32px;
         text-align: center;
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
-        transition-duration: 0.4s;
-        border-radius: 10px;
+        margin: 4px 2px;
         cursor: pointer;
 
-        /* Button hover effect */
+        /* Edit button hover effect */
         &:hover {
-            background-color: black;
-            color: white;
+          background-color: white;
+          color: #4caf50;
+          transition: 0.5s ease;
         }
+      }
+
+      /* Delete button style */
+      .delete {
+        background-color: red;
+        border: 2px solid red;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+
+        /* Delete button hover effect */
+        &:hover {
+          background-color: white;
+          color: red;
+          transition: 0.5s ease;
+        }
+      }
+
+      /* Styles for tasks not overdue */
+      .aufgabe_nicht_zu_spaet {
+        background-color: lightgreen;
+
+        /* Select all container style */
+        .selectAllContainer {
+          background-color: blue;
+          display: flex;
+          align-items: center;
+        }
+      }
+
+      /* Styles for overdue tasks */
+      .aufgabe_zu_spaet {
+        background-color: lightcoral;
+      }
+    }
+
+    /* Form styling */
+    form {
+      margin-top: 0.2rem;
+
+      /* Input field style */
+      input {
+        width: 20%;
+        height: 47px;
+        font-size: 20px;
+        border: 2px solid black;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      }
+
+      /* Margin adjustment for elements with IDs */
+      #aufgabe,
+      #date {
+        margin-left: 1em;
+      }
+
+      /* Add task button style */
+      .hinzufuegen {
+        background-color: #06145b;
+        border: 2px solid #06145b;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        transition-duration: 0.4s;
+        float: right;
+        padding: 15px 32px;
+        box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+        &:hover {
+          background-color: white;
+          color: #06145b;
+        }
+      }
     }
   }
-
-    /* Styling for main content */
-    main {
-        display: block;
-        margin-left: 3rem;
-        color: white;
-
-        /* Text color for headers and paragraphs */
-        h1,
-        p {
-            color: white;
-            text-align: center;
-        }
-
-        /* Table styling */
-        table {
-            width: 50%;
-            border-collapse: collapse;
-            box-shadow: 0px 2px 18px 0px rgba(255, 255, 255, 0.5);
-            margin-left: auto;
-            margin-right: auto;
-            margin-bottom: 5rem;
-
-            /* Table cell styles */
-            td,
-            th {
-              color: black;
-                border: 1px solid black;
-                text-align: left;
-                background-color: white;
-                padding: 15px;
-            }
-
-            /* Specific styles for cells with input type checkbox */
-            td input[type="checkbox"] {
-                width: 25px;
-                height: 25px;
-
-                /* Checkbox hover effect */
-                &:hover {
-                    cursor: pointer;
-                }
-            }
-            /* Specific styles for cells with input type checkbox */
-            th input[type="checkbox"] {
-              width: 25px;
-              height: 25px;
-
-              /* Checkbox hover effect */
-              &:hover {
-                  cursor: pointer;
-              }
-          }
-
-            /* Edit button style */
-            .edit {
-                background-color: #4caf50;
-                border: 2px solid #4caf50;
-                color: white;
-                padding: 15px 32px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                margin: 4px 2px;
-                cursor: pointer;
-
-                /* Edit button hover effect */
-                &:hover {
-                    background-color: white;
-                    color: #4caf50;
-                    transition: 0.5s ease;
-                }
-            }
-
-            /* Delete button style */
-            .delete {
-                background-color: red;
-                border: 2px solid red;
-                color: white;
-                padding: 15px 32px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                cursor: pointer;
-
-                /* Delete button hover effect */
-                &:hover {
-                    background-color: white;
-                    color: red;
-                    transition: 0.5s ease;
-                }
-            }
-
-            /* Styles for tasks not overdue */
-            .aufgabe_nicht_zu_spaet {
-                background-color: lightgreen;
-
-                /* Select all container style */
-                .selectAllContainer {
-                    background-color: blue;
-                    display: flex;
-                    align-items: center;
-                }
-            }
-
-            /* Styles for overdue tasks */
-            .aufgabe_zu_spaet {
-                background-color: lightcoral;
-            }
-        }
-
-        /* Form styling */
-        form {
-            margin-top: 0.2rem;
-
-            /* Input field style */
-            input {
-                width: 20%;
-                height: 47px;
-                font-size: 20px;
-                border: 2px solid black;
-                box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-            }
-
-            /* Margin adjustment for elements with IDs */
-            #aufgabe,
-            #date {
-                margin-left: 1em;
-            }
-
-            /* Add task button style */
-            .hinzufuegen {
-                background-color: #06145b;
-                border: 2px solid #06145b;
-                color: white;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                transition-duration: 0.4s;
-                float: right;
-                padding: 15px 32px;
-                box-shadow: 0px 2px 18px 0px rgba(0, 0, 0, 0.5);
-                cursor: pointer;
-                &:hover {
-                    background-color: white;
-                    color: #06145b;
-                }
-            }
-        }
-    }
   #deleteAllOffeneTasks,
   #deleteAllErledigteTasks {
     background-color: white;
@@ -321,7 +321,8 @@ body {
           label {
             float: right;
           }
-          select, input {
+          select,
+          input {
             width: 90%;
             padding: 12px 20px;
             margin: 8px 0;
@@ -382,7 +383,7 @@ body {
       }
     }
   }
-  .noData{
+  .noData {
     text-align: center;
     h1 {
       color: red;
@@ -436,11 +437,11 @@ body {
     }
     main {
       margin-left: -0.5rem;
-      .options{
+      .options {
         margin-top: 0.3rem;
         margin-left: 5rem;
         width: 100%;
-        button{
+        button {
           font-size: 20px;
           margin-top: 0.4rem;
           padding: 8px 15px;
@@ -451,14 +452,14 @@ body {
         font-size: 1rem;
         border-collapse: collapse;
         tr {
-            font-size: 0.9rem;
-            th {
-              padding: 0px;
-              text-align: left;
-              input[type="checkbox"] {
-                width: 40px;
-                height: 40px;
-              }
+          font-size: 0.9rem;
+          th {
+            padding: 0px;
+            text-align: left;
+            input[type="checkbox"] {
+              width: 40px;
+              height: 40px;
+            }
           }
           td {
             padding: 0px;
@@ -471,11 +472,11 @@ body {
         }
       }
     }
-    .modal{
+    .modal {
       width: 100%;
-      .modal-content{
+      .modal-content {
         width: 50%;
-        .modal-body{
+        .modal-body {
           padding: 0px;
         }
       }
