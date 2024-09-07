@@ -1,111 +1,116 @@
 /* Default styles */
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    -webkit-animation: bgcolor 20s infinite;
-    animation: bgcolor 10s infinite;
-    -webkit-animation-direction: alternate;
-    animation-direction: alternate;
-    position: relative;
-    overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  -webkit-animation: bgcolor 20s infinite;
+  animation: bgcolor 10s infinite;
+  -webkit-animation-direction: alternate;
+  animation-direction: alternate;
+  position: relative;
+  overflow: hidden;
 }
 
 body::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("../../assets/icon.png");
-    background-size: cover;
-    background-position: center;
-    opacity: 0.5; /* Adjust the opacity as needed */
-    z-index: -1;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("../../assets/icon.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.5; /* Adjust the opacity as needed */
+  z-index: -1;
 }
 
 .title {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
 }
 
 .title h1 {
-    position: relative;
-    font-size: 4em;
-    color: black;
-    margin: 0.5em 0;
-    padding: 0.5em 1em;
-    font-weight: bold;
+  position: relative;
+  font-size: 4em;
+  color: black;
+  margin: 0.5em 0;
+  padding: 0.5em 1em;
+  font-weight: bold;
 }
 
 .title h1::after {
-    content: '';
-    position: absolute;
-    bottom: 0px; /* Adjust as needed */
-    left: 0;
-    width: 100%;
-    height: 5px; /* Thickness of the underline */
-    background: rgb(15, 162, 214);
-    background: linear-gradient(90deg, rgba(15, 162, 214, 1) 0%, rgba(9, 9, 121, 1) 50%, rgba(241, 133, 34, 1) 100%);
+  content: "";
+  position: absolute;
+  bottom: 0px; /* Adjust as needed */
+  left: 0;
+  width: 100%;
+  height: 5px; /* Thickness of the underline */
+  background: rgb(15, 162, 214);
+  background: linear-gradient(
+    90deg,
+    rgba(15, 162, 214, 1) 0%,
+    rgba(9, 9, 121, 1) 50%,
+    rgba(241, 133, 34, 1) 100%
+  );
 }
 
 .title h1::before {
-    content: attr(data-text); /* Use attribute content for original text */
-    position: absolute;
-    top: 0;
-    left: 0;
-    color: transparent; /* Hide original text */
-    overflow: hidden;
-    z-index: 1; /* Ensure text is above underline */
+  content: attr(data-text); /* Use attribute content for original text */
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: transparent; /* Hide original text */
+  overflow: hidden;
+  z-index: 1; /* Ensure text is above underline */
 }
 
 .title h1:hover::before {
-    color: white; /* Reveal original text on hover */
+  color: white; /* Reveal original text on hover */
 }
 
 .title .wrapper {
-    text-align: left;
-    width: 350px;
-    padding: 20px;
-    border: 2px solid hsl(197, 100%, 23%);
-    border-radius: 10px;
-    box-shadow: 2px 3px 5px gray;
-    background-color: white;
-    font: 14px sans-serif;
-    margin-top: 20px;
+  text-align: left;
+  width: 350px;
+  padding: 20px;
+  border: 2px solid hsl(197, 100%, 23%);
+  border-radius: 10px;
+  box-shadow: 2px 3px 5px gray;
+  background-color: white;
+  font: 14px sans-serif;
+  margin-top: 20px;
 }
 
 /* Media queries */
 @media (max-width: 829px) {
-    body {
-        flex-direction: column;
-        padding: 10px;
-    }
+  body {
+    flex-direction: column;
+    padding: 10px;
+  }
 
-    .title h1 {
-        font-size: 2.5em; /* Adjust the font size for mobile */
-        padding: 0.5em; /* Adjust padding for better appearance */
-    }
+  .title h1 {
+    font-size: 2.5em; /* Adjust the font size for mobile */
+    padding: 0.5em; /* Adjust padding for better appearance */
+  }
 
-    .title .wrapper {
-        width: 100%; /* Make the wrapper full width on mobile */
-        padding: 15px; /* Adjust padding for better appearance */
-        margin-top: 10px; /* Reduce margin for smaller screens */
-    }
+  .title .wrapper {
+    width: 100%; /* Make the wrapper full width on mobile */
+    padding: 15px; /* Adjust padding for better appearance */
+    margin-top: 10px; /* Reduce margin for smaller screens */
+  }
 }
 
 @media (max-width: 480px) {
-    .title h1 {
-        font-size: 2em; /* Further reduce the font size for very small screens */
-    }
+  .title h1 {
+    font-size: 2em; /* Further reduce the font size for very small screens */
+  }
 
-    .title .wrapper {
-        padding: 10px; /* Further adjust padding for smaller screens */
-    }
+  .title .wrapper {
+    padding: 10px; /* Further adjust padding for smaller screens */
+  }
 }

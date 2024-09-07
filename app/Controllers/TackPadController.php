@@ -257,12 +257,7 @@ class TackPadController
         $ids = e($_GET['id']);
         $result = $notiz->istErledigt($ids);
 
-        header("Content-Type: application/json");
-        if ($result['success']) {
-            echo json_encode(["success" => true, "ids" => $result['updated_ids']]); // Konsistentes Rückgabeformat
-        } else {
-            echo json_encode(["success" => false, "error" => implode(", ", $result['errors'])]);
-        }
+        header('Location: home');
     }
 
     public function unerledigt()
@@ -279,12 +274,7 @@ class TackPadController
         $ids = e($_GET['id']);
         $result = $notiz->undone($ids);
 
-        header("Content-Type: application/json");
-        if ($result['success']) {
-            echo json_encode(["success" => true, "ids" => $result['updated_ids']]); // Hier korrigieren
-        } else {
-            echo json_encode(["success" => false, "error" => implode(", ", $result['errors'])]); // Fehler ausgeben
-        }
+        header('Location: home');
     }
 
     public function login()

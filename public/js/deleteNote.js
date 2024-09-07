@@ -34,27 +34,32 @@ function deleteNote() {
   let ids = changeId_offen.join(",");
 
   $.ajax({
-      type: 'GET',
-      url: 'delete',
-      data: { id: ids },
-      success: function(response) {
-          if (response.success) {
-              // Entferne die gelöschten Aufgaben aus der Tabelle
-              response.ids.forEach(function(id) {
-                  $('tr').filter(function() {
-                      return $(this).find('input[type="checkbox"]').attr('onclick') === 'getId_for_offen(' + id + ')';
-                  }).remove();
-              });
+    type: "GET",
+    url: "delete",
+    data: { id: ids },
+    success: function (response) {
+      if (response.success) {
+        // Entferne die gelöschten Aufgaben aus der Tabelle
+        response.ids.forEach(function (id) {
+          $("tr")
+            .filter(function () {
+              return (
+                $(this).find('input[type="checkbox"]').attr("onclick") ===
+                "getId_for_offen(" + id + ")"
+              );
+            })
+            .remove();
+        });
 
-              closeModal(deleteModal); // Schließe das Lösch-Modal
-          } else {
-              alert('Error: ' + response.error);
-          }
-      },
-      error: function(xhr, status, error) {
-          console.error(xhr.responseText);
-          alert('An error occurred while deleting the task.');
+        closeModal(deleteModal); // Schließe das Lösch-Modal
+      } else {
+        alert("Error: " + response.error);
       }
+    },
+    error: function (xhr, status, error) {
+      console.error(xhr.responseText);
+      alert("An error occurred while deleting the task.");
+    },
   });
 }
 
