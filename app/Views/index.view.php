@@ -27,6 +27,7 @@ function decrypt($data, $key, $iv)
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script defer src="public/js/taskStatus.js"></script>
     <script defer src="public/js/tackpad.js"></script>
     <script defer src="public/js/deleteNote.js"></script>
     <script defer src="public/js/createNote.js"></script>
@@ -113,26 +114,25 @@ function decrypt($data, $key, $iv)
                             $decrypted_prioritaet = decrypt($task['prioritaet'], $encryption_key, $iv);
                             $decrypted_date_to_complete = decrypt($task['date_to_complete'], $encryption_key, $iv);
                             $is_past_due = strtotime($decrypted_date_to_complete) < time();
-                            $row_class = $is_past_due ? 'zu_spaet' : 'nicht_zu_spaet';
-                            $background_color = $is_past_due ? 'lightcoral' : 'lightgreen';
+                            $status_class = taskStatusClass(false, $is_past_due);
                             ?>
-                            <tr class="<?= $row_class ?>" data-id="<?= htmlspecialchars($task['NoteId']); ?>"
+                            <tr class="task-row <?= $status_class ?>" data-id="<?= htmlspecialchars($task['NoteId']); ?>"
                                 data-titel="<?= htmlspecialchars($decrypted_titel); ?>"
                                 data-aufgabe="<?= htmlspecialchars($decrypted_notiz); ?>"
                                 data-datum="<?= htmlspecialchars($decrypted_date_to_complete); ?>"
                                 data-priority="<?= htmlspecialchars($decrypted_prioritaet); ?>">
-                                <td style='background-color:<?= $background_color ?>;'>
+                                <td>
                                     <input type='checkbox' onclick="getId_for_offen(<?= htmlspecialchars($task['NoteId']); ?>)"
                                         class='offene_tasks'>
                                 </td>
-                                <td style='background-color:<?= $background_color ?>;'><?= htmlspecialchars($decrypted_titel); ?></td>
-                                <td style='background-color:<?= $background_color ?>;'><?= htmlspecialchars($decrypted_notiz); ?></td>
-                                <td style='background-color:<?= $background_color ?>;'>
+                                <td><?= htmlspecialchars($decrypted_titel); ?></td>
+                                <td><?= htmlspecialchars($decrypted_notiz); ?></td>
+                                <td>
                                     <?= date('dS M Y', strtotime($decrypted_date_to_complete)); ?>
                                 </td>
-                                <td style='background-color:<?= $background_color ?>;'><?= htmlspecialchars($decrypted_prioritaet); ?>
+                                <td><?= htmlspecialchars($decrypted_prioritaet); ?>
                                 </td>
-                                <td style='background-color:<?= $background_color ?>;'>
+                                <td>
                                     <?= date('dS M Y', strtotime($task['last_change'])); ?>
                                 </td>
                             </tr>
@@ -170,25 +170,26 @@ function decrypt($data, $key, $iv)
                             $decrypted_date_to_complete = decrypt($task['date_to_complete'], $encryption_key, $iv);
                             $decrypted_date_when_completed = decrypt($task['date_when_completed'], $encryption_key, $iv);
                             ?>
-                            <tr class="erledigt" data-id="<?= htmlspecialchars($task['NoteId']); ?>"
+                            <tr class="task-row <?= taskStatusClass(true, false) ?> erledigt"
+                                data-id="<?= htmlspecialchars($task['NoteId']); ?>"
                                 data-titel="<?= htmlspecialchars($decrypted_titel); ?>"
                                 data-aufgabe="<?= htmlspecialchars($decrypted_notiz); ?>"
                                 data-datum="<?= htmlspecialchars($decrypted_date_to_complete); ?>"
                                 data-priority="<?= htmlspecialchars($decrypted_prioritaet); ?>">
-                                <td style='background-color:lightgrey;'>
+                                <td>
                                     <input type='checkbox' onclick="getId_for_erledigt(<?= htmlspecialchars($task['NoteId']); ?>)"
                                         class='erledigte_tasks'>
                                 </td>
-                                <td style='background-color:lightgrey;'><del><?= htmlspecialchars($decrypted_titel); ?></del></td>
-                                <td style='background-color:lightgrey;'><del><?= htmlspecialchars($decrypted_notiz); ?></del></td>
-                                <td style='background-color:lightgrey;'>
+                                <td><del><?= htmlspecialchars($decrypted_titel); ?></del></td>
+                                <td><del><?= htmlspecialchars($decrypted_notiz); ?></del></td>
+                                <td>
                                     <del><?= date('dS M Y', strtotime($decrypted_date_to_complete)); ?></del>
                                 </td>
-                                <td style='background-color:lightgrey;'><del><?= htmlspecialchars($decrypted_prioritaet); ?></del></td>
-                                <td style='background-color:lightgrey;'>
+                                <td><del><?= htmlspecialchars($decrypted_prioritaet); ?></del></td>
+                                <td>
                                     <del><?= date('dS M Y', strtotime($decrypted_date_when_completed)); ?></del>
                                 </td>
-                                <td style='background-color:lightgrey;'>
+                                <td>
                                     <del><?= date('dS M Y', strtotime($task['last_change'])); ?></del>
                                 </td>
                             </tr>

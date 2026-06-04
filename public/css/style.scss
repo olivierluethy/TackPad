@@ -1,3 +1,29 @@
+/* =========================================================================
+   Task status colour tokens — single source of truth for row colours.
+   A task row's semantic state is decided in code (taskStatusClass() in
+   core/helpers.php and public/js/taskStatus.js); the mapping from that state
+   to an actual colour lives ONLY here. To recolour a state, change its token.
+   To add a state or a theme, add a token + a .task-row--<state> rule below.
+   ========================================================================= */
+:root {
+  --task-color-on-time: lightgreen;
+  --task-color-overdue: lightcoral;
+  --task-color-completed: lightgrey;
+}
+
+/* Apply the status colour to every cell of a task row. */
+.task-row--on-time td {
+  background-color: var(--task-color-on-time);
+}
+
+.task-row--overdue td {
+  background-color: var(--task-color-overdue);
+}
+
+.task-row--completed td {
+  background-color: var(--task-color-completed);
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -151,21 +177,12 @@ body {
         }
       }
 
-      /* Styles for tasks not overdue */
-      .aufgabe_nicht_zu_spaet {
-        background-color: lightgreen;
-
-        /* Select all container style */
-        .selectAllContainer {
-          background-color: blue;
-          display: flex;
-          align-items: center;
-        }
-      }
-
-      /* Styles for overdue tasks */
-      .aufgabe_zu_spaet {
-        background-color: lightcoral;
+      /* Task row colours are driven by the .task-row--<state> classes and the
+         colour tokens defined at the top of this file — see :root above. */
+      .selectAllContainer {
+        background-color: blue;
+        display: flex;
+        align-items: center;
       }
     }
 

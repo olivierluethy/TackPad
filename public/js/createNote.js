@@ -22,28 +22,36 @@ $(document).ready(function () {
         if (response.error) {
           alert("Error: " + response.error);
         } else {
+          // Derive the row's status the same way the server does: a brand new
+          // task is open (not completed) and may already be past due. The colour
+          // itself is owned by CSS via the status class — no inline styles here.
+          var isPastDue = new Date(response.task.datum) < new Date();
+          var statusClass = taskStatusClass(false, isPastDue);
+
+          var dueDate = new Date(response.task.datum).toLocaleDateString();
+
           // Neue Aufgabe zur Tabelle der offenen Aufgaben hinzufügen
           var newTaskRow =
-            '<tr class="nicht_zu_spaet">' +
-            '<td style="background-color: lightgreen;">' +
+            '<tr class="task-row ' + statusClass + '">' +
+            "<td>" +
             '<input type="checkbox" onclick="getId_for_offen(' +
             response.task.id +
             ')" class="offene_tasks">' +
             "</td>" +
-            '<td style="background-color: lightgreen;">' +
+            "<td>" +
             response.task.titel +
             "</td>" +
-            '<td style="background-color: lightgreen;">' +
+            "<td>" +
             response.task.aufgabe +
             "</td>" +
-            '<td style="background-color: lightgreen;">' +
-            new Date(response.task.datum).toLocaleDateString() +
+            "<td>" +
+            dueDate +
             "</td>" +
-            '<td style="background-color: lightgreen;">' +
+            "<td>" +
             response.task.prioritaet +
             "</td>" +
-            '<td style="background-color: lightgreen;">' +
-            new Date(response.task.datum).toLocaleDateString() +
+            "<td>" +
+            dueDate +
             "</td>" +
             "</tr>";
 

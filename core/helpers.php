@@ -33,6 +33,28 @@ function post(string $key, $default = '')
 }
 
 /**
+ * Maps a task's semantic state to its row status class.
+ *
+ * This is the single server-side place that turns business state (is the task
+ * completed? is it past due?) into a presentation hook. The class names map to
+ * the colour tokens defined once in public/css/style.scss (.task-row--*), so the
+ * actual colours live in CSS, not here. The JS equivalent in
+ * public/js/taskStatus.js mirrors this mapping for client-rendered rows.
+ *
+ * @param bool $isCompleted Whether the task has been marked as done.
+ * @param bool $isPastDue    Whether the task's due date is in the past.
+ * @return string The status modifier class for the task <tr>.
+ */
+function taskStatusClass(bool $isCompleted, bool $isPastDue): string
+{
+    if ($isCompleted) {
+        return 'task-row--completed';
+    }
+
+    return $isPastDue ? 'task-row--overdue' : 'task-row--on-time';
+}
+
+/**
  * Stellt eine Verbindung zur Datenbank her und gibt die
  * Datenbankverbindung als PDO zurück.
  */
