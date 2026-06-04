@@ -64,20 +64,31 @@ class TackPadController
                 $titel = htmlspecialchars($_POST['titel']);
                 $aufgabe = htmlspecialchars($_POST['aufgabe']);
                 $status = 0; // Standardwert
-                $datum = htmlspecialchars($_POST['datum']);
+                // Date and (optional) time arrive as separate inputs and are
+                // merged into the single canonical stored shape here.
+                $datum = combineDateTime($_POST['datum'] ?? '', $_POST['zeit'] ?? '');
+                $datum = htmlspecialchars($datum);
                 $prioritaet = htmlspecialchars($_POST['priority']);
 
-                // Aufgabe erstellen
-                $notiz->createNotiz($titel, $aufgabe, $prioritaet, $status, $datum, $_SESSION['id']);
+                // last_change is stored raw (not encrypted) so the list view can
+                // read it directly with strtotime — same contract as updateDate().
+                $last_change = date('Y-m-d H:i:s');
 
-                // Erfolgreich hinzugefügt, Rückgabe der neuen Aufgabe als JSON
+                // Aufgabe erstellen (returns the new NoteId for the live insert)
+                $newId = $notiz->createNotiz($titel, $aufgabe, $prioritaet, $status, $datum, $_SESSION['id'], $last_change);
+
+                // Erfolgreich hinzugefügt, Rückgabe der neuen Aufgabe als JSON.
+                // Raw date strings are returned so the client formats them with
+                // the same rules as the server (formatTaskDate in taskStatus.js).
                 echo json_encode([
                     'success' => true,
                     'task' => [
+                        'id' => $newId,
                         'titel' => $titel,
                         'aufgabe' => $aufgabe,
                         'datum' => $datum,
                         'prioritaet' => $prioritaet,
+                        'last_change' => $last_change,
                     ]
                 ]);
             } catch (Exception $e) {
@@ -86,6 +97,36 @@ class TackPadController
         } else {
             echo json_encode(['error' => 'Invalid request method']);
         }
+    }
+
+    /* Aufgabe mit einem anderen Nutzer teilen */
+    public function share()
+    {
+        session_start();
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Not logged in']);
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'error' => 'Invalid request method']);
+            exit;
+        }
+
+        $id = (int) ($_POST['id'] ?? 0);
+        $email = (string) ($_POST['email'] ?? '');
+
+        $notiz = new Notiz();
+        $result = $notiz->shareNotiz($id, (int) $_SESSION['id'], $email);
+
+        if (!$result['success']) {
+            http_response_code(422);
+        }
+        echo json_encode($result);
     }
 
     /* Aufgabe löschen */
@@ -176,25 +217,50 @@ class TackPadController
     public function edit()
     {
         session_start();
+        header('Content-Type: application/json');
+
         // Check if the user is logged in
         if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-            header("HTTP/1.1 401 Unauthorized");
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Not logged in']);
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'error' => 'Invalid request method']);
             exit;
         }
 
         $notiz = new Notiz();
-        $id = e($_GET["id"]);
+        $id = (int) ($_GET["id"] ?? 0);
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $titel = e($_POST['titel']);
-            $aufgabe = e($_POST['aufgabe']);
-            $datum = e($_POST['datum']);
-            $prioritaet = e($_POST['priority']);
+        $titel = $_POST['titel'] ?? '';
+        $aufgabe = $_POST['aufgabe'] ?? '';
+        // Date and (optional) time arrive separately and merge into one value.
+        $datum = combineDateTime($_POST['datum'] ?? '', $_POST['zeit'] ?? '');
+        $prioritaet = $_POST['priority'] ?? '';
+        $last_change = date('Y-m-d H:i:s');
 
-            $notiz->edit($titel, $aufgabe, $datum, $prioritaet, $id);
+        $ok = $notiz->edit($titel, $aufgabe, $datum, $prioritaet, $id, (int) $_SESSION['id'], $last_change);
 
-            header('Location: home');
+        if (!$ok) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Task not found or not owned by user']);
+            exit;
         }
+
+        // Echo back the canonical stored values so the client updates the row in
+        // place (no reload), formatted identically to a server render.
+        echo json_encode([
+            'success' => true,
+            'task' => [
+                'id' => $id,
+                'datum' => $datum,
+                'prioritaet' => $prioritaet,
+                'last_change' => $last_change,
+            ],
+        ]);
     }
 
     /* Kalenderansicht (FullCalendar) */
@@ -232,10 +298,11 @@ class TackPadController
         $events = [];
         foreach ($tasks as $task) {
             $iv = base64_decode($task['iv']);
-            $title   = $notiz->decrypt($task['titel'], $encryption_key, $iv);
-            $note    = $notiz->decrypt($task['notiz'], $encryption_key, $iv);
-            $status  = $notiz->decrypt($task['status'], $encryption_key, $iv);
-            $rawDate = $notiz->decrypt($task['date_to_complete'], $encryption_key, $iv);
+            $title    = $notiz->decrypt($task['titel'], $encryption_key, $iv);
+            $note     = $notiz->decrypt($task['notiz'], $encryption_key, $iv);
+            $status   = $notiz->decrypt($task['status'], $encryption_key, $iv);
+            $priority = $notiz->decrypt($task['prioritaet'], $encryption_key, $iv);
+            $rawDate  = $notiz->decrypt($task['date_to_complete'], $encryption_key, $iv);
 
             [$start, $allDay] = $this->toCalendarStart($rawDate);
             $isCompleted = $status === '1';
@@ -249,6 +316,10 @@ class TackPadController
                 'extendedProps' => [
                     'note'      => $note,
                     'completed' => $isCompleted,
+                    // Raw stored due-date and priority so the detail modal can
+                    // format them with the same helpers as the task list.
+                    'rawDate'   => $rawDate,
+                    'priority'  => $priority,
                 ],
             ];
         }
@@ -593,8 +664,22 @@ class TackPadController
                 if ($stmt = mysqli_prepare($link, $sql)) {
                     mysqli_stmt_bind_param($stmt, "sss", $email_hash, $param_password, $salt);
                     if (mysqli_stmt_execute($stmt)) {
-                        // Redirect to login page
-                        header("location: login");
+                        // Auto-login: registration creates the account AND signs the
+                        // user in, so they land straight on the dashboard. A fresh
+                        // login is only needed again after an explicit logout.
+                        $new_user_id = mysqli_insert_id($link);
+                        mysqli_stmt_close($stmt);
+                        mysqli_close($link);
+
+                        if (session_status() === PHP_SESSION_NONE) {
+                            session_start();
+                        }
+                        $_SESSION["loggedin"] = true;
+                        $_SESSION["id"] = $new_user_id;
+                        $_SESSION["email"] = $email;
+                        $_SESSION["email_hash"] = $email_hash;
+
+                        header("location: home");
                         exit();
                     } else {
                         echo "Oops! Something went wrong. Please try again later.";

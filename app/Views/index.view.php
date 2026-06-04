@@ -9,6 +9,64 @@ function decrypt($data, $key, $iv)
     return $decrypted;
 }
 
+/*
+ * Decrypt + normalise every task once, then sort by priority (0 = most urgent
+ * first) and, within the same priority, by due date (earliest first). Sorting
+ * has to happen here, in PHP after decryption, because priority and date are
+ * stored encrypted and therefore cannot be ordered by the SQL query. The same
+ * ordering is mirrored client-side (insertTaskRowSorted in tackpad.js) so rows
+ * added after a create/edit land in the right place without a reload.
+ */
+$normalized_tasks = [];
+foreach ($alle_tasks as $task) {
+    $iv = base64_decode($task['iv']);
+    $normalized_tasks[] = [
+        'id'                  => $task['NoteId'],
+        'titel'               => decrypt($task['titel'], $encryption_key, $iv),
+        'notiz'               => decrypt($task['notiz'], $encryption_key, $iv),
+        'prioritaet'          => decrypt($task['prioritaet'], $encryption_key, $iv),
+        'status'              => decrypt($task['status'], $encryption_key, $iv),
+        'date_to_complete'    => decrypt($task['date_to_complete'], $encryption_key, $iv),
+        // date_when_completed is stored as a raw unix timestamp (see Notiz::istErledigt)
+        'date_when_completed' => $task['date_when_completed'] !== null
+            ? decrypt($task['date_when_completed'], $encryption_key, $iv)
+            : '',
+        'last_change'         => $task['last_change'],
+        // "shared" is plain metadata (a boolean flag), not encrypted content.
+        'shared'              => !empty($task['shared']),
+    ];
+}
+
+$sortByPriorityThenDate = function (array $a, array $b) {
+    $priorityComparison = (int) $a['prioritaet'] <=> (int) $b['prioritaet'];
+    if ($priorityComparison !== 0) {
+        return $priorityComparison; // lower number = more important, comes first
+    }
+    return strtotime($a['date_to_complete']) <=> strtotime($b['date_to_complete']);
+};
+
+$open_tasks = array_values(array_filter($normalized_tasks, fn($t) => $t['status'] === '0'));
+$completed_tasks = array_values(array_filter($normalized_tasks, fn($t) => $t['status'] === '1'));
+usort($open_tasks, $sortByPriorityThenDate);
+usort($completed_tasks, $sortByPriorityThenDate);
+
+$open_tasks_counter = count($open_tasks);
+$done_tasks_counter = count($completed_tasks);
+$has_open_tasks = $open_tasks_counter > 0;
+$has_completed_tasks = $done_tasks_counter > 0;
+
+// Robust display for the secondary date columns. Some legacy values are stored
+// as raw unix timestamps (completed/changed); others as datetime strings. This
+// keeps every column readable instead of falling back to 1970 or ciphertext.
+$displayDate = function ($value) {
+    if ($value === null || trim((string) $value) === '') {
+        return '&mdash;';
+    }
+    if (is_numeric($value)) {
+        return date('j M Y, H:i', (int) $value);
+    }
+    return strtotime($value) === false ? '&mdash;' : formatTaskDate($value);
+};
 ?>
 
 <!DOCTYPE html>
@@ -33,6 +91,7 @@ function decrypt($data, $key, $iv)
     <script defer src="public/js/createNote.js"></script>
     <script defer src="public/js/doneNote.js"></script>
     <script defer src="public/js/editNote.js"></script>
+    <script defer src="public/js/shareNote.js"></script>
     <script defer src="public/js/modal.js"></script>
     <script defer src="public/js/inputValidation.js"></script>
 </head>
@@ -50,7 +109,7 @@ function decrypt($data, $key, $iv)
     <span class='navi' onclick="openNav()">&#9776;</span>
 
     <main>
-        <?php if (count($alle_tasks) > 0): ?>
+        <?php if (count($normalized_tasks) > 0): ?>
             <div class='options'>
                 <button onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Add</button>
                 <button id='bearbeiten' onclick='openBearbeiten()' title="Edit your task"><i
@@ -61,41 +120,27 @@ function decrypt($data, $key, $iv)
                         class='fas fa-check'></i>&nbsp;Done</button>
                 <button id='undo' title="Undo your task if you haven't finished it yet" onclick='undone()'><i
                         class='fas fa-undo'></i>&nbsp;Undo</button>
-                <button id='freigeben' title="Release your task to someone else"><i
-                        class='fas fa-share'></i>&nbsp;Release</button>
+                <button id='freigeben' title="Share this task with another TackPad user" onclick='openShareModal()'><i
+                        class='fas fa-share'></i>&nbsp;Share</button>
                 <button id='deleteAllErledigteTasks' title="Delete all your finished tasks" onclick='realyDeleteNote()'><i
                         class='fas fa-trash-alt'></i> Delete all</button>
                 <button id='deleteAllOffeneTasks' title="Delete all your open tasks" onclick='realyDeleteNote()'><i
                         class='fas fa-trash-alt'></i> Delete all</button>
             </div>
 
-            <?php
-            $has_open_tasks = false;
-            $has_completed_tasks = false;
-            $open_tasks_counter = 0;
-            $done_tasks_counter = 0;
-
-            // Überprüfung, ob es offene und/oder abgeschlossene Aufgaben gibt
-            foreach ($alle_tasks as $task) {
-                $decrypted_status = decrypt($task['status'], $encryption_key, base64_decode($task['iv']));
-                if ($decrypted_status === '0') {
-                    $has_open_tasks = true;
-                    $open_tasks_counter++;
-                } elseif ($decrypted_status === '1') {
-                    $has_completed_tasks = true;
-                    $done_tasks_counter++;
-                }
-            }
-            ?>
+            <!-- Top navigation tabs: switch between the two task lists without
+                 scrolling. The counts are kept live by refreshTaskCounts(). -->
+            <nav class="task-tabs" role="tablist">
+                <button type="button" class="task-tab active" data-tab="open" onclick="showTaskTab('open')">
+                    Open Tasks (<span id="open-count"><?= $open_tasks_counter ?></span>)
+                </button>
+                <button type="button" class="task-tab" data-tab="completed" onclick="showTaskTab('completed')">
+                    Completed Tasks (<span id="done-count"><?= $done_tasks_counter ?></span>)
+                </button>
+            </nav>
 
             <!-- Container für offene Aufgaben -->
-            <?php if ($has_open_tasks): ?>
-                <?php
-                if ($open_tasks_counter > 1) {
-                    echo "<h1>Open Tasks ({$open_tasks_counter})</h1>";
-                } elseif ($open_tasks_counter === 1) {
-                    echo "<h1>Open Task ({$open_tasks_counter})</h1>";
-                } ?>
+            <section class="task-panel" id="panel-open">
                 <table id="open-tasks-container">
                     <tr>
                         <th><input id='checkAllOffeneTasks' type='checkbox' onclick='checkAllOffeneTasks(this)'
@@ -106,50 +151,36 @@ function decrypt($data, $key, $iv)
                         <th>Priority</th>
                         <th>Changed</th>
                     </tr>
-                    <?php foreach ($alle_tasks as $task):
-                        $decrypted_status = decrypt($task['status'], $encryption_key, base64_decode($task['iv']));
-                        if ($decrypted_status === '0'):
-                            $iv = base64_decode($task['iv']);
-                            $decrypted_titel = decrypt($task['titel'], $encryption_key, $iv);
-                            $decrypted_notiz = decrypt($task['notiz'], $encryption_key, $iv);
-                            $decrypted_prioritaet = decrypt($task['prioritaet'], $encryption_key, $iv);
-                            $decrypted_date_to_complete = decrypt($task['date_to_complete'], $encryption_key, $iv);
-                            $is_past_due = strtotime($decrypted_date_to_complete) < time();
-                            $status_class = taskStatusClass(false, $is_past_due);
-                            ?>
-                            <tr class="task-row <?= $status_class ?>" data-id="<?= htmlspecialchars($task['NoteId']); ?>"
-                                data-titel="<?= htmlspecialchars($decrypted_titel); ?>"
-                                data-aufgabe="<?= htmlspecialchars($decrypted_notiz); ?>"
-                                data-datum="<?= htmlspecialchars($decrypted_date_to_complete); ?>"
-                                data-priority="<?= htmlspecialchars($decrypted_prioritaet); ?>">
-                                <td>
-                                    <input type='checkbox' data-id="<?= htmlspecialchars($task['NoteId']); ?>"
-                                        onclick="getId_for_offen()" class='offene_tasks'>
-                                </td>
-                                <td><?= htmlspecialchars($decrypted_titel); ?></td>
-                                <td><?= htmlspecialchars($decrypted_notiz); ?></td>
-                                <td>
-                                    <?= date('dS M Y', strtotime($decrypted_date_to_complete)); ?>
-                                </td>
-                                <td><?= htmlspecialchars($decrypted_prioritaet); ?>
-                                </td>
-                                <td>
-                                    <?= date('dS M Y', strtotime($task['last_change'])); ?>
-                                </td>
-                            </tr>
-                        <?php endif; endforeach; ?>
+                    <?php foreach ($open_tasks as $task):
+                        $status_class = taskStatusClass(false, isTaskPastDue($task['date_to_complete']));
+                        ?>
+                        <tr class="task-row <?= $status_class ?><?= $task['shared'] ? ' task-row--shared' : '' ?>"
+                            data-id="<?= htmlspecialchars($task['id']); ?>"
+                            data-titel="<?= htmlspecialchars($task['titel']); ?>"
+                            data-aufgabe="<?= htmlspecialchars($task['notiz']); ?>"
+                            data-datum="<?= htmlspecialchars($task['date_to_complete']); ?>"
+                            data-priority="<?= htmlspecialchars($task['prioritaet']); ?>"
+                            data-shared="<?= $task['shared'] ? '1' : '0' ?>">
+                            <td>
+                                <input type='checkbox' data-id="<?= htmlspecialchars($task['id']); ?>"
+                                    onclick="getId_for_offen()" class='offene_tasks'>
+                            </td>
+                            <td class="cell-title">
+                                <span class="cell-title-text"><?= htmlspecialchars($task['titel']); ?></span>
+                                <i class="fas fa-share-alt task-shared-badge" title="Shared with another user"
+                                    <?= $task['shared'] ? '' : 'hidden' ?>></i>
+                            </td>
+                            <td class="cell-task"><?= htmlspecialchars($task['notiz']); ?></td>
+                            <td class="cell-date"><?= formatTaskDate($task['date_to_complete']); ?></td>
+                            <td class="cell-priority"><?= htmlspecialchars(priorityLabel($task['prioritaet'])); ?></td>
+                            <td><?= $displayDate($task['last_change']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                 </table>
-            <?php endif; ?>
+                <p class="task-empty" id="open-empty" <?= $has_open_tasks ? 'hidden' : '' ?>>No open tasks &mdash; nice work!</p>
+            </section>
 
-            <?php if ($has_completed_tasks): ?>
-
-                <?php
-                if ($done_tasks_counter > 1) {
-                    echo "<h1>Completed Tasks ({$done_tasks_counter})</h1>";
-                } elseif ($done_tasks_counter === 1) {
-                    echo "<h1>Completed Task ({$done_tasks_counter})</h1>";
-                } ?>
-
+            <section class="task-panel" id="panel-completed" hidden>
                 <table id="completed-tasks-container">
                     <tr>
                         <th><input id='checkAllErledigteTasks' type='checkbox' onclick='checkAllErledigteTasks(this)'
@@ -161,42 +192,33 @@ function decrypt($data, $key, $iv)
                         <th>Completed on</th>
                         <th>Changed</th>
                     </tr>
-                    <?php foreach ($alle_tasks as $task):
-                        $decrypted_status = decrypt($task['status'], $encryption_key, base64_decode($task['iv']));
-                        if ($decrypted_status === '1'):
-                            $iv = base64_decode($task['iv']);
-                            $decrypted_titel = decrypt($task['titel'], $encryption_key, $iv);
-                            $decrypted_notiz = decrypt($task['notiz'], $encryption_key, $iv);
-                            $decrypted_prioritaet = decrypt($task['prioritaet'], $encryption_key, $iv);
-                            $decrypted_date_to_complete = decrypt($task['date_to_complete'], $encryption_key, $iv);
-                            $decrypted_date_when_completed = decrypt($task['date_when_completed'], $encryption_key, $iv);
-                            ?>
-                            <tr class="task-row <?= taskStatusClass(true, false) ?> erledigt"
-                                data-id="<?= htmlspecialchars($task['NoteId']); ?>"
-                                data-titel="<?= htmlspecialchars($decrypted_titel); ?>"
-                                data-aufgabe="<?= htmlspecialchars($decrypted_notiz); ?>"
-                                data-datum="<?= htmlspecialchars($decrypted_date_to_complete); ?>"
-                                data-priority="<?= htmlspecialchars($decrypted_prioritaet); ?>">
-                                <td>
-                                    <input type='checkbox' data-id="<?= htmlspecialchars($task['NoteId']); ?>"
-                                        onclick="getId_for_erledigt()" class='erledigte_tasks'>
-                                </td>
-                                <td><del><?= htmlspecialchars($decrypted_titel); ?></del></td>
-                                <td><del><?= htmlspecialchars($decrypted_notiz); ?></del></td>
-                                <td>
-                                    <del><?= date('dS M Y', strtotime($decrypted_date_to_complete)); ?></del>
-                                </td>
-                                <td><del><?= htmlspecialchars($decrypted_prioritaet); ?></del></td>
-                                <td>
-                                    <del><?= date('dS M Y', strtotime($decrypted_date_when_completed)); ?></del>
-                                </td>
-                                <td>
-                                    <del><?= date('dS M Y', strtotime($task['last_change'])); ?></del>
-                                </td>
-                            </tr>
-                        <?php endif; endforeach; ?>
+                    <?php foreach ($completed_tasks as $task): ?>
+                        <tr class="task-row <?= taskStatusClass(true, false) ?> erledigt"
+                            data-id="<?= htmlspecialchars($task['id']); ?>"
+                            data-titel="<?= htmlspecialchars($task['titel']); ?>"
+                            data-aufgabe="<?= htmlspecialchars($task['notiz']); ?>"
+                            data-datum="<?= htmlspecialchars($task['date_to_complete']); ?>"
+                            data-priority="<?= htmlspecialchars($task['prioritaet']); ?>"
+                            data-shared="<?= $task['shared'] ? '1' : '0' ?>">
+                            <td>
+                                <input type='checkbox' data-id="<?= htmlspecialchars($task['id']); ?>"
+                                    onclick="getId_for_erledigt()" class='erledigte_tasks'>
+                            </td>
+                            <td class="cell-title">
+                                <span class="cell-title-text"><?= htmlspecialchars($task['titel']); ?></span>
+                                <i class="fas fa-share-alt task-shared-badge" title="Shared with another user"
+                                    <?= $task['shared'] ? '' : 'hidden' ?>></i>
+                            </td>
+                            <td class="cell-task"><?= htmlspecialchars($task['notiz']); ?></td>
+                            <td class="cell-date"><?= formatTaskDate($task['date_to_complete']); ?></td>
+                            <td class="cell-priority"><?= htmlspecialchars(priorityLabel($task['prioritaet'])); ?></td>
+                            <td><?= $displayDate($task['date_when_completed']); ?></td>
+                            <td><?= $displayDate($task['last_change']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                 </table>
-            <?php endif; ?>
+                <p class="task-empty" id="completed-empty" <?= $has_completed_tasks ? 'hidden' : '' ?>>No completed tasks yet.</p>
+            </section>
 
         <?php else: ?>
             <div class="noData">
@@ -211,6 +233,7 @@ function decrypt($data, $key, $iv)
     include("editNote.view.php");
     include("addNote.view.php");
     include("reallyDelete.view.php");
+    include("shareNote.view.php");
     ?>
 </body>
 

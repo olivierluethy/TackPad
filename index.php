@@ -18,6 +18,9 @@ $routes = [
 	/* Informationen hinzufügen */
 	'create' => 'TackPadController@create',
 
+	/* Aufgabe teilen */
+	'share' => 'TackPadController@share',
+
 	/* Informationen löschen */
 	'delete' => 'TackPadController@delete',
 	'deleteAllDone' => 'TackPadController@deleteAllDone',

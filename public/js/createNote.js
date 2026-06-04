@@ -1,3 +1,6 @@
+// Create a task without a full page reload. The new row is built from the same
+// data the server stored, placed at the correct sorted position, and the tab
+// counts are refreshed — so the list looks exactly as it would after a reload.
 $(document).ready(function () {
   $("#addForm").submit(function (event) {
     event.preventDefault();
@@ -6,60 +9,53 @@ $(document).ready(function () {
     var task = $("#aufgabe_add").val();
     var priority = $("#priority_add").val();
     var date = $("#datum_add").val();
+    var time = $("#zeit_add").val();
 
     $.ajax({
       type: "POST",
       url: "create",
+      // Date and time are sent separately; the server merges them into the
+      // canonical stored shape and echoes it back as response.task.datum.
       data: {
         titel: title,
         aufgabe: task,
         priority: priority,
         datum: date,
+        zeit: time,
       },
       success: function (response) {
         response = JSON.parse(response);
 
         if (response.error) {
           alert("Error: " + response.error);
-        } else {
-          // Derive the row's status the same way the server does: a brand new
-          // task is open (not completed) and may already be past due. The colour
-          // itself is owned by CSS via the status class — no inline styles here.
-          var isPastDue = new Date(response.task.datum) < new Date();
-          var statusClass = taskStatusClass(false, isPastDue);
-
-          var dueDate = new Date(response.task.datum).toLocaleDateString();
-
-          // Neue Aufgabe zur Tabelle der offenen Aufgaben hinzufügen
-          var newTaskRow =
-            '<tr class="task-row ' + statusClass + '" data-id="' + response.task.id + '">' +
-            "<td>" +
-            '<input type="checkbox" data-id="' +
-            response.task.id +
-            '" onclick="getId_for_offen()" class="offene_tasks">' +
-            "</td>" +
-            "<td>" +
-            response.task.titel +
-            "</td>" +
-            "<td>" +
-            response.task.aufgabe +
-            "</td>" +
-            "<td>" +
-            dueDate +
-            "</td>" +
-            "<td>" +
-            response.task.prioritaet +
-            "</td>" +
-            "<td>" +
-            dueDate +
-            "</td>" +
-            "</tr>";
-
-          $("#open-tasks-container").append(newTaskRow);
-
-          $("#addForm")[0].reset();
-          $("#addModal").hide();
+          return;
         }
+
+        var container = document.getElementById("open-tasks-container");
+        if (!container) {
+          // First-ever task: there was no table to insert into (empty state),
+          // so fall back to a reload to render the full task UI once.
+          location.reload();
+          return;
+        }
+
+        var row = buildOpenTaskRow({
+          id: response.task.id,
+          titel: title,
+          aufgabe: task,
+          // Canonical combined date/time from the server (raw, unformatted).
+          datum: response.task.datum,
+          prioritaet: priority,
+          last_change: response.task.last_change,
+          shared: false,
+        });
+
+        insertTaskRowSorted(container, row);
+        refreshTaskCounts();
+        showTaskTab("open");
+
+        $("#addForm")[0].reset();
+        $("#addModal").hide();
       },
       error: function (xhr, status, error) {
         console.error(xhr.responseText);

@@ -16,8 +16,12 @@
                         <td><input type="text" id="aufgabe_add" name="aufgabe"></td>
                     </tr>
                     <tr>
-                        <td><label for="lname">Date:</label></td>
+                        <td><label for="datum_add">Date:</label></td>
                         <td><input type="date" id="datum_add" name="datum"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="zeit_add">Time:</label></td>
+                        <td><input type="time" id="zeit_add" name="zeit"></td>
                     </tr>
                     <tr>
                         <td><label for="priority_add">Priority:</label></td>

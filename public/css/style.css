@@ -467,4 +467,121 @@ body .noData button:hover {
   body .modal .modal-content .modal-body {
     padding: 0px;
   }
-}/*# sourceMappingURL=style.css.map */
+}
+
+/* =========================================================================
+   Top navigation tabs (Open / Completed task lists)
+   ========================================================================= */
+.task-tabs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem auto 1.5rem;
+}
+
+.task-tab {
+  background-color: #1c1c1c;
+  color: #fff;
+  border: 2px solid #444;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.task-tab:hover {
+  background-color: #333;
+}
+
+.task-tab.active {
+  background-color: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+.task-panel[hidden] {
+  display: none;
+}
+
+/* Empty-state message shown when a panel has no tasks. */
+.task-empty {
+  color: #ccc;
+  text-align: center;
+  margin: 1rem 0 3rem;
+}
+
+.task-empty[hidden] {
+  display: none;
+}
+
+/* =========================================================================
+   Completed rows + "shared" indicator
+   ========================================================================= */
+/* Completed tasks are struck through via CSS (no per-cell <del> markup), so
+   server-rendered and dynamically-built rows look identical. */
+.task-row.erledigt td {
+  text-decoration: line-through;
+}
+
+/* Small badge next to a shared task's title; revealed when a task is shared. */
+.task-shared-badge {
+  color: #06145b;
+  margin-left: 6px;
+}
+
+.task-shared-badge[hidden] {
+  display: none;
+}
+
+/* Subtle accent on a shared task's row so it reads as shared at a glance. */
+.task-row--shared td:first-child {
+  border-left: 4px solid #06145b;
+}
+
+/* =========================================================================
+   Share modal helper text / feedback
+   ========================================================================= */
+.share-hint {
+  color: #000;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.share-feedback {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #06145b;
+}
+
+.share-feedback.is-error {
+  color: #b00020;
+}
+
+.share-feedback[hidden] {
+  display: none;
+}
+
+/* =========================================================================
+   Calendar event detail modal
+   ========================================================================= */
+.event-details {
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+.event-details dt {
+  font-weight: bold;
+  color: #06145b;
+  margin-top: 10px;
+}
+
+.event-details dd {
+  margin: 0 0 6px 0;
+  color: #000;
+  word-break: break-word;
+}
+/*# sourceMappingURL=style.css.map */

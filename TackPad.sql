@@ -22,5 +22,8 @@ CREATE TABLE notes (
     last_change VARCHAR(256),
     fk_usersId INT NOT NULL,
     iv VARCHAR(256) NOT NULL,
+    -- Plain boolean flag (not encrypted content): marks a task the owner has
+    -- shared with another user, used only to show a "shared" indicator.
+    shared TINYINT(1) NOT NULL DEFAULT 0,
     FOREIGN KEY (fk_usersId) REFERENCES users(id)
 );

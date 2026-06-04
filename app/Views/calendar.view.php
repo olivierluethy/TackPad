@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- FullCalendar v6 (single global bundle: dayGrid + timeGrid + interaction) -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <script defer src="public/js/taskStatus.js"></script>
     <script defer src="public/js/tackpad.js"></script>
     <script defer src="public/js/calendar.js"></script>
 </head>
@@ -50,6 +51,34 @@
 
         <div id="calendar"></div>
     </main>
+
+    <!-- Task detail modal: shown when a calendar event is clicked. Populated by
+         showDetails() in calendar.js — replaces the old alert() popup. -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeEventModal()">&times;</span>
+                <h2 id="event_title">Task</h2>
+            </div>
+            <div class="modal-body">
+                <dl class="event-details">
+                    <dt>Date &amp; time</dt>
+                    <dd id="event_when">&mdash;</dd>
+                    <dt>Description</dt>
+                    <dd id="event_note">&mdash;</dd>
+                    <dt>Priority</dt>
+                    <dd id="event_priority">&mdash;</dd>
+                    <dt>Status</dt>
+                    <dd id="event_status">&mdash;</dd>
+                </dl>
+            </div>
+            <div class="modal-footer">
+                <div class="select-button">
+                    <button class="verwerfen" type="button" onclick="closeEventModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

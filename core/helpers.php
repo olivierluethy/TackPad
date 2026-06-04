@@ -55,6 +55,128 @@ function taskStatusClass(bool $isCompleted, bool $isPastDue): string
 }
 
 /**
+ * Whether a stored due-date carries a wall-clock time.
+ *
+ * Due dates are stored either date-only ("YYYY-MM-DD", 10 chars) or as a
+ * datetime ("YYYY-MM-DD HH:MM[:SS]"). The length is the single discriminator
+ * used by every formatter/overdue check on both server and client (the JS twin
+ * lives in public/js/taskStatus.js — keep them in lock-step).
+ *
+ * @param string $raw The stored due-date.
+ * @return bool True when a time component is present.
+ */
+function taskHasTime(string $raw): bool
+{
+    return strlen(trim($raw)) > 10;
+}
+
+/**
+ * Decides whether a task is past due, treating date-only and timed deadlines
+ * correctly so a task due *today* never flips to overdue prematurely:
+ *   - date-only ("YYYY-MM-DD"): due at the very end of that day (23:59:59), so
+ *     it stays "on time" all day and only goes overdue tomorrow.
+ *   - timed ("YYYY-MM-DD HH:MM"): due at exactly that instant, so a deadline
+ *     later today is still on time until the clock passes it.
+ *
+ * Mirrored by isTaskPastDue() in public/js/taskStatus.js for client-rendered
+ * rows; both must agree or a row's colour would change on reload.
+ *
+ * @param string $raw The stored due-date.
+ * @return bool True when the deadline has passed.
+ */
+function isTaskPastDue(string $raw): bool
+{
+    $raw = trim($raw);
+    if ($raw === '') {
+        return false;
+    }
+
+    $timestamp = strtotime($raw);
+    if ($timestamp === false) {
+        return false;
+    }
+
+    if (!taskHasTime($raw)) {
+        // Date-only deadline: only overdue once the whole day has elapsed.
+        $timestamp = strtotime(date('Y-m-d', $timestamp) . ' 23:59:59');
+    }
+
+    return $timestamp < time();
+}
+
+/**
+ * Formats a stored due-date for display in one consistent style used across the
+ * whole UI: "j M Y" for date-only ("4 Jun 2026") and "j M Y, H:i" when a time
+ * is present ("4 Jun 2026, 14:30"). The JS twin formatTaskDate() in
+ * public/js/taskStatus.js produces byte-identical output so server-rendered and
+ * dynamically-inserted rows look the same without a reload.
+ *
+ * @param string $raw The stored due-date (or any strtotime-parsable string).
+ * @return string The formatted date, or '' when the input is empty/invalid.
+ */
+function formatTaskDate(string $raw): string
+{
+    $raw = trim($raw);
+    if ($raw === '') {
+        return '';
+    }
+
+    $timestamp = strtotime($raw);
+    if ($timestamp === false) {
+        return $raw;
+    }
+
+    return taskHasTime($raw)
+        ? date('j M Y, H:i', $timestamp)
+        : date('j M Y', $timestamp);
+}
+
+/**
+ * Combines a date input ("YYYY-MM-DD") and an optional time input ("HH:MM")
+ * into the canonical stored due-date. With no time it returns the bare date,
+ * which keeps the task an all-day deadline; with a time it returns
+ * "YYYY-MM-DD HH:MM". This is the single place add/edit funnel through so the
+ * stored shape stays consistent with taskHasTime()/formatTaskDate().
+ *
+ * @param string $date Date portion ("YYYY-MM-DD").
+ * @param string $time Optional time portion ("HH:MM").
+ * @return string The combined due-date, or '' when no date was given.
+ */
+function combineDateTime(string $date, string $time): string
+{
+    $date = trim($date);
+    $time = trim($time);
+
+    if ($date === '') {
+        return '';
+    }
+
+    return $time === '' ? $date : $date . ' ' . substr($time, 0, 5);
+}
+
+/**
+ * Human-readable label for a stored priority value ("0".."4"). Single source of
+ * truth shared by the list, the calendar detail modal (via its JS twin) and any
+ * other surface, so the wording never drifts between views.
+ *
+ * @param string|int $priority The stored priority value.
+ * @return string The label, or the raw value if it is out of range.
+ */
+function priorityLabel($priority): string
+{
+    $labels = [
+        '0' => 'Incredibly important',
+        '1' => 'Very important',
+        '2' => 'Important',
+        '3' => 'Moderately important',
+        '4' => 'Not important',
+    ];
+
+    $key = (string) $priority;
+    return $labels[$key] ?? $key;
+}
+
+/**
  * Stellt eine Verbindung zur Datenbank her und gibt die
  * Datenbankverbindung als PDO zurück.
  */

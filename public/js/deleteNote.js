@@ -55,6 +55,10 @@ function deleteNote() {
         if (typeof updateToolbar === "function") {
           updateToolbar();
         }
+        // Keep the tab counts and empty-state messages in sync after removal.
+        if (typeof refreshTaskCounts === "function") {
+          refreshTaskCounts();
+        }
         closeModal(deleteModal);
       } else {
         alert("Error: " + response.error);

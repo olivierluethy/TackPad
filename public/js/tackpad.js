@@ -114,3 +114,210 @@ function getId_for_erledigt() {
 // Derive the toolbar from the actual checkbox state on load too, so that even
 // if the browser restores checkboxes after navigation the UI stays consistent.
 document.addEventListener("DOMContentLoaded", updateToolbar);
+
+/* =========================================================================
+   Top navigation tabs (Open / Completed)
+   -------------------------------------------------------------------------
+   Two panels (#panel-open, #panel-completed) are always present in the DOM;
+   the tabs just toggle which one is visible, so the user can switch lists
+   without scrolling. The visible tab is the single source of truth, mirrored
+   onto the .active class and the [hidden] attribute of each panel.
+   ========================================================================= */
+function showTaskTab(which) {
+  var tabs = document.getElementsByClassName("task-tab");
+  for (var i = 0; i < tabs.length; i++) {
+    var isActive = tabs[i].getAttribute("data-tab") === which;
+    tabs[i].classList.toggle("active", isActive);
+  }
+  togglePanel("panel-open", which === "open");
+  togglePanel("panel-completed", which === "completed");
+}
+
+function togglePanel(id, visible) {
+  var panel = document.getElementById(id);
+  if (panel) {
+    panel.hidden = !visible;
+  }
+}
+
+// On load, open the tab that actually has tasks (prefer Open). This keeps the
+// first view useful even when one of the two lists is empty.
+document.addEventListener("DOMContentLoaded", function () {
+  if (!document.getElementById("panel-open")) {
+    return; // not the task list page
+  }
+  var openCount = countTaskRows("open-tasks-container");
+  showTaskTab(
+    openCount === 0 && countTaskRows("completed-tasks-container") > 0
+      ? "completed"
+      : "open"
+  );
+  refreshTaskCounts();
+});
+
+/* =========================================================================
+   Live counts + sorted insertion — keep the page accurate after AJAX changes
+   (create / edit / delete) without a full reload.
+   ========================================================================= */
+
+// Number of real task rows in a table (excludes the header row).
+function countTaskRows(tableId) {
+  var table = document.getElementById(tableId);
+  return table ? table.querySelectorAll("tr.task-row").length : 0;
+}
+
+// Recompute the tab counts and toggle each panel's empty-state message. Called
+// after every AJAX mutation so the header always reflects reality.
+function refreshTaskCounts() {
+  var open = countTaskRows("open-tasks-container");
+  var done = countTaskRows("completed-tasks-container");
+
+  setText("open-count", open);
+  setText("done-count", done);
+  toggleHidden("open-empty", open > 0);
+  toggleHidden("completed-empty", done > 0);
+}
+
+function setText(id, value) {
+  var el = document.getElementById(id);
+  if (el) {
+    el.textContent = value;
+  }
+}
+
+function toggleHidden(id, hide) {
+  var el = document.getElementById(id);
+  if (el) {
+    el.hidden = hide;
+  }
+}
+
+// Sort key comparison for two task rows, read from their data attributes.
+// Mirrors the PHP ordering in index.view.php: priority ascending (0 = most
+// urgent), then due date ascending (earliest first). parseTaskDate is defined
+// in taskStatus.js, which loads before this file on the task list page.
+function compareTaskRows(a, b) {
+  var pa = parseInt(a.getAttribute("data-priority"), 10) || 0;
+  var pb = parseInt(b.getAttribute("data-priority"), 10) || 0;
+  if (pa !== pb) {
+    return pa - pb;
+  }
+  var da = parseTaskDate(a.getAttribute("data-datum"));
+  var db = parseTaskDate(b.getAttribute("data-datum"));
+  return (da ? da.getTime() : 0) - (db ? db.getTime() : 0);
+}
+
+// Insert a task row into its table at the position the server-side sort would
+// have placed it, so a created/edited task appears in the correct order without
+// reloading. Falls back to appending when it sorts after everything else.
+function insertTaskRowSorted(table, newRow) {
+  var rows = table.querySelectorAll("tr.task-row");
+  for (var i = 0; i < rows.length; i++) {
+    if (compareTaskRows(newRow, rows[i]) < 0) {
+      rows[i].parentNode.insertBefore(newRow, rows[i]);
+      return;
+    }
+  }
+  table.appendChild(newRow);
+}
+
+/* =========================================================================
+   Row construction / update — one place that turns task data into a row, used
+   by the create (build) and edit (update-in-place) flows. Values are written
+   with textContent / setAttribute (never innerHTML) so user-supplied text can
+   never inject markup. The row's status colour is derived from the same
+   helpers as the server (taskStatusClass + isTaskPastDue in taskStatus.js).
+   ========================================================================= */
+
+// Sets a row's status class from its semantic state, preserving any non-status
+// classes already on the row (task-row, erledigt, task-row--shared).
+function applyRowStatus(row, isCompleted, dueRaw) {
+  ["task-row--on-time", "task-row--overdue", "task-row--completed"].forEach(
+    function (c) {
+      row.classList.remove(c);
+    }
+  );
+  row.classList.add(taskStatusClass(isCompleted, isTaskPastDue(dueRaw)));
+}
+
+// Build a brand-new OPEN task row (6 columns) matching the server layout.
+function buildOpenTaskRow(data) {
+  var row = document.createElement("tr");
+  row.className = "task-row";
+  applyRowStatus(row, false, data.datum);
+  if (data.shared) {
+    row.classList.add("task-row--shared");
+  }
+  row.setAttribute("data-id", data.id);
+  row.setAttribute("data-titel", data.titel);
+  row.setAttribute("data-aufgabe", data.aufgabe);
+  row.setAttribute("data-datum", data.datum || "");
+  row.setAttribute("data-priority", data.prioritaet);
+  row.setAttribute("data-shared", data.shared ? "1" : "0");
+
+  // Checkbox cell
+  var tdCheck = document.createElement("td");
+  var box = document.createElement("input");
+  box.type = "checkbox";
+  box.className = "offene_tasks";
+  box.setAttribute("data-id", data.id);
+  box.setAttribute("onclick", "getId_for_offen()");
+  tdCheck.appendChild(box);
+  row.appendChild(tdCheck);
+
+  // Title cell (text + hidden share badge)
+  var tdTitle = document.createElement("td");
+  tdTitle.className = "cell-title";
+  var titleText = document.createElement("span");
+  titleText.className = "cell-title-text";
+  titleText.textContent = data.titel;
+  tdTitle.appendChild(titleText);
+  var badge = document.createElement("i");
+  badge.className = "fas fa-share-alt task-shared-badge";
+  badge.title = "Shared with another user";
+  badge.hidden = !data.shared;
+  tdTitle.appendChild(document.createTextNode(" "));
+  tdTitle.appendChild(badge);
+  row.appendChild(tdTitle);
+
+  row.appendChild(makeCell("cell-task", data.aufgabe));
+  row.appendChild(makeCell("cell-date", formatTaskDate(data.datum)));
+  row.appendChild(makeCell("cell-priority", priorityLabel(data.prioritaet)));
+  row.appendChild(makeCell("", formatTaskDate(data.last_change)));
+
+  return row;
+}
+
+function makeCell(className, text) {
+  var td = document.createElement("td");
+  if (className) {
+    td.className = className;
+  }
+  td.textContent = text;
+  return td;
+}
+
+// Update an existing row in place after an edit. Works for both open and
+// completed rows because it only touches the columns common to both (title,
+// task, date, priority) and the data attributes. The row's completed state is
+// read from its own class so the colour stays correct.
+function updateTaskRowCells(row, data) {
+  row.setAttribute("data-titel", data.titel);
+  row.setAttribute("data-aufgabe", data.aufgabe);
+  row.setAttribute("data-datum", data.datum || "");
+  row.setAttribute("data-priority", data.prioritaet);
+
+  setCellText(row, ".cell-title-text", data.titel);
+  setCellText(row, ".cell-task", data.aufgabe);
+  setCellText(row, ".cell-date", formatTaskDate(data.datum));
+  setCellText(row, ".cell-priority", priorityLabel(data.prioritaet));
+
+  applyRowStatus(row, row.classList.contains("erledigt"), data.datum);
+}
+
+function setCellText(row, selector, text) {
+  var el = row.querySelector(selector);
+  if (el) {
+    el.textContent = text;
+  }
+}

@@ -58,21 +58,53 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  // Lightweight detail view that keeps the user on the page.
+  // Detail view in a modal (replaces the old alert): shows the task's title,
+  // date/time, description, priority and status, formatted consistently with
+  // the task list via the shared helpers in taskStatus.js.
   function showDetails(info) {
     var props = info.event.extendedProps || {};
-    var when = info.event.start
-      ? info.event.start.toLocaleString("en-GB")
-      : "no date";
-    var status = props.completed ? "Completed" : "Open";
-    alert(
-      info.event.title +
-        "\n" +
-        (props.note ? props.note + "\n" : "") +
-        "Due: " +
-        when +
-        "\nStatus: " +
-        status
+
+    setText("event_title", info.event.title || "Task");
+    // Prefer the raw stored due-date so formatting matches the list exactly;
+    // fall back to the event's start instant for any legacy event.
+    setText(
+      "event_when",
+      props.rawDate
+        ? formatTaskDate(props.rawDate)
+        : info.event.start
+        ? info.event.start.toLocaleString("en-GB")
+        : "No date set"
     );
+    setText("event_note", props.note ? props.note : "—");
+    setText(
+      "event_priority",
+      props.priority != null ? priorityLabel(props.priority) : "—"
+    );
+    setText("event_status", props.completed ? "Completed" : "Open");
+
+    document.getElementById("eventModal").style.display = "block";
+  }
+
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.textContent = value;
+    }
+  }
+});
+
+// Close the calendar detail modal. Global so the inline onclick handlers in the
+// modal markup can reach it.
+function closeEventModal() {
+  var modal = document.getElementById("eventModal");
+  if (modal) {
+    modal.style.display = "none";
+  }
+}
+
+// Close the modal when clicking on the dark backdrop outside the dialog.
+window.addEventListener("click", function (event) {
+  if (event.target && event.target.id === "eventModal") {
+    closeEventModal();
   }
 });

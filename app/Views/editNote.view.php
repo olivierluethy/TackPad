@@ -20,6 +20,10 @@
                         <td><input type="date" id="datum_edit" name="datum"></td>
                     </tr>
                     <tr>
+                        <td><label for="zeit_edit">Time:</label></td>
+                        <td><input type="time" id="zeit_edit" name="zeit"></td>
+                    </tr>
+                    <tr>
                         <td><label for="priority_edit">Priority:</label></td>
                         <td>
                             <select name="priority" id="priority_edit">
