@@ -7,6 +7,12 @@ $routes = [
 	'' => 'TackPadController@index',
 	'home' => 'TackPadController@index',
 
+	/* Kalender */
+	'calendar' => 'TackPadController@calendar',
+	'calendarevents' => 'TackPadController@calendarEvents',
+	'updatetaskdate' => 'TackPadController@updateTaskDate',
+	'calendar.ics' => 'TackPadController@exportIcs',
+
 	'edit' => 'TackPadController@edit',
 
 	/* Informationen hinzufügen */

@@ -53,6 +53,39 @@ I am excited about the future of this project and look forward to seeing how it 
 
 Future Mission: This application should have end-to-end encryption so that no bulk text gets into the database, only the hash.
 
+## Run with Docker (recommended for testing)
+
+The whole stack (PHP/Apache web server + MySQL, with the schema auto-imported)
+runs with a single command — validated on Ubuntu:
+
+```bash
+docker compose up --build
+# then open http://localhost:8080  (register a user, then log in)
+```
+
+The web server waits for the database to become healthy before starting, and the
+`.env` file is generated automatically from `docker-compose.yml`, so no manual
+setup is required. If port 8080 is taken, pick another:
+
+```bash
+WEB_PORT=8088 docker compose up --build
+```
+
+Tear down with `docker compose down` (add `-v` to also drop the database volume).
+
+## Calendar view
+
+A **Calendar** entry in the sidebar opens an interactive [FullCalendar](https://fullcalendar.io/)
+view of your task deadlines:
+
+- Deadlines appear on their date; switch to **Week**/**Day** view to place a task
+  at a specific time (e.g. "tomorrow at 18:00").
+- **Drag and drop** an event to reschedule it — the change is persisted to the
+  database immediately, so the task list and calendar stay in sync.
+- Dates use ISO 8601 on the wire and a clear regional format (en-GB) on screen.
+- **Export (.ics)** downloads a standard iCalendar file you can import into
+  Google Calendar, Proton Calendar, Apple Calendar or Outlook.
+
 ## Installation Guide
 
 1. **Install Git:**

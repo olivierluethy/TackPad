@@ -197,6 +197,197 @@ class TackPadController
         }
     }
 
+    /* Kalenderansicht (FullCalendar) */
+    public function calendar()
+    {
+        session_start();
+
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            header("location: login");
+            exit;
+        }
+
+        $notiz = new Notiz();
+        $username = $notiz->getUsernameFromEmail($_SESSION["email"]);
+
+        require 'app/Views/calendar.view.php';
+    }
+
+    /* JSON-Feed der Aufgaben für FullCalendar (ISO 8601) */
+    public function calendarEvents()
+    {
+        session_start();
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            http_response_code(401);
+            echo json_encode(['error' => 'Not logged in']);
+            exit;
+        }
+
+        $encryption_key = getenv('ENCRYPTION_KEY');
+        $notiz = new Notiz();
+        $tasks = $notiz->tackpad()->fetchAll(); // already scoped to the session user
+
+        $events = [];
+        foreach ($tasks as $task) {
+            $iv = base64_decode($task['iv']);
+            $title   = $notiz->decrypt($task['titel'], $encryption_key, $iv);
+            $note    = $notiz->decrypt($task['notiz'], $encryption_key, $iv);
+            $status  = $notiz->decrypt($task['status'], $encryption_key, $iv);
+            $rawDate = $notiz->decrypt($task['date_to_complete'], $encryption_key, $iv);
+
+            [$start, $allDay] = $this->toCalendarStart($rawDate);
+            $isCompleted = $status === '1';
+
+            $events[] = [
+                'id'         => $task['NoteId'],
+                'title'      => $title,
+                'start'      => $start,
+                'allDay'     => $allDay,
+                'classNames' => ['tackpad-event--' . ($isCompleted ? 'completed' : 'open')],
+                'extendedProps' => [
+                    'note'      => $note,
+                    'completed' => $isCompleted,
+                ],
+            ];
+        }
+
+        echo json_encode($events);
+    }
+
+    /* Drag-and-drop reschedule: persist the new date in real time */
+    public function updateTaskDate()
+    {
+        session_start();
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Not logged in']);
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'error' => 'Invalid request method']);
+            exit;
+        }
+
+        $id     = (int) ($_POST['id'] ?? 0);
+        $start  = (string) ($_POST['start'] ?? '');
+        $allDay = ($_POST['allDay'] ?? 'true') === 'true';
+
+        // Keep the wall-clock time the user dropped on — slice the ISO string
+        // instead of round-tripping through strtotime to avoid timezone drift.
+        if ($allDay) {
+            $stored = substr($start, 0, 10);                        // YYYY-MM-DD
+        } else {
+            $stored = str_replace('T', ' ', substr($start, 0, 19)); // YYYY-MM-DD HH:MM:SS
+        }
+
+        if ($stored === '' || strtotime($stored) === false) {
+            http_response_code(422);
+            echo json_encode(['success' => false, 'error' => 'Invalid date']);
+            exit;
+        }
+
+        $notiz = new Notiz();
+        $ok = $notiz->updateDate($id, $stored, (int) $_SESSION['id']);
+
+        if (!$ok) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Task not found or not owned by user']);
+            exit;
+        }
+
+        echo json_encode(['success' => true, 'id' => $id, 'start' => $stored, 'allDay' => $allDay]);
+    }
+
+    /* Optional bonus: export tasks as an iCalendar feed (Google/Proton/Apple/Outlook) */
+    public function exportIcs()
+    {
+        session_start();
+
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            header("location: login");
+            exit;
+        }
+
+        $encryption_key = getenv('ENCRYPTION_KEY');
+        $notiz = new Notiz();
+        $tasks = $notiz->tackpad()->fetchAll();
+
+        $lines = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//TackPad//Task Calendar//EN',
+            'CALSCALE:GREGORIAN',
+        ];
+
+        foreach ($tasks as $task) {
+            $iv = base64_decode($task['iv']);
+            $title   = $notiz->decrypt($task['titel'], $encryption_key, $iv);
+            $note    = $notiz->decrypt($task['notiz'], $encryption_key, $iv);
+            $rawDate = $notiz->decrypt($task['date_to_complete'], $encryption_key, $iv);
+
+            $ts = strtotime($rawDate);
+            if ($ts === false) {
+                continue;
+            }
+            $isAllDay = strlen(trim($rawDate)) <= 10;
+
+            $lines[] = 'BEGIN:VEVENT';
+            $lines[] = 'UID:tackpad-' . $task['NoteId'] . '@tackpad.local';
+            $lines[] = 'DTSTAMP:' . gmdate('Ymd\THis\Z');
+            $lines[] = $isAllDay
+                ? 'DTSTART;VALUE=DATE:' . date('Ymd', $ts)
+                : 'DTSTART:' . date('Ymd\THis', $ts);
+            $lines[] = 'SUMMARY:' . $this->icsEscape($title);
+            $lines[] = 'DESCRIPTION:' . $this->icsEscape($note);
+            $lines[] = 'END:VEVENT';
+        }
+
+        $lines[] = 'END:VCALENDAR';
+
+        header('Content-Type: text/calendar; charset=utf-8');
+        header('Content-Disposition: attachment; filename="tackpad.ics"');
+        echo implode("\r\n", $lines) . "\r\n";
+    }
+
+    /**
+     * Normalises a stored due-date into a FullCalendar start value.
+     * Date-only strings become all-day events; datetime strings become timed
+     * events in ISO 8601 (local wall-clock, no timezone conversion).
+     *
+     * @return array{0:string,1:bool} [start, allDay]
+     */
+    private function toCalendarStart(string $rawDate): array
+    {
+        $rawDate = trim($rawDate);
+        $timestamp = strtotime($rawDate);
+
+        if ($timestamp === false) {
+            return [date('Y-m-d'), true];
+        }
+
+        if (strlen($rawDate) <= 10) { // "YYYY-MM-DD"
+            return [date('Y-m-d', $timestamp), true];
+        }
+
+        return [date('Y-m-d\TH:i:s', $timestamp), false];
+    }
+
+    /** Escapes a value per RFC 5545 for safe inclusion in an .ics field. */
+    private function icsEscape(string $value): string
+    {
+        return str_replace(
+            ["\\", ";", ",", "\r\n", "\n"],
+            ["\\\\", "\\;", "\\,", "\\n", "\\n"],
+            $value
+        );
+    }
+
     public function erledigt()
     {
         session_start();

@@ -123,6 +123,51 @@ class Notiz
 		$statement->execute();
 	}
 
+	/**
+	 * Reschedules a task by re-encrypting only its due date with the row's
+	 * existing IV. Verifies the task belongs to $userId before writing, which
+	 * prevents one user from rescheduling another user's task (IDOR).
+	 *
+	 * @param int    $id       NoteId to update.
+	 * @param string $newDate  Wall-clock date ("Y-m-d") or datetime ("Y-m-d H:i:s").
+	 * @param int    $userId   Owning user (session id).
+	 * @return bool            True on success, false if not found / not owned.
+	 */
+	public function updateDate($id, $newDate, $userId)
+	{
+		$id = (int) $id;
+		$userId = (int) $userId;
+
+		require_once __DIR__ . '/../../vendor/autoload.php';
+		$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+		$dotenv->safeLoad();
+		$encryption_key = getenv('ENCRYPTION_KEY');
+
+		// Fetch the row's IV and owner; reuse the same IV so the other
+		// (untouched) encrypted fields in this row stay decryptable.
+		$statement = $this->db->prepare('SELECT `iv`, `fk_usersId` FROM `notes` WHERE `NoteId` = :id');
+		$statement->bindParam(':id', $id, PDO::PARAM_INT);
+		$statement->execute();
+		$row = $statement->fetch(PDO::FETCH_ASSOC);
+
+		if (!$row || (int) $row['fk_usersId'] !== $userId) {
+			return false;
+		}
+
+		$iv = base64_decode($row['iv']);
+		$encrypted_date = $this->encrypt($newDate, $encryption_key, $iv);
+		$last_change = date('Y-m-d H:i:s'); // stored raw to match the view's read path
+
+		$update = $this->db->prepare('UPDATE notes SET date_to_complete = :date, last_change = :last_change WHERE NoteId = :id AND fk_usersId = :userId');
+		$update->bindParam(':date', $encrypted_date, PDO::PARAM_STR);
+		$update->bindParam(':last_change', $last_change, PDO::PARAM_STR);
+		$update->bindParam(':id', $id, PDO::PARAM_INT);
+		$update->bindParam(':userId', $userId, PDO::PARAM_INT);
+		$update->execute();
+
+		return true;
+	}
+
 	// Function to extract and clean username from email
 	public function getUsernameFromEmail($email)
 	{

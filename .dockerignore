@@ -1,0 +1,11 @@
+# Keep the build context small and reproducible.
+.git
+.gitignore
+vendor
+node_modules
+.env
+.DS_Store
+thumbs.db
+diagramme
+mockup
+doc

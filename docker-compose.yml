@@ -1,0 +1,42 @@
+# Full TackPad stack: PHP/Apache web server + MySQL, runnable with
+#   docker compose up --build
+# The database schema is auto-loaded and the web server waits for the DB to be
+# healthy before starting, so the site is usable as soon as the stack is up.
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: TackPad
+      MYSQL_USER: tackpad
+      MYSQL_PASSWORD: tackpad
+    volumes:
+      - dbdata:/var/lib/mysql
+      # Auto-import the schema on first boot of an empty data volume.
+      - ./TackPad.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-utackpad", "-ptackpad"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  web:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_SERVER: db
+      DB_USERNAME: tackpad
+      DB_PASSWORD: tackpad
+      DB_NAME: TackPad
+      # Dev-only key (32 bytes for AES-256). Override in real deployments.
+      ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef"
+    ports:
+      # Host port is configurable to avoid conflicts: WEB_PORT=8088 docker compose up
+      - "${WEB_PORT:-8080}:80"
+    restart: unless-stopped
+
+volumes:
+  dbdata:

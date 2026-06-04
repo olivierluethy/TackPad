@@ -3,6 +3,16 @@ let changeId_erledigt = [];
 let counter_offen = 0;
 let counter_erledigt = 0;
 
+// Sidebar navigation — shared by every page that has the sidenav (task list and
+// calendar both load this file), so the hamburger works everywhere.
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+}
+
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
+
 function checkAllOffeneTasks(source) {
   var checkboxes = document.getElementsByClassName("offene_tasks");
   var counter_offen = 0;
@@ -178,19 +188,8 @@ function getId_for_erledigt(id) {
     document.getElementById("checkAllErledigteTasks").checked = false;
   }
 }
-
-// Event listener for individual checkboxes
-var checkboxes = document.getElementsByClassName("offene_tasks");
-for (var i = 0; i < checkboxes.length; i++) {
-  checkboxes[i].addEventListener("change", function () {
-    getId_for_offen(this.id);
-  });
-}
-
-// Event listener for individual checkboxes
-var checkboxes = document.getElementsByClassName("erledigte_tasks");
-for (var i = 0; i < checkboxes.length; i++) {
-  checkboxes[i].addEventListener("change", function () {
-    getId_for_erledigt(this.id);
-  });
-}
+// Note: selection is handled by each checkbox's inline onclick
+// (getId_for_offen / getId_for_erledigt with the row's NoteId). A second
+// "change" listener used to fire here with this.id — but the checkboxes have
+// no id attribute, so it pushed empty strings into the selection arrays and
+// broke the Edit action. The inline onclick is the single source of truth.

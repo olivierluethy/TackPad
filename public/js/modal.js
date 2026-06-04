@@ -1,10 +1,5 @@
-function openNav() {
-  document.getElementById("mySidenav").style.width = "250px";
-}
-
-function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
-}
+// openNav / closeNav now live in tackpad.js so they are available on every page
+// with the sidebar (including the calendar view), not just the task list.
 
 function openModal() {
   addmodal.style.display = "block";

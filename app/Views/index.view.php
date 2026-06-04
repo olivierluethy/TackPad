@@ -44,6 +44,7 @@ function decrypt($data, $key, $iv)
         <img src="assets/icon.png" alt="">
         <h1>TackPad</h1>
         <h2>Hello <?= htmlspecialchars($username); ?>!</h2>
+        <a href="calendar"><i class="fas fa-calendar-alt"></i>&nbsp;Calendar</a>
         <a href="logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</a>
     </div>
     <span class='navi' onclick="openNav()">&#9776;</span>

@@ -4,7 +4,14 @@ class Router
 {
     /**
      * Enthält alle definierten Routes.
+     *
+     * Explicitly declared so assigning to it does not create a dynamic
+     * property (deprecated since PHP 8.2). A stray deprecation notice here
+     * would print before any headers and break session_start()/header().
+     *
+     * @var array
      */
+    protected $routes = [];
 
     /**
      * Initialisiert die definierten Routes.
