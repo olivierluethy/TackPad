@@ -7,8 +7,6 @@ $routes = [
 	'' => 'TackPadController@index',
 	'home' => 'TackPadController@index',
 
-	'getTaskData' => 'TackPadController@getTaskData',
-
 	'edit' => 'TackPadController@edit',
 
 	/* Informationen hinzufügen */

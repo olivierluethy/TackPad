@@ -123,15 +123,6 @@ class Notiz
 		$statement->execute();
 	}
 
-	public function getInfosFromTask($id)
-	{
-		$id = htmlspecialchars($id);
-		$statement = $this->db->prepare('SELECT * FROM notes WHERE NoteId = :id');
-		$statement->bindParam(':id', $id);
-		$statement->execute();
-		return $statement;
-	}
-
 	// Function to extract and clean username from email
 	public function getUsernameFromEmail($email)
 	{

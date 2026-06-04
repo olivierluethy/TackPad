@@ -19,34 +19,25 @@ function openBearbeiten() {
   editmodal.style.display = "block";
 }
 
-// JavaScript to handle edit button click
+// Populate the edit modal from the values already shown on the page.
+// No background fetch: the model reflects exactly what the user sees in the DOM.
 function openEditModal(taskId) {
-  $.ajax({
-    url: "getTaskData",
-    type: "POST",
-    data: { id: taskId },
-    success: function (response) {
-      var task = JSON.parse(response);
-      $('#editModal input[name="titel"]').val(task.titel);
-      $('#editModal input[name="aufgabe"]').val(task.notiz);
-      $("#datum_edit").val(task.date_to_complete);
+  var row = document.querySelector('tr[data-id="' + taskId + '"]');
+  if (!row) {
+    alert("The selected task could not be found on this page.");
+    return;
+  }
 
-      // Convert task.prioritaet to an integer
-      var priorityValue = parseInt(task.priority);
+  // Take the current values straight from the task row's data attributes.
+  $('#editModal input[name="titel"]').val(row.dataset.titel);
+  $('#editModal input[name="aufgabe"]').val(row.dataset.aufgabe);
+  $("#datum_edit").val(row.dataset.datum);
+  $("#priority_edit").val(parseInt(row.dataset.priority, 10));
 
-      // Set the value of the priority select field
-      $("#priority_edit").val(priorityValue);
-      $('#priority_edit option[value="' + task.prioritaet + '"]').prop(
-        "selected",
-        true
-      );
+  // Point the form at the edit endpoint for this task.
+  $("#editForm").attr("action", "edit?id=" + taskId);
 
-      // Update the form action with the taskId
-      $("#editForm").attr("action", "edit?id=" + task.id);
-
-      $("#editModal").show();
-    },
-  });
+  $("#editModal").show();
 }
 
 $(document).ready(function () {

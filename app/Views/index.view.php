@@ -116,7 +116,11 @@ function decrypt($data, $key, $iv)
                             $row_class = $is_past_due ? 'zu_spaet' : 'nicht_zu_spaet';
                             $background_color = $is_past_due ? 'lightcoral' : 'lightgreen';
                             ?>
-                            <tr class="<?= $row_class ?>">
+                            <tr class="<?= $row_class ?>" data-id="<?= htmlspecialchars($task['NoteId']); ?>"
+                                data-titel="<?= htmlspecialchars($decrypted_titel); ?>"
+                                data-aufgabe="<?= htmlspecialchars($decrypted_notiz); ?>"
+                                data-datum="<?= htmlspecialchars($decrypted_date_to_complete); ?>"
+                                data-priority="<?= htmlspecialchars($decrypted_prioritaet); ?>">
                                 <td style='background-color:<?= $background_color ?>;'>
                                     <input type='checkbox' onclick="getId_for_offen(<?= htmlspecialchars($task['NoteId']); ?>)"
                                         class='offene_tasks'>
@@ -166,7 +170,11 @@ function decrypt($data, $key, $iv)
                             $decrypted_date_to_complete = decrypt($task['date_to_complete'], $encryption_key, $iv);
                             $decrypted_date_when_completed = decrypt($task['date_when_completed'], $encryption_key, $iv);
                             ?>
-                            <tr class="erledigt">
+                            <tr class="erledigt" data-id="<?= htmlspecialchars($task['NoteId']); ?>"
+                                data-titel="<?= htmlspecialchars($decrypted_titel); ?>"
+                                data-aufgabe="<?= htmlspecialchars($decrypted_notiz); ?>"
+                                data-datum="<?= htmlspecialchars($decrypted_date_to_complete); ?>"
+                                data-priority="<?= htmlspecialchars($decrypted_prioritaet); ?>">
                                 <td style='background-color:lightgrey;'>
                                     <input type='checkbox' onclick="getId_for_erledigt(<?= htmlspecialchars($task['NoteId']); ?>)"
                                         class='erledigte_tasks'>
