@@ -5,18 +5,17 @@ setupModalClose(editModal, 0);
 let editmodal = document.getElementById("editModal");
 
 function openBearbeiten() {
-  let OpenIds = changeId_offen.join(",");
-  let DoneIds = changeId_erledigt.join(",");
+  let openId = changeId_offen[0];
+  let doneId = changeId_erledigt[0];
 
-  if (OpenIds.length > 0) {
-    openEditModal(OpenIds);
-  } else if (DoneIds.length > 0) {
-    openEditModal(DoneIds);
+  if (changeId_offen.length > 0) {
+    openEditModal(openId);
+  } else if (changeId_erledigt.length > 0) {
+    openEditModal(doneId);
   } else {
     alert("Please select at least one task!");
     return;
   }
-  editmodal.style.display = "block";
 }
 
 // Populate the edit modal from the values already shown on the page.
