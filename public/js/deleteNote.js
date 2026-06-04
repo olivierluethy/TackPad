@@ -30,28 +30,32 @@ function realyDeleteNote() {
 }
 
 function deleteNote() {
-  // Konvertiere das Array in eine durch Kommata getrennte Zeichenkette
-  let ids = changeId_offen.join(",");
+  // Derive the deletion targets from the live selection (open + completed) at
+  // click time, and guard so nothing runs when the selection is empty.
+  var selectedIds = getSelectedIds("offene_tasks").concat(
+    getSelectedIds("erledigte_tasks")
+  );
+  if (selectedIds.length === 0) {
+    closeModal(deleteModal);
+    return;
+  }
 
   $.ajax({
     type: "GET",
     url: "delete",
-    data: { id: ids },
+    data: { id: selectedIds.join(",") },
     success: function (response) {
       if (response.success) {
-        // Entferne die gelöschten Aufgaben aus der Tabelle
+        // Remove the deleted rows by their data-id, then re-derive the toolbar
+        // so the selection state can never reference rows that no longer exist.
         response.ids.forEach(function (id) {
-          $("tr")
-            .filter(function () {
-              return (
-                $(this).find('input[type="checkbox"]').attr("onclick") ===
-                "getId_for_offen(" + id + ")"
-              );
-            })
-            .remove();
+          $('tr[data-id="' + id + '"]').remove();
         });
 
-        closeModal(deleteModal); // Schließe das Lösch-Modal
+        if (typeof updateToolbar === "function") {
+          updateToolbar();
+        }
+        closeModal(deleteModal);
       } else {
         alert("Error: " + response.error);
       }

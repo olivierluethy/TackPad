@@ -5,17 +5,18 @@ setupModalClose(editModal, 0);
 let editmodal = document.getElementById("editModal");
 
 function openBearbeiten() {
-  let openId = changeId_offen[0];
-  let doneId = changeId_erledigt[0];
+  // Editing targets a single task. Derive the selection live from the DOM so it
+  // is always current, and guard against zero/multiple selections.
+  var ids = getSelectedIds("offene_tasks").concat(
+    getSelectedIds("erledigte_tasks")
+  );
 
-  if (changeId_offen.length > 0) {
-    openEditModal(openId);
-  } else if (changeId_erledigt.length > 0) {
-    openEditModal(doneId);
-  } else {
-    alert("Please select at least one task!");
+  if (ids.length !== 1) {
+    alert("Please select exactly one task to edit.");
     return;
   }
+
+  openEditModal(ids[0]);
 }
 
 // Populate the edit modal from the values already shown on the page.

@@ -32,11 +32,11 @@ $(document).ready(function () {
 
           // Neue Aufgabe zur Tabelle der offenen Aufgaben hinzufügen
           var newTaskRow =
-            '<tr class="task-row ' + statusClass + '">' +
+            '<tr class="task-row ' + statusClass + '" data-id="' + response.task.id + '">' +
             "<td>" +
-            '<input type="checkbox" onclick="getId_for_offen(' +
+            '<input type="checkbox" data-id="' +
             response.task.id +
-            ')" class="offene_tasks">' +
+            '" onclick="getId_for_offen()" class="offene_tasks">' +
             "</td>" +
             "<td>" +
             response.task.titel +

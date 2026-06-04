@@ -123,8 +123,8 @@ function decrypt($data, $key, $iv)
                                 data-datum="<?= htmlspecialchars($decrypted_date_to_complete); ?>"
                                 data-priority="<?= htmlspecialchars($decrypted_prioritaet); ?>">
                                 <td>
-                                    <input type='checkbox' onclick="getId_for_offen(<?= htmlspecialchars($task['NoteId']); ?>)"
-                                        class='offene_tasks'>
+                                    <input type='checkbox' data-id="<?= htmlspecialchars($task['NoteId']); ?>"
+                                        onclick="getId_for_offen()" class='offene_tasks'>
                                 </td>
                                 <td><?= htmlspecialchars($decrypted_titel); ?></td>
                                 <td><?= htmlspecialchars($decrypted_notiz); ?></td>
@@ -178,8 +178,8 @@ function decrypt($data, $key, $iv)
                                 data-datum="<?= htmlspecialchars($decrypted_date_to_complete); ?>"
                                 data-priority="<?= htmlspecialchars($decrypted_prioritaet); ?>">
                                 <td>
-                                    <input type='checkbox' onclick="getId_for_erledigt(<?= htmlspecialchars($task['NoteId']); ?>)"
-                                        class='erledigte_tasks'>
+                                    <input type='checkbox' data-id="<?= htmlspecialchars($task['NoteId']); ?>"
+                                        onclick="getId_for_erledigt()" class='erledigte_tasks'>
                                 </td>
                                 <td><del><?= htmlspecialchars($decrypted_titel); ?></del></td>
                                 <td><del><?= htmlspecialchars($decrypted_notiz); ?></del></td>
