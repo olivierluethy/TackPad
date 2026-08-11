@@ -299,6 +299,86 @@ function makeCell(className, text) {
   return td;
 }
 
+// Build a COMPLETED task row (7 columns) matching the server layout, including
+// the "Completed on" column. Used when a task is marked done without a reload.
+function buildCompletedTaskRow(data) {
+  var row = document.createElement("tr");
+  row.className = "task-row erledigt";
+  applyRowStatus(row, true, data.datum); // completed → grey
+  if (data.shared) {
+    row.classList.add("task-row--shared");
+  }
+  row.setAttribute("data-id", data.id);
+  row.setAttribute("data-titel", data.titel);
+  row.setAttribute("data-aufgabe", data.aufgabe);
+  row.setAttribute("data-datum", data.datum || "");
+  row.setAttribute("data-priority", data.prioritaet);
+  row.setAttribute("data-shared", data.shared ? "1" : "0");
+
+  var tdCheck = document.createElement("td");
+  var box = document.createElement("input");
+  box.type = "checkbox";
+  box.className = "erledigte_tasks";
+  box.setAttribute("data-id", data.id);
+  box.setAttribute("onclick", "getId_for_erledigt()");
+  tdCheck.appendChild(box);
+  row.appendChild(tdCheck);
+
+  var tdTitle = document.createElement("td");
+  tdTitle.className = "cell-title";
+  var titleText = document.createElement("span");
+  titleText.className = "cell-title-text";
+  titleText.textContent = data.titel;
+  tdTitle.appendChild(titleText);
+  var badge = document.createElement("i");
+  badge.className = "fas fa-share-alt task-shared-badge";
+  badge.title = "Shared with another user";
+  badge.hidden = !data.shared;
+  tdTitle.appendChild(document.createTextNode(" "));
+  tdTitle.appendChild(badge);
+  row.appendChild(tdTitle);
+
+  row.appendChild(makeCell("cell-task", data.aufgabe));
+  row.appendChild(makeCell("cell-date", formatTaskDate(data.datum)));
+  row.appendChild(makeCell("cell-priority", priorityLabel(data.prioritaet)));
+  row.appendChild(makeCell("cell-completed", formatTaskDate(data.completed_at)));
+  row.appendChild(makeCell("", formatTaskDate(data.last_change)));
+
+  return row;
+}
+
+// Move a task row between the open and completed tables in place (no reload),
+// rebuilding it with the correct column layout for its new status.
+function moveTaskRow(id, toCompleted, completedAt, lastChange) {
+  var oldRow = document.querySelector('tr.task-row[data-id="' + id + '"]');
+  if (!oldRow) {
+    return;
+  }
+  var data = {
+    id: id,
+    titel: oldRow.dataset.titel,
+    aufgabe: oldRow.dataset.aufgabe,
+    datum: oldRow.dataset.datum,
+    prioritaet: oldRow.dataset.priority,
+    shared: oldRow.dataset.shared === "1",
+    completed_at: completedAt || "",
+    last_change: lastChange || "",
+  };
+
+  oldRow.parentNode.removeChild(oldRow);
+
+  var target = document.getElementById(
+    toCompleted ? "completed-tasks-container" : "open-tasks-container"
+  );
+  if (!target) {
+    return;
+  }
+  var newRow = toCompleted
+    ? buildCompletedTaskRow(data)
+    : buildOpenTaskRow(data);
+  insertTaskRowSorted(target, newRow);
+}
+
 // Update an existing row in place after an edit. Works for both open and
 // completed rows because it only touches the columns common to both (title,
 // task, date, priority) and the data attributes. The row's completed state is

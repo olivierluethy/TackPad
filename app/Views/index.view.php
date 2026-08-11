@@ -31,6 +31,9 @@ foreach ($alle_tasks as $task) {
         'date_when_completed' => $task['date_when_completed'] !== null
             ? decrypt($task['date_when_completed'], $encryption_key, $iv)
             : '',
+        // Plain completion timestamp (preferred); legacy encrypted value above
+        // is kept only as a fallback for tasks completed before this column.
+        'completed_at'        => $task['completed_at'] ?? '',
         'last_change'         => $task['last_change'],
         // "shared" is plain metadata (a boolean flag), not encrypted content.
         'shared'              => !empty($task['shared']),
@@ -205,7 +208,7 @@ $displayDate = function ($value) {
                             <td class="cell-task"><?= htmlspecialchars($task['notiz']); ?></td>
                             <td class="cell-date"><?= formatTaskDate($task['date_to_complete']); ?></td>
                             <td class="cell-priority"><?= htmlspecialchars(priorityLabel($task['prioritaet'])); ?></td>
-                            <td><?= $displayDate($task['date_when_completed']); ?></td>
+                            <td class="cell-completed"><?= $displayDate($task['completed_at'] !== '' ? $task['completed_at'] : $task['date_when_completed']); ?></td>
                             <td><?= $displayDate($task['last_change']); ?></td>
                         </tr>
                     <?php endforeach; ?>

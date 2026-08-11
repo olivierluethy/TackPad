@@ -469,38 +469,38 @@ class TackPadController
         );
     }
 
+    /* Mark task(s) as done — JSON so the client moves rows without a reload. */
     public function erledigt()
     {
         session_start();
+        header('Content-Type: application/json');
 
-        // Check if the user is logged in, if not then redirect to login page
         if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-            header("location: login");
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Not logged in']);
             exit;
         }
 
-        $notiz = new Notiz();
-        $ids = e($_GET['id']);
-        $result = $notiz->istErledigt($ids);
-
-        header('Location: home');
+        $ids = (string) ($_POST['id'] ?? $_GET['id'] ?? '');
+        $result = (new Notiz())->istErledigt($ids, (int) $_SESSION['id']);
+        echo json_encode($result);
     }
 
+    /* Reopen completed task(s) — JSON, same no-reload contract. */
     public function unerledigt()
     {
         session_start();
+        header('Content-Type: application/json');
 
-        // Check if the user is logged in, if not then redirect to login page
         if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-            header("location: login");
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Not logged in']);
             exit;
         }
 
-        $notiz = new Notiz();
-        $ids = e($_GET['id']);
-        $result = $notiz->undone($ids);
-
-        header('Location: home');
+        $ids = (string) ($_POST['id'] ?? $_GET['id'] ?? '');
+        $result = (new Notiz())->undone($ids, (int) $_SESSION['id']);
+        echo json_encode($result);
     }
 
     public function login()

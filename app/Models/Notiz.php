@@ -368,69 +368,20 @@ class Notiz
 		$statement->execute();
 	}
 
-	public function istErledigt($ids)
+	/**
+	 * Marks the given tasks as completed for $userId.
+	 *
+	 * `status` stays encrypted (the list decrypts it to decide open/completed).
+	 * The completion moment is recorded in the plain `completed_at` column so it
+	 * can be displayed and ordered directly, and `last_change` is stored plain
+	 * (matching create/edit/updateDate). Every task is scoped to the owner so a
+	 * user cannot complete another user's task (IDOR).
+	 *
+	 * @return array{success:bool,updated:array<int,array{id:int,completed_at:string,last_change:string}>,errors:string[]}
+	 */
+	public function istErledigt($ids, $userId)
 	{
-		// Check if $ids is a string and convert it to an array
-		if (is_string($ids)) {
-			$ids = explode(',', $ids);
-		}
-
-		// Prevent SQL injection by sanitizing the input
-		$cleaned_ids = array_map('intval', $ids); // Assuming NoteId is an integer field
-
-		require_once __DIR__ . '/../../vendor/autoload.php'; // Pfad anpassen, falls notwendig
-
-		// Laden der .env-Datei
-		$dotenv = Dotenv::createImmutable(__DIR__ . '/../../'); // Pfad anpassen, falls notwendig
-		$dotenv->load();
-
-		// Hole den Verschlüsselungsschlüssel aus der .env-Datei
-		$encryption_key = getenv('ENCRYPTION_KEY');
-
-		// Daten verschlüsseln
-		$status = '1';
-		$date_when_completed = time();
-		$last_change = time();
-
-		// Initialisierung von Erfolgs- und Fehlermeldungen
-		$updated_ids = [];
-		$errors = [];
-
-		foreach ($cleaned_ids as $id) {
-			try {
-				// Holen des IV-Werts aus der Datenbank
-				$statement = $this->db->prepare('SELECT `iv` FROM `notes` WHERE `NoteId` = :id');
-				$statement->bindParam(':id', $id);
-				$statement->execute();
-				$iv_row = $statement->fetch(PDO::FETCH_ASSOC);
-
-				// Überprüfen, ob ein IV-Wert gefunden wurde
-				if (isset($iv_row['iv'])) {
-					// Encrypt values using the same iv
-					$encrypted_status = $this->encrypt($status, $encryption_key, base64_decode($iv_row['iv']));
-					$encrypted_date_when_completed = $this->encrypt($date_when_completed, $encryption_key, base64_decode($iv_row['iv']));
-					$encrypted_last_change = $this->encrypt($last_change, $encryption_key, base64_decode($iv_row['iv']));
-
-					// Update der Datenbank
-					$update_statement = $this->db->prepare('UPDATE notes SET status = :status, date_when_completed = :date_when_completed, last_change = :last_change WHERE NoteId = :id');
-					$update_statement->bindParam(':status', $encrypted_status);
-					$update_statement->bindParam(':date_when_completed', $encrypted_date_when_completed);
-					$update_statement->bindParam(':last_change', $encrypted_last_change);
-					$update_statement->bindParam(':id', $id);
-					$update_statement->execute();
-				}
-			} catch (PDOException $e) {
-				$errors[] = "Database error for Task ID $id: " . $e->getMessage();
-			} catch (Exception $e) {
-				$errors[] = "An unexpected error occurred for Task ID $id: " . $e->getMessage();
-			}
-		}
-		// Rückgabe des Ergebnisses
-		if (empty($errors)) {
-			return ["success" => true, "updated_ids" => $updated_ids];
-		} else {
-			return ["success" => false, "updated_ids" => $updated_ids, "errors" => $errors];
-		}
+		return $this->setCompletion($ids, (int) $userId, true);
 	}
 
 
@@ -449,79 +400,81 @@ class Notiz
 		$statement->execute();
 	}
 
-	public function undone($ids)
+	/**
+	 * Reopens the given completed tasks for $userId: status back to '0' and
+	 * `completed_at` cleared. Owner-scoped like istErledigt().
+	 *
+	 * @return array{success:bool,updated:array<int,array{id:int,completed_at:string,last_change:string}>,errors:string[]}
+	 */
+	public function undone($ids, $userId)
 	{
-		// Check if $ids is a string and convert it to an array
+		return $this->setCompletion($ids, (int) $userId, false);
+	}
+
+	/**
+	 * Shared implementation of complete / reopen. Re-encrypts only `status`
+	 * (reusing the row's own IV so the other encrypted fields stay decryptable),
+	 * sets the plain `completed_at` and `last_change`, and enforces ownership.
+	 *
+	 * @param string|array $ids       Comma string or array of NoteIds.
+	 * @param int          $userId    Owning user.
+	 * @param bool         $completed True to complete, false to reopen.
+	 */
+	private function setCompletion($ids, int $userId, bool $completed): array
+	{
 		if (is_string($ids)) {
 			$ids = explode(',', $ids);
 		}
+		$cleaned_ids = array_map('intval', $ids);
 
-		// Prevent SQL injection by sanitizing the input
-		$cleaned_ids = array_map('intval', $ids); // Assuming NoteId is an integer field
-
-		require_once __DIR__ . '/../../vendor/autoload.php'; // Pfad anpassen, falls notwendig
-
-		// Laden der .env-Datei
-		$dotenv = Dotenv::createImmutable(__DIR__ . '/../../'); // Pfad anpassen, falls notwendig
-		$dotenv->load();
-
-		// Hole den Verschlüsselungsschlüssel aus der .env-Datei
+		require_once __DIR__ . '/../../vendor/autoload.php';
+		$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+		$dotenv->safeLoad();
 		$encryption_key = getenv('ENCRYPTION_KEY');
 
-		// Daten vorbereiten
-		$status = '0';
-		$date_when_completed = time();
-		$last_change = time();
-
-		// Initialisierung von Erfolgs- und Fehlermeldungen
-		$updated_ids = [];
+		$status = $completed ? '1' : '0';
+		$updated = [];
 		$errors = [];
 
 		foreach ($cleaned_ids as $id) {
 			try {
-				// Holen des IV-Werts aus der Datenbank
-				$statement = $this->db->prepare('SELECT `iv` FROM `notes` WHERE `NoteId` = :id');
-				$statement->bindParam(':id', $id);
+				$statement = $this->db->prepare('SELECT `iv`, `fk_usersId` FROM `notes` WHERE `NoteId` = :id');
+				$statement->bindParam(':id', $id, PDO::PARAM_INT);
 				$statement->execute();
-				$iv_row = $statement->fetch(PDO::FETCH_ASSOC);
+				$row = $statement->fetch(PDO::FETCH_ASSOC);
 
-				// Überprüfen, ob ein IV-Wert gefunden wurde
-				if (isset($iv_row['iv'])) {
-					// Verschlüsselung der Werte mit dem IV
-					$encrypted_status = $this->encrypt($status, $encryption_key, base64_decode($iv_row['iv']));
-					$encrypted_date_when_completed = $this->encrypt($date_when_completed, $encryption_key, base64_decode($iv_row['iv']));
-					$encrypted_last_change = $this->encrypt($last_change, $encryption_key, base64_decode($iv_row['iv']));
-
-					// Update der Datenbank
-					$update_statement = $this->db->prepare('UPDATE notes SET status = :status, date_when_completed = :date_when_completed, last_change = :last_change WHERE NoteId = :id');
-					$update_statement->bindParam(':status', $encrypted_status);
-					$update_statement->bindParam(':date_when_completed', $encrypted_date_when_completed);
-					$update_statement->bindParam(':last_change', $encrypted_last_change);
-					$update_statement->bindParam(':id', $id);
-					$update_statement->execute();
-
-					// Überprüfen, ob die Aktualisierung erfolgreich war
-					if ($update_statement->rowCount() > 0) {
-						$updated_ids[] = $id;
-					} else {
-						$errors[] = "Task with ID $id could not be updated.";
-					}
-				} else {
-					$errors[] = "IV not found for Task ID $id.";
+				if (!$row || (int) $row['fk_usersId'] !== $userId) {
+					$errors[] = "Task $id not found or not owned by user.";
+					continue;
 				}
+
+				$iv = base64_decode($row['iv']);
+				$encrypted_status = $this->encrypt($status, $encryption_key, $iv);
+				$last_change = date('Y-m-d H:i:s');
+				$completed_at = $completed ? date('Y-m-d H:i:s') : null;
+
+				$update = $this->db->prepare(
+					'UPDATE notes SET status = :status, completed_at = :completed_at, last_change = :last_change
+					 WHERE NoteId = :id AND fk_usersId = :userId'
+				);
+				$update->bindParam(':status', $encrypted_status, PDO::PARAM_STR);
+				$update->bindValue(':completed_at', $completed_at, $completed_at === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
+				$update->bindParam(':last_change', $last_change, PDO::PARAM_STR);
+				$update->bindParam(':id', $id, PDO::PARAM_INT);
+				$update->bindParam(':userId', $userId, PDO::PARAM_INT);
+				$update->execute();
+
+				$updated[] = [
+					'id' => $id,
+					'completed_at' => $completed_at ?? '',
+					'last_change' => $last_change,
+				];
 			} catch (PDOException $e) {
-				$errors[] = "Database error for Task ID $id: " . $e->getMessage();
-			} catch (Exception $e) {
-				$errors[] = "An unexpected error occurred for Task ID $id: " . $e->getMessage();
+				$errors[] = "Database error for Task $id: " . $e->getMessage();
 			}
 		}
 
-		// Rückgabe des Ergebnisses
-		if (empty($errors)) {
-			return ["success" => true, "updated_ids" => $updated_ids];
-		} else {
-			return ["success" => false, "updated_ids" => $updated_ids, "errors" => $errors];
-		}
+		return ['success' => empty($errors) || !empty($updated), 'updated' => $updated, 'errors' => $errors];
 	}
 
 	public function delete($ids)
