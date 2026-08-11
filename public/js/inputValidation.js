@@ -1,67 +1,57 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const editForm = document.getElementById("editForm");
+/* =========================================================================
+   Client-side validation for the add/edit task modals. Replaces the old
+   injected red <label> markers with a single toast summarising what's missing
+   and a red outline on each offending field (styleguide's toast/inline system).
+   The server (Validator) remains the source of truth; this is fast feedback.
+   ========================================================================= */
+document.addEventListener("DOMContentLoaded", function () {
+  wireValidation("addForm", [
+    { selector: "#titel_add", label: "Title" },
+    { selector: "#aufgabe_add", label: "Task" },
+    { selector: "#datum_add", label: "Date" },
+    { selector: "#priority_add", label: "Priority" },
+  ]);
 
-  if (!editForm) return;
-
-  editForm.addEventListener("submit", (evt) => {
-    // Remove existing warning messages
-    const warnings = editForm.querySelectorAll(".warning");
-    warnings.forEach((warning) => warning.remove());
-
-    let hasErrors = false;
-    const validations = [
-      { selector: "#titel_edit", message: "Please enter a title" },
-      { selector: "#aufgabe_edit", message: "Please enter a task" },
-      { selector: "#datum_edit", message: "Please select a date" },
-      { selector: "#priority_edit", message: "Please select a priority" },
-    ];
-
-    validations.forEach(({ selector, message }) => {
-      const element = editForm.querySelector(selector);
-      if (element && element.value.trim() === "") {
-        element.insertAdjacentHTML(
-          "afterend",
-          `<label class="warning" style="color: red;">${message}</label>`
-        );
-        hasErrors = true;
-      }
-    });
-
-    if (hasErrors) {
-      evt.preventDefault();
-    }
-  });
-
-  const addForm = document.getElementById("addForm");
-
-  if (!addForm) return;
-
-  addForm.addEventListener("submit", (evt) => {
-    // Remove existing warning messages
-    const warnings = addForm.querySelectorAll(".warning");
-    warnings.forEach((warning) => warning.remove());
-
-    let hasErrors = false;
-    const validations = [
-      { selector: "#titel_add", message: "Please enter a title" },
-      { selector: "#aufgabe_add", message: "Please enter a task" },
-      { selector: "#datum_add", message: "Please select a date" },
-      { selector: "#priority_add", message: "Please select a priority" },
-    ];
-
-    validations.forEach(({ selector, message }) => {
-      const element = addForm.querySelector(selector);
-      if (element && element.value.trim() === "") {
-        element.insertAdjacentHTML(
-          "afterend",
-          `<label class="warning" style="color: red;">${message}</label>`
-        );
-        hasErrors = true;
-      }
-    });
-
-    if (hasErrors) {
-      evt.preventDefault();
-    }
-  });
+  wireValidation("editForm", [
+    { selector: "#titel_edit", label: "Title" },
+    { selector: "#aufgabe_edit", label: "Task" },
+    { selector: "#datum_edit", label: "Date" },
+    { selector: "#priority_edit", label: "Priority" },
+  ]);
 });
+
+function wireValidation(formId, fields) {
+  var form = document.getElementById(formId);
+  if (!form) return;
+
+  // Clear the invalid outline as soon as the user fixes a field.
+  fields.forEach(function (f) {
+    var el = form.querySelector(f.selector);
+    if (el) {
+      el.addEventListener("input", function () {
+        el.classList.remove("field-invalid");
+      });
+    }
+  });
+
+  form.addEventListener(
+    "submit",
+    function (evt) {
+      var missing = [];
+      fields.forEach(function (f) {
+        var el = form.querySelector(f.selector);
+        if (el && el.value.trim() === "") {
+          el.classList.add("field-invalid");
+          missing.push(f.label);
+        }
+      });
+
+      if (missing.length > 0) {
+        evt.preventDefault();
+        evt.stopImmediatePropagation(); // block the AJAX submit handler too
+        window.TackpadToast.error("Please fill in: " + missing.join(", ") + ".");
+      }
+    },
+    true // capture: run before the jQuery submit handlers
+  );
+}

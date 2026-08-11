@@ -482,3 +482,8 @@
   padding: 0;
 }
 .auth-gen:hover { text-decoration: underline; }
+/* Invalid field outline used by client-side validation (inputValidation.js). */
+.field-invalid {
+  border-color: #b00020 !important;
+  outline: 2px solid rgba(176, 0, 32, 0.35);
+}

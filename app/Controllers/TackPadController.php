@@ -33,6 +33,12 @@ class TackPadController
                 throw new Exception('Username not found for email: ' . $_SESSION["email"]);
             }
 
+            // Current user's avatar (for the sidebar) — file wins over URL,
+            // falling back to a monogram of the username's first letter.
+            $currentUser = (new User())->getById((int) $_SESSION['id']);
+            $avatarSrc = User::avatarSrc($currentUser);
+            $initial = strtoupper(mb_substr($username, 0, 1));
+
             // Alle Aufgaben
             $alle_tasks = $notiz->tackpad()->fetchAll();
             if ($alle_tasks === false) {
@@ -275,6 +281,10 @@ class TackPadController
 
         $notiz = new Notiz();
         $username = $notiz->getUsernameFromEmail($_SESSION["email"]);
+
+        $currentUser = (new User())->getById((int) $_SESSION['id']);
+        $avatarSrc = User::avatarSrc($currentUser);
+        $initial = strtoupper(mb_substr($username, 0, 1));
 
         require 'app/Views/calendar.view.php';
     }
@@ -544,6 +554,111 @@ class TackPadController
     public function logout()
     {
         require 'app/Views/logout.php';
+    }
+
+    /**
+     * Updates the signed-in user's avatar. Three modes, all returning JSON so
+     * the profile modal updates in place without a reload:
+     *   - mode=url:    apply a confirmed remote image URL (validated).
+     *   - file upload: store an uploaded image under public/uploads/avatars.
+     *   - mode=remove: clear the avatar (revert to the monogram).
+     */
+    public function updateAvatar()
+    {
+        session_start();
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Not logged in']);
+            exit;
+        }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'error' => 'Invalid request method']);
+            exit;
+        }
+
+        $user = new User();
+        $userId = (int) $_SESSION['id'];
+        $mode = $_POST['mode'] ?? '';
+
+        // --- Remove --------------------------------------------------------
+        if ($mode === 'remove') {
+            $user->clearAvatar($userId);
+            echo json_encode(['success' => true, 'src' => '']);
+            exit;
+        }
+
+        // --- Uploaded file -------------------------------------------------
+        if (!empty($_FILES['avatar']['name'])) {
+            $file = $_FILES['avatar'];
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                http_response_code(422);
+                echo json_encode(['success' => false, 'error' => 'Upload failed. Please try again.']);
+                exit;
+            }
+            if ($file['size'] > 2 * 1024 * 1024) {
+                http_response_code(422);
+                echo json_encode(['success' => false, 'error' => 'The image is too large (max 2 MB).']);
+                exit;
+            }
+
+            // Trust the real content type, not the client-supplied name.
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mime = $finfo->file($file['tmp_name']);
+            $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'gif', 'image/webp' => 'webp'];
+            if (!isset($allowed[$mime])) {
+                http_response_code(422);
+                echo json_encode(['success' => false, 'error' => 'Please upload a JPEG, PNG, GIF or WebP image.']);
+                exit;
+            }
+
+            $dir = __DIR__ . '/../../public/uploads/avatars';
+            if (!is_dir($dir)) {
+                mkdir($dir, 0775, true);
+            }
+            $filename = $userId . '_' . bin2hex(random_bytes(6)) . '.' . $allowed[$mime];
+            $target = $dir . '/' . $filename;
+
+            if (!move_uploaded_file($file['tmp_name'], $target)) {
+                http_response_code(500);
+                echo json_encode(['success' => false, 'error' => 'Could not save the image.']);
+                exit;
+            }
+
+            // Remove the previous uploaded file, if any, to avoid orphans.
+            $previous = $user->getById($userId);
+            if ($previous && !empty($previous['avatar_path'])) {
+                $prevPath = __DIR__ . '/../../' . $previous['avatar_path'];
+                if (is_file($prevPath)) {
+                    @unlink($prevPath);
+                }
+            }
+
+            $relative = 'public/uploads/avatars/' . $filename;
+            $user->setAvatarPath($userId, $relative);
+            echo json_encode(['success' => true, 'src' => $relative]);
+            exit;
+        }
+
+        // --- Remote URL ----------------------------------------------------
+        if ($mode === 'url') {
+            $url = (string) ($_POST['avatar_url'] ?? '');
+            $validator = new Validator();
+            $validator->checkAvatarUrl($url);
+            if ($validator->fails()) {
+                http_response_code(422);
+                echo json_encode(['success' => false, 'error' => $validator->firstError()]);
+                exit;
+            }
+            $user->setAvatarUrl($userId, trim($url));
+            echo json_encode(['success' => true, 'src' => trim($url)]);
+            exit;
+        }
+
+        http_response_code(422);
+        echo json_encode(['success' => false, 'error' => 'Nothing to update.']);
     }
 
     public function config()

@@ -75,8 +75,7 @@ $displayDate = function ($value) {
 <head>
     <meta charset="UTF-8">
     <title>TackPad</title>
-    <link rel="stylesheet" type="text/css" href="public/css/style.css">
-    <link rel="stylesheet" type="text/css" href="public/css/nav.css">
+    <link rel="stylesheet" type="text/css" href="public/css/tackpad.css">
     <link rel="shortcut icon" href="assets/favicon.ico">
     <meta name="author" content="Olivier Luethy">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,6 +84,7 @@ $displayDate = function ($value) {
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script defer src="public/js/toast.js"></script>
     <script defer src="public/js/taskStatus.js"></script>
     <script defer src="public/js/tackpad.js"></script>
     <script defer src="public/js/deleteNote.js"></script>
@@ -92,40 +92,33 @@ $displayDate = function ($value) {
     <script defer src="public/js/doneNote.js"></script>
     <script defer src="public/js/editNote.js"></script>
     <script defer src="public/js/shareNote.js"></script>
+    <script defer src="public/js/profile.js"></script>
     <script defer src="public/js/modal.js"></script>
     <script defer src="public/js/inputValidation.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 </head>
 
-<body>
-    <!-- Sidebar Navigation -->
-    <div id="mySidenav" class="sidenav">
-        <a class="closebtn" onclick="closeNav()">&times;</a>
-        <img src="assets/icon.png" alt="">
-        <h1>TackPad</h1>
-        <h2>Hello <?= htmlspecialchars($username); ?>!</h2>
-        <a href="calendar"><i class="fas fa-calendar-alt"></i>&nbsp;Calendar</a>
-        <a href="logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</a>
-    </div>
-    <span class='navi' onclick="openNav()">&#9776;</span>
+<body class="on-dark">
+    <?php $sidebarActive = 'tasks'; include 'partials/sidebar.view.php'; ?>
 
-    <main>
+    <main class="pt-14 px-3">
         <?php if (count($normalized_tasks) > 0): ?>
-            <div class='options'>
-                <button onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Add</button>
-                <button id='bearbeiten' onclick='openBearbeiten()' title="Edit your task"><i
+            <div class='options-bar'>
+                <button class="btn-white" onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Add</button>
+                <button class="btn-white" id='bearbeiten' style="display:none" onclick='openBearbeiten()' title="Edit your task"><i
                         class='fas fa-edit'></i>&nbsp;Edit</button>
-                <button id='loeschen' onclick='realyDeleteNote()' title="Delete your task"><i
+                <button class="btn-white" id='loeschen' style="display:none" onclick='realyDeleteNote()' title="Delete your task"><i
                         class='fas fa-trash'></i>&nbsp;Delete</button>
-                <button id='erledigt' onclick='erledigt()' title="Mark your task as done"><i
+                <button class="btn-white" id='erledigt' style="display:none" onclick='erledigt()' title="Mark your task as done"><i
                         class='fas fa-check'></i>&nbsp;Done</button>
-                <button id='undo' title="Undo your task if you haven't finished it yet" onclick='undone()'><i
+                <button class="btn-white" id='undo' style="display:none" title="Undo your task if you haven't finished it yet" onclick='undone()'><i
                         class='fas fa-undo'></i>&nbsp;Undo</button>
-                <button id='freigeben' title="Share this task with another TackPad user" onclick='openShareModal()'><i
+                <button class="btn-white" id='freigeben' style="display:none" title="Share this task with another TackPad user" onclick='openShareModal()'><i
                         class='fas fa-share'></i>&nbsp;Share</button>
-                <button id='deleteAllErledigteTasks' title="Delete all your finished tasks" onclick='realyDeleteNote()'><i
-                        class='fas fa-trash-alt'></i> Delete all</button>
-                <button id='deleteAllOffeneTasks' title="Delete all your open tasks" onclick='realyDeleteNote()'><i
-                        class='fas fa-trash-alt'></i> Delete all</button>
+                <button class="btn-white" id='deleteAllErledigteTasks' style="display:none" title="Delete all your finished tasks" onclick='realyDeleteNote()'><i
+                        class='fas fa-trash-alt'></i>&nbsp;Delete all</button>
+                <button class="btn-white" id='deleteAllOffeneTasks' style="display:none" title="Delete all your open tasks" onclick='realyDeleteNote()'><i
+                        class='fas fa-trash-alt'></i>&nbsp;Delete all</button>
             </div>
 
             <!-- Top navigation tabs: switch between the two task lists without
@@ -141,7 +134,7 @@ $displayDate = function ($value) {
 
             <!-- Container für offene Aufgaben -->
             <section class="task-panel" id="panel-open">
-                <table id="open-tasks-container">
+                <table class="task-table" id="open-tasks-container">
                     <tr>
                         <th><input id='checkAllOffeneTasks' type='checkbox' onclick='checkAllOffeneTasks(this)'
                                 title='Select All'></th>
@@ -181,7 +174,7 @@ $displayDate = function ($value) {
             </section>
 
             <section class="task-panel" id="panel-completed" hidden>
-                <table id="completed-tasks-container">
+                <table class="task-table" id="completed-tasks-container">
                     <tr>
                         <th><input id='checkAllErledigteTasks' type='checkbox' onclick='checkAllErledigteTasks(this)'
                                 title='Select All'></th>
@@ -221,9 +214,9 @@ $displayDate = function ($value) {
             </section>
 
         <?php else: ?>
-            <div class="noData">
+            <div class="no-data">
                 <h1>No tasks added yet</h1>
-                <button title="Add a task" onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Add task</button>
+                <button class="btn-white" title="Add a task" onclick='displayModal()'><i class='fas fa-plus'></i>&nbsp;Add task</button>
             </div>
         <?php endif; ?>
     </main>
@@ -234,6 +227,7 @@ $displayDate = function ($value) {
     include("addNote.view.php");
     include("reallyDelete.view.php");
     include("shareNote.view.php");
+    include("profile.view.php");
     ?>
 </body>
 

@@ -60,13 +60,14 @@ function deleteNote() {
           refreshTaskCounts();
         }
         closeModal(deleteModal);
+        window.TackpadToast.success("Deleted.");
       } else {
-        alert("Error: " + response.error);
+        window.TackpadToast.error(response.error || "Could not delete the task.");
       }
     },
     error: function (xhr, status, error) {
       console.error(xhr.responseText);
-      alert("An error occurred while deleting the task.");
+      window.TackpadToast.error("Something went wrong while deleting the task.");
     },
   });
 }

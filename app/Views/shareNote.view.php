@@ -6,20 +6,18 @@
                 <h2>Share task</h2>
             </div>
             <div class="modal-body">
-                <p class="share-hint">Enter the email address of the TackPad user you want to share this task with.
-                    A copy will appear in their account.</p>
-                <table>
-                    <tr>
-                        <td><label for="share_email">Email:</label></td>
-                        <td><input type="email" id="share_email" name="email" placeholder="name@example.com"></td>
-                    </tr>
-                </table>
+                <p class="share-hint mb-2">Enter the email of the TackPad user to share this task with.
+                    A copy appears in their account.</p>
+                <div class="field-row">
+                    <label class="field-label" for="share_email">Email</label>
+                    <input type="email" id="share_email" name="email" placeholder="name@example.com">
+                </div>
                 <p class="share-feedback" id="share_feedback" hidden></p>
             </div>
             <div class="modal-footer">
                 <div class="select-button">
-                    <button class="hinzufuegen" type="submit">Share</button>
-                    <button class="verwerfen" type="reset">Discard</button>
+                    <button class="btn-primary" type="submit"><i class="fas fa-share"></i>&nbsp;Share</button>
+                    <button class="btn-danger" type="reset">Discard</button>
                 </div>
             </div>
         </form>

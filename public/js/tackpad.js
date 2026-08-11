@@ -39,7 +39,9 @@ function getSelectedIds(className) {
 function setDisplay(id, visible) {
   var el = document.getElementById(id);
   if (el) {
-    el.style.display = visible ? "inline-block" : "none";
+    // inline-flex matches the .btn component (icon + label gap); the toggled
+    // toolbar buttons start hidden via inline style in the markup.
+    el.style.display = visible ? "inline-flex" : "none";
   }
 }
 

@@ -12,7 +12,7 @@ function openBearbeiten() {
   );
 
   if (ids.length !== 1) {
-    alert("Please select exactly one task to edit.");
+    window.TackpadToast.error("Please select exactly one task to edit.");
     return;
   }
 
@@ -24,7 +24,7 @@ function openBearbeiten() {
 function openEditModal(taskId) {
   var row = document.querySelector('tr[data-id="' + taskId + '"]');
   if (!row) {
-    alert("The selected task could not be found on this page.");
+    window.TackpadToast.error("The selected task could not be found on this page.");
     return;
   }
 
@@ -85,8 +85,8 @@ $(document).ready(function () {
       dataType: "json",
       success: function (response) {
         if (!response || !response.success) {
-          alert(
-            "Error: " + ((response && response.error) || "could not save.")
+          window.TackpadToast.error(
+            (response && response.error) || "Could not save the task."
           );
           return;
         }
@@ -109,10 +109,11 @@ $(document).ready(function () {
         }
 
         $("#editModal").hide();
+        window.TackpadToast.success("Changes saved.");
       },
       error: function (xhr) {
         console.error(xhr.responseText);
-        alert("An error occurred while saving the task.");
+        window.TackpadToast.error("Something went wrong while saving the task.");
       },
     });
   });

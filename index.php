@@ -21,6 +21,9 @@ $routes = [
 	/* Aufgabe teilen */
 	'share' => 'TackPadController@share',
 
+	/* Profilbild */
+	'avatar' => 'TackPadController@updateAvatar',
+
 	/* Informationen löschen */
 	'delete' => 'TackPadController@delete',
 	'deleteAllDone' => 'TackPadController@deleteAllDone',

@@ -48,12 +48,12 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then(function (data) {
         if (!data || !data.success) {
-          alert("Could not reschedule: " + ((data && data.error) || "unknown error"));
+          window.TackpadToast.error("Could not reschedule: " + ((data && data.error) || "unknown error"));
           info.revert();
         }
       })
       .catch(function () {
-        alert("Network error while rescheduling. Reverting the change.");
+        window.TackpadToast.error("Network error while rescheduling. Reverting the change.");
         info.revert();
       });
   }

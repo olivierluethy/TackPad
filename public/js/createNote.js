@@ -27,7 +27,7 @@ $(document).ready(function () {
         response = JSON.parse(response);
 
         if (response.error) {
-          alert("Error: " + response.error);
+          window.TackpadToast.error(response.error);
           return;
         }
 
@@ -56,10 +56,11 @@ $(document).ready(function () {
 
         $("#addForm")[0].reset();
         $("#addModal").hide();
+        window.TackpadToast.success("Task added.");
       },
       error: function (xhr, status, error) {
         console.error(xhr.responseText);
-        alert("An error occurred while adding the task.");
+        window.TackpadToast.error("Something went wrong while adding the task.");
       },
     });
   });

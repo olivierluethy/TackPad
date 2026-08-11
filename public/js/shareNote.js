@@ -11,7 +11,7 @@ function openShareModal() {
   );
 
   if (ids.length !== 1) {
-    alert("Please select exactly one task to share.");
+    window.TackpadToast.error("Please select exactly one task to share.");
     return;
   }
 
@@ -88,6 +88,7 @@ $(document).ready(function () {
         if (response && response.success) {
           markRowShared(shareTaskId);
           $("#shareModal").hide();
+          window.TackpadToast.success("Task shared.");
         } else {
           showShareFeedback(
             (response && response.error) || "Could not share the task.",
