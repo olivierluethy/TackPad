@@ -18,4 +18,15 @@ EOF
     chown www-data:www-data "$ENV_FILE"
 fi
 
+# Apply any pending database migrations (idempotent). Wait briefly for the DB
+# to accept connections first — the web container starts once the DB reports
+# healthy, but this adds a small safety margin.
+echo "Running database migrations..."
+i=0
+until php /var/www/html/core/migrate.php || [ "$i" -ge 10 ]; do
+    i=$((i + 1))
+    echo "  migrate: database not ready yet, retry $i/10..."
+    sleep 3
+done
+
 exec "$@"

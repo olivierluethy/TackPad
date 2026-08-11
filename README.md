@@ -86,6 +86,33 @@ view of your task deadlines:
 - **Export (.ics)** downloads a standard iCalendar file you can import into
   Google Calendar, Proton Calendar, Apple Calendar or Outlook.
 
+## Frontend build (Tailwind CSS)
+
+The UI is styled with [Tailwind CSS](https://tailwindcss.com/), configured from
+`docs/STYLEGUIDE.md` (the single source of truth for TackPad's colours,
+typography and components). The **compiled stylesheet `public/css/tackpad.css`
+is committed**, so running the app — including in production — needs no Node
+toolchain. Only rebuild it when you change styles:
+
+```bash
+npm install          # once
+npm run build:css    # compile public/css/src/app.css -> public/css/tackpad.css
+npm run watch:css    # rebuild on change during development
+```
+
+## Database migrations
+
+Schema changes are applied by an idempotent runner, safe to run repeatedly:
+
+```bash
+php core/migrate.php            # apply all pending migrations
+php core/migrate.php --status   # list applied / pending without changing anything
+```
+
+Fresh installs get the full schema from `TackPad.sql`; existing databases are
+brought up to date by the migrations in `/migrations`. Under Docker, migrations
+run automatically on container start.
+
 ## Installation Guide
 
 1. **Install Git:**

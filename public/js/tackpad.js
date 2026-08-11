@@ -245,7 +245,7 @@ function applyRowStatus(row, isCompleted, dueRaw) {
 // Build a brand-new OPEN task row (6 columns) matching the server layout.
 function buildOpenTaskRow(data) {
   var row = document.createElement("tr");
-  row.className = "task-row";
+  row.className = "task-row task-row-enter";
   applyRowStatus(row, false, data.datum);
   if (data.shared) {
     row.classList.add("task-row--shared");
@@ -303,7 +303,7 @@ function makeCell(className, text) {
 // the "Completed on" column. Used when a task is marked done without a reload.
 function buildCompletedTaskRow(data) {
   var row = document.createElement("tr");
-  row.className = "task-row erledigt";
+  row.className = "task-row erledigt task-row-enter";
   applyRowStatus(row, true, data.datum); // completed → grey
   if (data.shared) {
     row.classList.add("task-row--shared");
