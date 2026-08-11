@@ -495,87 +495,50 @@ class TackPadController
 
     public function login()
     {
-        // Initialize the session
         session_start();
 
-        // Check if the user is already logged in, if yes then redirect to home page
+        // Already signed in → straight to the dashboard.
         if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
             header("location: home");
             exit;
         }
 
-        // Include config file
-        include __DIR__ . '/../../core/db_config.php';
+        $mode = 'login';
+        $errors = [];
+        $old = [];
 
-        // Define variables and initialize with empty values
-        $email = $password = "";
-        $email_err = $password_err = "";
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $email = strtolower(trim($_POST['email'] ?? ''));
+            $password = (string) ($_POST['password'] ?? '');
+            $old['email'] = $email;
 
-        // Processing form data when form is submitted
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Check if email is empty
-            if (empty(trim($_POST["email"]))) {
-                $email_err = "Bitte geben Sie eine E-Mail-Adresse ein.";
-            } else {
-                $email = strtolower(trim($_POST["email"]));
+            $validator = new Validator();
+            $validator->checkEmail($email);
+            if (trim($password) === '') {
+                $validator->add('password', 'Please enter your password.');
             }
 
-            // Check if password is empty
-            if (empty(trim($_POST["password"]))) {
-                $password_err = "Bitte geben Sie Ihr Passwort ein.";
-            } else {
-                $password = trim($_POST["password"]);
-            }
+            if ($validator->passes()) {
+                $user = (new User())->authenticate($email, $password);
+                if ($user !== null) {
+                    // New session id on privilege change (fixation defence).
+                    session_regenerate_id(true);
+                    $_SESSION["loggedin"] = true;
+                    $_SESSION["id"] = (int) $user['id'];
+                    $_SESSION["email"] = $email;
+                    $_SESSION["email_hash"] = $user['email'];
 
-            // Validate credentials
-            if (empty($email_err) && empty($password_err)) {
-                // Prepare a select statement to get salt and email hash
-                $sql = "SELECT id, email, password, salt FROM users";
-
-                if ($result = mysqli_query($link, $sql)) {
-                    $found = false;
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        $generated_hash = hash_hmac('sha256', $email, $row['salt']);
-
-                        if ($generated_hash === $row['email']) {
-                            $found = true;
-                            if (password_verify($password, $row['password'])) {
-                                // Password is correct, start a new session
-                                session_start();
-
-                                // Store data in session variables
-                                $_SESSION["loggedin"] = true;
-                                $_SESSION["id"] = $row['id'];
-                                $_SESSION["email"] = $email;
-                                $_SESSION["email_hash"] = $row['email'];
-
-                                // Redirect user to home page
-                                header("location: home");
-                                exit();
-                            } else {
-                                // Display an error message if password is not valid
-                                $password_err = "Das Passwort ist nicht gültig.";
-                            }
-                        }
-                    }
-                    if (!$found) {
-                        // Display an error message if email doesn't exist
-                        $email_err = "Kein Konto mit dieser E-Mail-Adresse gefunden.";
-                    }
-                } else {
-                    echo "Oops! Something went wrong. Please try again later.";
+                    header("location: home");
+                    exit();
                 }
-
-                // Free result set
-                mysqli_free_result($result);
+                // Generic message: never reveal whether the email exists.
+                $errors['password'] = 'The email or password is incorrect.';
+            } else {
+                $errors = $validator->errors();
             }
-
-            // Close connection
-            mysqli_close($link);
         }
 
-        // Load login view with appropriate error messages
-        require 'app/Views/login.php';
+        require 'app/Views/auth.view.php';
     }
 
     public function logout()
@@ -590,114 +553,51 @@ class TackPadController
 
     public function register()
     {
-        // Include config file
-        include __DIR__ . '/../../core/db_config.php';
+        session_start();
 
-        // Define variables and initialize with empty values
-        $email = $password = $confirm_password = "";
-        $email_err = $password_err = $confirm_password_err = "";
-
-        // Processing form data when form is submitted
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Validate email
-            if (empty(trim($_POST['email']))) {
-                $email_err = "Bitte geben Sie eine E-Mail-Adresse ein.";
-            } else {
-                $email = strtolower(trim($_POST['email'])); // Email to lowercase
-                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    $email_err = "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
-                } else {
-                    // Prepare a select statement to check if the email already exists
-                    $sql = "SELECT email, salt FROM users";
-                    if ($result = mysqli_query($link, $sql)) {
-                        $email_exists = false;
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            $stored_email_hash = $row['email'];
-                            $stored_salt = $row['salt'];
-                            $check_email_hash = hash_hmac('sha256', $email, $stored_salt);
-                            if ($stored_email_hash === $check_email_hash) {
-                                $email_exists = true;
-                                break;
-                            }
-                        }
-                        mysqli_free_result($result);
-
-                        if ($email_exists) {
-                            $email_err = "Diese E-Mail-Adresse ist bereits vergeben.";
-                        }
-                    } else {
-                        echo "Oops! Something went wrong. Please try again later.";
-                    }
-                }
-            }
-
-            // Validate password
-            if (empty(trim($_POST["password"]))) {
-                $password_err = "Bitte geben Sie ein Passwort ein.";
-            } elseif (strlen(trim($_POST["password"])) < 6) {
-                $password_err = "Das Passwort muss mindestens 6 Zeichen haben.";
-            } else {
-                $password = trim($_POST["password"]);
-            }
-
-            // Validate confirm password
-            if (empty(trim($_POST["confirm_password"]))) {
-                $confirm_password_err = "Bitte bestätigen Sie das Passwort.";
-            } else {
-                $confirm_password = trim($_POST["confirm_password"]);
-                if (empty($password_err) && ($password != $confirm_password)) {
-                    $confirm_password_err = "Die Passwörter stimmen nicht überein.";
-                }
-            }
-
-            // Check input errors before inserting in database
-            if (empty($email_err) && empty($password_err) && empty($confirm_password_err)) {
-                // Generate salt
-                $salt = bin2hex(random_bytes(16)); // 16 bytes = 128 bits
-                // Hash the email with the salt
-                $email_hash = hash_hmac('sha256', $email, $salt);
-                // Hash the password
-                $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
-
-                // Prepare an insert statement
-                $sql = "INSERT INTO users (email, password, salt) VALUES (?, ?, ?)";
-                if ($stmt = mysqli_prepare($link, $sql)) {
-                    mysqli_stmt_bind_param($stmt, "sss", $email_hash, $param_password, $salt);
-                    if (mysqli_stmt_execute($stmt)) {
-                        // Auto-login: registration creates the account AND signs the
-                        // user in, so they land straight on the dashboard. A fresh
-                        // login is only needed again after an explicit logout.
-                        $new_user_id = mysqli_insert_id($link);
-                        mysqli_stmt_close($stmt);
-                        mysqli_close($link);
-
-                        if (session_status() === PHP_SESSION_NONE) {
-                            session_start();
-                        }
-                        $_SESSION["loggedin"] = true;
-                        $_SESSION["id"] = $new_user_id;
-                        $_SESSION["email"] = $email;
-                        $_SESSION["email_hash"] = $email_hash;
-
-                        header("location: home");
-                        exit();
-                    } else {
-                        echo "Oops! Something went wrong. Please try again later.";
-                    }
-                    mysqli_stmt_close($stmt);
-                }
-            }
-
-            // Close connection
-            mysqli_close($link);
+        if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+            header("location: home");
+            exit;
         }
 
-        // Generate a new CSRF token
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        // Same unified screen as login(), opened on the Register tab.
+        $mode = 'register';
+        $errors = [];
+        $old = [];
 
-        require 'app/Views/register.view.php';
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $email = strtolower(trim($_POST['email'] ?? ''));
+            $password = (string) ($_POST['password'] ?? '');
+            $confirm = (string) ($_POST['confirm_password'] ?? '');
+            $old['email'] = $email;
+
+            $validator = new Validator();
+            $validator->checkEmail($email);
+            $validator->checkPassword($password);
+            $validator->checkPasswordConfirmation($password, $confirm);
+
+            $user = new User();
+            if ($validator->passes() && $user->emailExists($email)) {
+                $validator->add('email', 'This email address is already registered.');
+            }
+
+            if ($validator->passes()) {
+                $newUserId = $user->create($email, $password);
+
+                // Auto-login: registration creates the account AND signs the user
+                // in, so they land straight on the dashboard.
+                session_regenerate_id(true);
+                $_SESSION["loggedin"] = true;
+                $_SESSION["id"] = $newUserId;
+                $_SESSION["email"] = $email;
+
+                header("location: home");
+                exit();
+            }
+
+            $errors = $validator->errors();
+        }
+
+        require 'app/Views/auth.view.php';
     }
 }

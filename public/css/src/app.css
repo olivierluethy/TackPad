@@ -470,3 +470,15 @@
   transition: width 0.35s ease;
 }
 .pw-meter__label { font-size: 12px; margin-top: 4px; color: #333; min-height: 1em; }
+.auth-gen {
+  margin-top: 8px;
+  border: none;
+  background: none;
+  color: #06145b;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+.auth-gen:hover { text-decoration: underline; }
