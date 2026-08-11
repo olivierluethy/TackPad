@@ -22,6 +22,8 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  [x-cloak] { display: none !important; }
+
   body {
     @apply bg-tp-black text-tp-white font-mono;
     margin: 0;

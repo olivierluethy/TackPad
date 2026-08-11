@@ -102,7 +102,7 @@ $displayDate = function ($value) {
 </head>
 
 <body class="on-dark">
-    <?php $sidebarActive = 'tasks'; include 'partials/sidebar.view.php'; ?>
+    <?php $sidebarActive = 'tasks'; include __DIR__ . '/partials/sidebar.view.php'; ?>
 
     <main class="pt-14 px-3">
         <?php if (count($normalized_tasks) > 0): ?>
@@ -226,11 +226,11 @@ $displayDate = function ($value) {
 
     <!-- Include modals and additional views -->
     <?php
-    include("editNote.view.php");
-    include("addNote.view.php");
-    include("reallyDelete.view.php");
-    include("shareNote.view.php");
-    include("profile.view.php");
+    include __DIR__ . "/editNote.view.php";
+    include __DIR__ . "/addNote.view.php";
+    include __DIR__ . "/reallyDelete.view.php";
+    include __DIR__ . "/shareNote.view.php";
+    include __DIR__ . "/profile.view.php";
     ?>
 </body>
 

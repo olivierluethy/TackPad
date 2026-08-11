@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- FullCalendar v6 (single global bundle: dayGrid + timeGrid + interaction) -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script defer src="public/js/toast.js"></script>
     <script defer src="public/js/taskStatus.js"></script>
     <script defer src="public/js/tackpad.js"></script>
@@ -24,7 +23,7 @@
 </head>
 
 <body class="on-dark">
-    <?php $sidebarActive = 'calendar'; include 'partials/sidebar.view.php'; ?>
+    <?php $sidebarActive = 'calendar'; include __DIR__ . '/partials/sidebar.view.php'; ?>
 
     <main class="calendar-main">
         <header class="calendar-header">
@@ -73,7 +72,7 @@
         </div>
     </div>
 
-    <?php include 'profile.view.php'; ?>
+    <?php include __DIR__ . '/profile.view.php'; ?>
 </body>
 
 </html>
