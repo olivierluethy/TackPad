@@ -48,6 +48,11 @@ module.exports = {
       fontFamily: {
         mono: ['Inconsolata', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
+      // Off-canvas drawer width — single source shared by CSS (.sidenav open
+      // state) so no JS ever hard-codes the pixel value.
+      spacing: {
+        sidenav: '250px',
+      },
       borderRadius: {
         btn: '10px',
         modal: '25px',

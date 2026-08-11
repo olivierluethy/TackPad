@@ -1,12 +1,40 @@
 // Sidebar navigation — shared by every page that has the sidenav (task list and
 // calendar both load this file), so the hamburger works everywhere.
+//
+// The open/closed state is a single class on <html> (.sidenav-open); the width
+// lives only in CSS. We persist that class to localStorage so the drawer keeps
+// its state across page navigation, and a tiny inline script in the sidebar
+// partial re-applies it before first paint (no flicker). The key and default
+// below are kept in sync with that inline script.
+var SIDENAV_KEY = "tackpad.sidenav";
+
+// Toggle + remember. localStorage can throw (private mode, quota); a failed
+// write just means the choice isn't remembered — the drawer still opens/closes.
+function setSidenav(open) {
+  document.documentElement.classList.toggle("sidenav-open", open);
+  try {
+    localStorage.setItem(SIDENAV_KEY, open ? "1" : "0");
+  } catch (e) {
+    /* preference not persisted — non-fatal */
+  }
+}
+
 function openNav() {
-  document.getElementById("mySidenav").style.width = "250px";
+  setSidenav(true);
 }
 
 function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
+  setSidenav(false);
 }
+
+// The restore script opens the drawer with animation suppressed so a
+// remembered-open sidebar doesn't slide in on load. Once the first frame has
+// painted, drop that guard so user-driven opens/closes animate normally.
+window.addEventListener("DOMContentLoaded", function () {
+  requestAnimationFrame(function () {
+    document.documentElement.classList.remove("sidenav-preload");
+  });
+});
 
 /* =========================================================================
    Task selection — single source of truth

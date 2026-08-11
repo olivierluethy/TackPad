@@ -96,26 +96,70 @@
     @apply px-4 py-2 text-sm rounded-[6px];
   }
 
-  /* ---- Sidebar drawer ------------------------------------------------- */
+  /* ---- Sidebar drawer -------------------------------------------------
+     Off-canvas drawer. Width is the only thing that animates and it is driven
+     entirely by a class on <html> (.sidenav-open), set before first paint by
+     the restore script in partials/sidebar.view.php and toggled by
+     openNav()/closeNav() in tackpad.js — so no page ever writes an inline
+     width and the open/closed state survives navigation. */
   .sidenav {
     @apply fixed top-0 left-0 z-40 h-full w-0 overflow-x-hidden overflow-y-auto
-           bg-tp-sidenav flex flex-col items-center justify-center
+           bg-tp-sidenav flex flex-col
            transition-[width] duration-300 ease-in-out;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.55);
   }
-  .sidenav a {
-    @apply block w-full text-center px-5 py-2.5 text-2xl text-tp-white no-underline
-           cursor-pointer transition-colors duration-300 hover:bg-tp-sidenav-hover;
+  html.sidenav-open .sidenav { @apply w-sidenav; }
+  /* During the pre-paint state restore, suppress the width animation so a
+     restored-open drawer is simply there, not sliding in. tackpad.js drops
+     this class after the first frame, so later toggles still animate. */
+  html.sidenav-preload .sidenav { transition: none !important; }
+
+  /* Fixed-width content column: labels never reflow while the drawer animates. */
+  .sidenav-inner {
+    @apply flex min-h-full w-sidenav flex-col px-4 pb-5 pt-14;
   }
+
+  /* Close control — a real button, quiet until hovered, top-right of the panel. */
+  .sidenav-close {
+    @apply absolute top-3 right-3 flex h-9 w-9 items-center justify-center
+           rounded-full border-0 bg-transparent p-0 text-2xl leading-none
+           text-tp-muted cursor-pointer transition-colors duration-200
+           hover:bg-tp-sidenav-hover hover:text-tp-white;
+  }
+
+  /* Identity block: avatar, gradient-underlined wordmark, greeting. */
+  .sidenav-header { @apply flex flex-col items-center pb-6 text-center; }
+  .sidenav-avatar { @apply mb-4 cursor-pointer border-0 bg-transparent p-0; }
   .sidenav .brand-mark {
-    @apply text-3xl font-bold px-5 py-2.5 mb-2 bg-tp-white text-tp-black;
-    box-shadow: 0 0 40px 0 rgba(255, 255, 255, 0.6);
+    @apply relative inline-block pb-2 text-3xl font-bold tracking-tight text-tp-white;
   }
-  .sidenav .brand-greeting {
-    @apply text-lg text-tp-white px-5 pb-5;
+  .sidenav .brand-mark::after {
+    content: "";
+    @apply absolute bottom-0 left-0 h-[3px] w-full rounded-full bg-tp-gradient;
   }
+  .sidenav .brand-greeting { @apply mt-2.5 text-sm text-tp-muted; }
+
+  /* Nav links: left-aligned, fixed-width icon gutter so labels align. */
+  .sidenav-links { @apply flex flex-col gap-1; }
+  .sidenav a {
+    @apply flex items-center gap-3 rounded-btn px-4 py-3 text-lg text-tp-white
+           no-underline cursor-pointer transition-colors duration-200
+           hover:bg-tp-sidenav-hover;
+  }
+  .sidenav a i { @apply w-5 text-center text-tp-muted transition-colors duration-200; }
+  .sidenav a:hover i { @apply text-tp-white; }
+
+  /* Log out: pinned to the bottom and divided off — the session-ending action. */
+  .sidenav-logout {
+    @apply mt-auto border-t border-tp-sidenav-hover pt-4;
+  }
+
+  /* Hamburger opener — reads as a button (hit area + hover), fixed top-left. */
   .navi {
-    @apply fixed top-2 left-4 z-30 text-4xl text-tp-white cursor-pointer select-none;
+    @apply fixed top-2 left-3 z-30 flex h-10 w-10 items-center justify-center
+           rounded-btn border-0 bg-transparent p-0 text-3xl text-tp-white
+           cursor-pointer select-none transition-colors duration-200
+           hover:bg-tp-sidenav;
   }
 
   /* ---- Sticky options bar --------------------------------------------- */
