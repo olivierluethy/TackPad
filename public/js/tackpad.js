@@ -131,8 +131,28 @@ function showTaskTab(which) {
     var isActive = tabs[i].getAttribute("data-tab") === which;
     tabs[i].classList.toggle("active", isActive);
   }
-  togglePanel("panel-open", which === "open");
+  // Open and Overdue share the open panel; Overdue just filters it to past-due
+  // rows (via the .filter-overdue CSS rule). Completed is its own panel.
+  togglePanel("panel-open", which === "open" || which === "overdue");
   togglePanel("panel-completed", which === "completed");
+
+  var openPanel = document.getElementById("panel-open");
+  if (openPanel) {
+    openPanel.classList.toggle("filter-overdue", which === "overdue");
+  }
+  // Empty-state messages: the overdue one only applies while filtering.
+  toggleHidden("overdue-empty", !(which === "overdue" && countOverdueRows() === 0));
+  if (which !== "overdue") {
+    toggleHidden("overdue-empty", true);
+  }
+}
+
+// Number of visible overdue rows in the open table.
+function countOverdueRows() {
+  var table = document.getElementById("open-tasks-container");
+  return table
+    ? table.querySelectorAll("tr.task-row.task-row--overdue").length
+    : 0;
 }
 
 function togglePanel(id, visible) {
@@ -176,8 +196,15 @@ function refreshTaskCounts() {
 
   setText("open-count", open);
   setText("done-count", done);
+  setText("overdue-count", countOverdueRows());
   toggleHidden("open-empty", open > 0);
   toggleHidden("completed-empty", done > 0);
+
+  // If the Overdue tab is active, keep its empty-state in step with the count.
+  var activeTab = document.querySelector(".task-tab.active");
+  if (activeTab && activeTab.getAttribute("data-tab") === "overdue") {
+    toggleHidden("overdue-empty", countOverdueRows() > 0);
+  }
 }
 
 function setText(id, value) {

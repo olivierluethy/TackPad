@@ -55,8 +55,15 @@ usort($completed_tasks, $sortByPriorityThenDate);
 
 $open_tasks_counter = count($open_tasks);
 $done_tasks_counter = count($completed_tasks);
+// Overdue = open tasks whose deadline has passed (a subset of the open list,
+// surfaced as its own top-level tab so it is reachable without scrolling).
+$overdue_tasks_counter = count(array_filter(
+    $open_tasks,
+    fn($t) => isTaskPastDue($t['date_to_complete'])
+));
 $has_open_tasks = $open_tasks_counter > 0;
 $has_completed_tasks = $done_tasks_counter > 0;
+$has_overdue_tasks = $overdue_tasks_counter > 0;
 
 // Robust display for the secondary date columns. Some legacy values are stored
 // as raw unix timestamps (completed/changed); others as datetime strings. This
@@ -128,10 +135,13 @@ $displayDate = function ($value) {
                  scrolling. The counts are kept live by refreshTaskCounts(). -->
             <nav class="task-tabs" role="tablist">
                 <button type="button" class="task-tab active" data-tab="open" onclick="showTaskTab('open')">
-                    Open Tasks (<span id="open-count"><?= $open_tasks_counter ?></span>)
+                    Open (<span id="open-count"><?= $open_tasks_counter ?></span>)
+                </button>
+                <button type="button" class="task-tab" data-tab="overdue" onclick="showTaskTab('overdue')">
+                    Overdue (<span id="overdue-count"><?= $overdue_tasks_counter ?></span>)
                 </button>
                 <button type="button" class="task-tab" data-tab="completed" onclick="showTaskTab('completed')">
-                    Completed Tasks (<span id="done-count"><?= $done_tasks_counter ?></span>)
+                    Completed (<span id="done-count"><?= $done_tasks_counter ?></span>)
                 </button>
             </nav>
 
@@ -174,6 +184,7 @@ $displayDate = function ($value) {
                     <?php endforeach; ?>
                 </table>
                 <p class="task-empty" id="open-empty" <?= $has_open_tasks ? 'hidden' : '' ?>>No open tasks &mdash; nice work!</p>
+                <p class="task-empty" id="overdue-empty" hidden>No overdue tasks &mdash; you're on top of things.</p>
             </section>
 
             <section class="task-panel" id="panel-completed" hidden>

@@ -505,3 +505,6 @@
 /* Gentle fade-in for task rows inserted without a reload (create / move). */
 @keyframes row-enter { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 .task-row-enter { animation: row-enter 0.35s ease; }
+
+/* Overdue tab: filter the open table down to past-due rows in place. */
+#panel-open.filter-overdue tr.task-row:not(.task-row--overdue) { display: none; }
