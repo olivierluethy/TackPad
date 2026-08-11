@@ -1,0 +1,13 @@
+{
+  "name": "tackpad",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TackPad — task manager with calendar. Tailwind build pipeline.",
+  "scripts": {
+    "build:css": "tailwindcss -i ./public/css/src/app.css -o ./public/css/tackpad.css --minify",
+    "watch:css": "tailwindcss -i ./public/css/src/app.css -o ./public/css/tackpad.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

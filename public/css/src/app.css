@@ -1,0 +1,472 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================================
+   BASE — canvas, type, accessibility floor
+   Tokens mirror docs/STYLEGUIDE.md. This is the only place the raw values
+   live besides tailwind.config.js.
+   ========================================================================= */
+@layer base {
+  :root {
+    /* Task status colour tokens — single source of truth for row colours.
+       The semantic state is decided in code (taskStatusClass() in
+       core/helpers.php and public/js/taskStatus.js); the state→colour mapping
+       lives only here. */
+    --task-color-on-time: #90ee90;
+    --task-color-overdue: #f08080;
+    --task-color-completed: #d3d3d3;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-tp-black text-tp-white font-mono;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3 {
+    font-weight: 700;
+  }
+
+  /* Visible keyboard focus everywhere — navy on light, white on dark. Never
+     removed without replacement (styleguide §5). */
+  :focus-visible {
+    outline: 2px solid #06145b;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  .on-dark :focus-visible,
+  .sidenav :focus-visible {
+    outline-color: #ffffff;
+  }
+
+  /* Honour reduced-motion: kill the modal slide and ambient drift. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+/* =========================================================================
+   COMPONENTS — reproduce the existing look as reusable classes so the PHP
+   views stay clean and the working JS (which relies on these class names)
+   keeps functioning unchanged.
+   ========================================================================= */
+@layer components {
+
+  /* ---- Buttons -------------------------------------------------------- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-btn font-mono
+           text-base font-bold cursor-pointer border-2 px-8 py-4
+           transition-colors duration-300 ease-in-out;
+  }
+  /* Primary navy — the app's main call to action; inverts on hover. */
+  .btn-primary {
+    @apply btn bg-tp-navy border-tp-navy text-tp-white
+           hover:bg-tp-white hover:text-tp-navy;
+  }
+  /* White toolbar button on the black canvas; inverts to black. */
+  .btn-white {
+    @apply btn bg-tp-white border-tp-white text-tp-black
+           hover:bg-tp-black hover:text-tp-white;
+  }
+  .btn-edit {
+    @apply btn bg-tp-edit border-tp-edit text-tp-white
+           hover:bg-tp-white hover:text-tp-edit;
+  }
+  .btn-danger {
+    @apply btn bg-tp-danger border-tp-danger text-tp-white
+           hover:bg-tp-white hover:text-tp-danger;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent border-tp-tab-border text-tp-white
+           hover:bg-tp-sidenav-hover;
+  }
+  .btn-sm {
+    @apply px-4 py-2 text-sm rounded-[6px];
+  }
+
+  /* ---- Sidebar drawer ------------------------------------------------- */
+  .sidenav {
+    @apply fixed top-0 left-0 z-40 h-full w-0 overflow-x-hidden overflow-y-auto
+           bg-tp-sidenav flex flex-col items-center justify-center
+           transition-[width] duration-300 ease-in-out;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  }
+  .sidenav a {
+    @apply block w-full text-center px-5 py-2.5 text-2xl text-tp-white no-underline
+           cursor-pointer transition-colors duration-300 hover:bg-tp-sidenav-hover;
+  }
+  .sidenav .brand-mark {
+    @apply text-3xl font-bold px-5 py-2.5 mb-2 bg-tp-white text-tp-black;
+    box-shadow: 0 0 40px 0 rgba(255, 255, 255, 0.6);
+  }
+  .sidenav .brand-greeting {
+    @apply text-lg text-tp-white px-5 pb-5;
+  }
+  .navi {
+    @apply fixed top-2 left-4 z-30 text-4xl text-tp-white cursor-pointer select-none;
+  }
+
+  /* ---- Sticky options bar --------------------------------------------- */
+  .options-bar {
+    @apply sticky top-0 z-20 mx-auto my-0 w-full max-w-3xl flex flex-wrap
+           items-center justify-center gap-2 p-2 bg-tp-black;
+  }
+
+  /* ---- Task tabs ------------------------------------------------------ */
+  .task-tabs {
+    @apply flex justify-center flex-wrap gap-2 mx-auto mt-4 mb-6;
+  }
+  .task-tab {
+    @apply bg-tp-tab text-tp-white border-2 border-tp-tab-border rounded-btn
+           px-6 py-3 text-base font-mono cursor-pointer transition-colors
+           duration-300 hover:bg-tp-sidenav;
+  }
+  .task-tab.active {
+    @apply bg-tp-white text-tp-black border-tp-white;
+  }
+  .task-panel[hidden] { display: none; }
+  .task-empty {
+    @apply text-tp-muted text-center my-4 mb-12;
+  }
+  .task-empty[hidden] { display: none; }
+
+  /* ---- Task table ----------------------------------------------------- */
+  .task-table {
+    @apply w-full md:w-3/4 lg:w-1/2 border-collapse mx-auto mb-20 bg-tp-white
+           text-tp-black;
+    box-shadow: 0 2px 18px 0 rgba(255, 255, 255, 0.5);
+  }
+  .task-table th,
+  .task-table td {
+    @apply text-tp-black border border-tp-black text-left align-middle p-3;
+  }
+  .task-table input[type="checkbox"] {
+    @apply w-6 h-6 cursor-pointer accent-tp-navy;
+  }
+
+  /* Status colours — applied to every cell of a row (styleguide §1.3). */
+  .task-row--on-time td { background-color: var(--task-color-on-time); }
+  .task-row--overdue td { background-color: var(--task-color-overdue); }
+  .task-row--completed td { background-color: var(--task-color-completed); }
+  /* Completed rows strike through; markup-agnostic so JS/PHP rows match. */
+  .task-row.erledigt td { text-decoration: line-through; }
+  /* Shared badge + row accent. */
+  .task-shared-badge { @apply text-tp-navy ml-1.5; }
+  .task-shared-badge[hidden] { display: none; }
+  .task-row--shared td:first-child { border-left: 4px solid #06145b; }
+
+  /* ---- Modals --------------------------------------------------------- */
+  .modal {
+    @apply hidden fixed inset-0 z-50 w-full h-full overflow-auto;
+    padding-top: 100px;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  .modal.is-open { display: block; }
+  .modal-content {
+    @apply relative bg-tp-surface mx-auto rounded-modal
+           w-[92%] sm:w-[70%] md:w-[440px];
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+    animation: animatetop 0.4s ease;
+  }
+  .modal-content .close {
+    @apply absolute right-4 top-2.5 text-tp-black text-3xl font-bold
+           cursor-pointer leading-none hover:opacity-70;
+  }
+  .modal-header {
+    @apply text-center rounded-t-modal px-4 py-3 bg-tp-white text-tp-black
+           border-b-2 border-tp-black;
+  }
+  .modal-header h2 { @apply text-tp-black text-xl; }
+  .modal-body { @apply px-6 py-4 text-tp-black; }
+  .modal-footer {
+    @apply px-4 py-3 bg-tp-white rounded-b-modal border-t-2 border-tp-black;
+  }
+  .modal-footer .select-button {
+    @apply flex justify-center items-center gap-3;
+  }
+
+  /* Fields inside modals. */
+  .field-row { @apply flex flex-col gap-1 mb-3; }
+  .field-label { @apply text-tp-black text-sm font-bold; }
+  .field-input,
+  .modal-body input:not([type="checkbox"]),
+  .modal-body select {
+    @apply w-full box-border px-3 py-2.5 my-1 rounded-input border border-gray-300
+           text-tp-black bg-tp-white font-mono
+           focus:border-tp-navy focus:outline-none;
+  }
+
+  /* ---- Empty state ---------------------------------------------------- */
+  .no-data { @apply text-center mt-16; }
+  .no-data h1 { @apply text-tp-danger mb-6; }
+
+  /* ---- Toasts (new) --------------------------------------------------- */
+  .toast-stack {
+    @apply fixed z-[60] top-4 right-4 flex flex-col gap-3
+           w-[min(92vw,360px)] pointer-events-none;
+  }
+  .toast {
+    @apply pointer-events-auto bg-tp-white text-tp-black rounded-btn
+           px-4 py-3 flex items-start gap-3 border-l-4;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+    animation: toast-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .toast--success { border-left-color: #4caf50; }
+  .toast--error { border-left-color: #b00020; }
+  .toast--info { border-left-color: #06145b; }
+  .toast__icon { @apply mt-0.5 shrink-0; }
+  .toast--success .toast__icon { @apply text-tp-edit; }
+  .toast--error .toast__icon { @apply text-tp-danger-ink; }
+  .toast--info .toast__icon { @apply text-tp-navy; }
+  .toast__msg { @apply text-sm leading-snug; }
+  .toast__close { @apply ml-auto text-tp-black/50 hover:text-tp-black cursor-pointer; }
+
+  /* ---- Avatars (new) -------------------------------------------------- */
+  .avatar {
+    @apply inline-flex items-center justify-center rounded-full overflow-hidden
+           bg-tp-navy text-tp-white font-bold uppercase select-none
+           ring-2 ring-tp-navy;
+  }
+  .avatar img { @apply w-full h-full object-cover; }
+  .avatar-sm { @apply w-8 h-8 text-sm; }
+  .avatar-md { @apply w-12 h-12 text-base; }
+  .avatar-lg { @apply w-20 h-20 text-2xl ring-tp-white; }
+
+  /* ---- Share / feedback ---------------------------------------------- */
+  .share-hint { @apply text-tp-black text-sm text-center; }
+  .share-feedback { @apply mt-2 text-sm text-center text-tp-navy; }
+  .share-feedback.is-error { @apply text-tp-danger-ink; }
+  .share-feedback[hidden] { display: none; }
+
+  /* ---- Calendar detail modal list ------------------------------------ */
+  .event-details { @apply m-0 py-2; }
+  .event-details dt { @apply font-bold text-tp-navy mt-2.5; }
+  .event-details dd { @apply m-0 mb-1.5 text-tp-black break-words; }
+}
+
+/* =========================================================================
+   PLAIN CSS (never purged) — FullCalendar runtime classes, the auth screen,
+   the gradient signature, and the password-strength meter. Kept outside
+   @layer so classes generated at runtime by FullCalendar survive the build.
+   ========================================================================= */
+
+/* ---- Calendar layout ------------------------------------------------- */
+.calendar-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+  box-sizing: border-box;
+}
+.calendar-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.calendar-header h1 { color: #fff; margin: 0; }
+.calendar-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.calendar-hint { color: #cfd6ff; margin: 0 0 1rem; font-size: 0.95rem; }
+
+/* The calendar sits on a clean white card for readability. */
+#calendar {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Status-based event colours, aligned with the task list's semantics. */
+.tackpad-event--open { background-color: #06145b; border-color: #06145b; }
+.tackpad-event--completed {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  text-decoration: line-through;
+}
+.fc .fc-button-primary { background-color: #06145b; border-color: #06145b; }
+.fc .fc-button-primary:hover,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: #4caf50;
+  border-color: #4caf50;
+}
+.fc a { color: inherit; }
+
+@media (max-width: 600px) {
+  .calendar-main { padding: 1.5rem 0.75rem 2.5rem; }
+  .fc .fc-toolbar.fc-header-toolbar { flex-direction: column; gap: 0.5rem; }
+}
+
+/* ---- Unified auth screen -------------------------------------------- */
+.auth-body {
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
+/* Faint app icon behind, with a slow ambient drift (respects reduced-motion). */
+.auth-body::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("../../assets/icon.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.28;
+  z-index: 0;
+  animation: bg-drift 16s ease-in-out infinite alternate;
+}
+.auth-shell {
+  position: relative;
+  z-index: 1;
+  width: min(92vw, 380px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.auth-title {
+  position: relative;
+  font-size: clamp(2rem, 8vw, 4rem);
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 0.4em;
+  padding: 0.2em 0.4em;
+  line-height: 1.05;
+}
+/* The signature: tri-colour gradient underline. */
+.auth-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #0fa2d6 0%, #090979 50%, #f18522 100%);
+}
+.auth-card {
+  width: 100%;
+  padding: 24px;
+  border: 2px solid #005475;
+  border-radius: 10px;
+  background: #fff;
+  color: #000;
+  box-shadow: 2px 3px 12px rgba(0, 0, 0, 0.6);
+  text-align: left;
+}
+.auth-toggle {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  margin-bottom: 18px;
+  background: #eceef5;
+  border-radius: 10px;
+}
+.auth-toggle button {
+  flex: 1;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  color: #06145b;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.auth-toggle button.active { background: #06145b; color: #fff; }
+.auth-field { margin-bottom: 14px; }
+.auth-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #06145b;
+}
+.auth-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 15px;
+  color: #000;
+  background: #fff;
+}
+.auth-input:focus { outline: 2px solid #06145b; outline-offset: 1px; }
+.auth-input.is-invalid { border-color: #b00020; }
+.auth-error { color: #b00020; font-size: 12.5px; margin-top: 4px; min-height: 1em; }
+.auth-input-wrap { position: relative; display: flex; align-items: center; }
+.auth-input-wrap .auth-input { padding-right: 84px; }
+.auth-inline-btn {
+  position: absolute;
+  right: 6px;
+  border: none;
+  background: transparent;
+  color: #06145b;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px;
+}
+.auth-inline-btn:hover { text-decoration: underline; }
+.auth-submit {
+  width: 100%;
+  padding: 13px;
+  margin-top: 6px;
+  border: 2px solid #06145b;
+  border-radius: 10px;
+  background: #06145b;
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.auth-submit:hover { background: #fff; color: #06145b; }
+.auth-switch { margin-top: 14px; font-size: 13px; text-align: center; color: #333; }
+.auth-switch button {
+  border: none;
+  background: none;
+  color: #06145b;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+.auth-switch button:hover { text-decoration: underline; }
+
+/* ---- Password-strength meter (gradient signature) ------------------- */
+.pw-meter { margin-top: 8px; }
+.pw-meter__track {
+  height: 8px;
+  border-radius: 999px;
+  background: #e4e7ef;
+  overflow: hidden;
+}
+.pw-meter__fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0fa2d6 0%, #090979 50%, #f18522 100%);
+  transition: width 0.35s ease;
+}
+.pw-meter__label { font-size: 12px; margin-top: 4px; color: #333; min-height: 1em; }
