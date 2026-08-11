@@ -26,19 +26,13 @@ $routes = [
 
 	/* Informationen löschen */
 	'delete' => 'TackPadController@delete',
-	'deleteAllDone' => 'TackPadController@deleteAllDone',
-	'deleteAllOpen' => 'TackPadController@deleteAllOpen',
 
-	/* Informationen bearbeiten */
-	'showEditPage' => 'TackPadController@showEditPage',
+	/* Status ändern */
 	'erledigt' => 'TackPadController@erledigt',
 	'unerledigt' => 'TackPadController@unerledigt',
 
-	'getInfoFromId' => 'TackPadController@allInfoFromId',
-
 	/* Login */
 	'login' => 'TackPadController@login',
-	'config' => 'TackPadController@config',
 	'register' => 'TackPadController@register',
 	'logout' => 'TackPadController@logout',
 ];

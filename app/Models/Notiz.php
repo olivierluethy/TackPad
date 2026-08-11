@@ -348,26 +348,6 @@ class Notiz
 		return openssl_encrypt($data, 'aes-256-cbc', $key, 0, $iv);
 	}
 
-	public function removeNotiz($id)
-	{
-		$id = htmlspecialchars($id);
-		$statement = $this->db->prepare('DELETE FROM `notes` WHERE NoteId = :id');
-		$statement->bindParam(':id', $id);
-		$statement->execute();
-	}
-
-	public function deleteAllDone()
-	{
-		$statement = $this->db->prepare('DELETE FROM `notes` WHERE status = 1');
-		$statement->execute();
-	}
-
-	public function deleteAllOpen()
-	{
-		$statement = $this->db->prepare('DELETE FROM `notes` WHERE status = 0');
-		$statement->execute();
-	}
-
 	/**
 	 * Marks the given tasks as completed for $userId.
 	 *
@@ -384,21 +364,6 @@ class Notiz
 		return $this->setCompletion($ids, (int) $userId, true);
 	}
 
-
-	public function renewNotiz($titel, $notice, $date, $id)
-	{
-		$titel = htmlspecialchars($_POST['title']);
-		$notice = htmlspecialchars($_POST['notice']);
-		$date = htmlspecialchars($_POST['date']);
-		$id = htmlspecialchars($id);
-
-		$statement = $this->db->prepare('UPDATE notes SET titel = :titel, notiz = :notiz, date_to_complete = :date WHERE NoteId = :id');
-		$statement->bindParam(':titel', $titel);
-		$statement->bindParam(':notiz', $notice);
-		$statement->bindParam(':date', $date);
-		$statement->bindParam(':id', $id);
-		$statement->execute();
-	}
 
 	/**
 	 * Reopens the given completed tasks for $userId: status back to '0' and
@@ -477,38 +442,38 @@ class Notiz
 		return ['success' => empty($errors) || !empty($updated), 'updated' => $updated, 'errors' => $errors];
 	}
 
-	public function delete($ids)
+	/**
+	 * Deletes the given tasks, scoped to $userId so a user can never delete
+	 * another user's task (IDOR). Ids are cast to integers (NoteId is an int
+	 * column) rather than html-escaped, which is the correct sanitisation for a
+	 * numeric key. Returns the ids that were actually deleted.
+	 */
+	public function delete($ids, $userId)
 	{
-		// Check if $ids is a string and convert it to an array
 		if (is_string($ids)) {
 			$ids = explode(',', $ids);
 		}
+		$cleaned_ids = array_values(array_filter(array_map('intval', $ids)));
+		$userId = (int) $userId;
 
-		// Prevent SQL injection by sanitizing the input
-		$cleaned_ids = array_map('htmlspecialchars', $ids);
+		if ($cleaned_ids === []) {
+			return ["success" => false, "error" => "No valid task ids were provided."];
+		}
 
-		// Create a placeholder string for the SQL query
 		$placeholders = implode(',', array_fill(0, count($cleaned_ids), '?'));
+		$statement = $this->db->prepare(
+			"DELETE FROM notes WHERE NoteId IN ($placeholders) AND fk_usersId = ?"
+		);
 
-		// Prepare the SQL query
-		$statement = $this->db->prepare("DELETE FROM notes WHERE NoteId IN ($placeholders)");
-
-		// Execute the query with the sanitized IDs as parameters
 		try {
-			$statement->execute($cleaned_ids);
+			$statement->execute(array_merge($cleaned_ids, [$userId]));
 
-			// Check if any rows were affected (i.e., deleted)
 			if ($statement->rowCount() > 0) {
 				return ["success" => true, "deleted_ids" => $cleaned_ids];
-			} else {
-				return ["success" => false, "error" => "No tasks were deleted. The provided IDs may be invalid."];
 			}
+			return ["success" => false, "error" => "No tasks were deleted. The provided ids may be invalid."];
 		} catch (PDOException $e) {
-			// Catch any database-related errors and return them
 			return ["success" => false, "error" => "Database error: " . $e->getMessage()];
-		} catch (Exception $e) {
-			// Catch any other errors and return them
-			return ["success" => false, "error" => "An unexpected error occurred: " . $e->getMessage()];
 		}
 	}
 }

@@ -149,9 +149,7 @@ class TackPadController
         }
 
         $notiz = new Notiz();
-        $ids = e($_GET['id']);
-
-        $result = $notiz->delete($ids);
+        $result = $notiz->delete($_GET['id'] ?? '', (int) $_SESSION['id']);
 
         header("Content-Type: application/json");
         if ($result['success']) {
@@ -159,65 +157,6 @@ class TackPadController
         } else {
             echo json_encode(["success" => false, "error" => $result['error']]);
         }
-    }
-
-    public function deleteAllDone()
-    {
-        // Initialize the session
-        session_start();
-
-        // Check if the user is logged in, if not then redirect to login page
-        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-            header("location: login");
-            exit;
-        }
-
-        $notiz = new Notiz();
-
-        $notiz->deleteAllDone();
-
-        header('Location: home');
-
-        require 'app/Views/tackpad.view.php';
-    }
-
-    public function deleteAllOpen()
-    {
-        // Initialize the session
-        session_start();
-
-        // Check if the user is logged in, if not then redirect to login page
-        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-            header("location: login");
-            exit;
-        }
-
-        $notiz = new Notiz();
-
-        $notiz->deleteAllOpen();
-
-        header('Location: home');
-
-        require 'app/Views/tackpad.view.php';
-    }
-
-    public function showEditPage()
-    {
-        // Initialize the session
-        session_start();
-
-        // Check if the user is logged in, if not then redirect to login page
-        if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-            header("location: login");
-            exit;
-        }
-
-        $notiz = new Notiz();
-
-        // Fetch all tasks
-        $alle_tasks = $notiz->tackpad()->fetchAll();
-
-        require 'app/Views/index.view.php';
     }
 
     public function edit()
@@ -659,11 +598,6 @@ class TackPadController
 
         http_response_code(422);
         echo json_encode(['success' => false, 'error' => 'Nothing to update.']);
-    }
-
-    public function config()
-    {
-        require 'core/db_config.php';
     }
 
     public function register()

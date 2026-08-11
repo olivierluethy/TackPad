@@ -72,14 +72,6 @@ function deleteNote() {
   });
 }
 
-function deleteAllDone() {
-  location.href = "deleteAllDone";
-}
-
-function deleteAllOpen() {
-  location.href = "deleteAllOpen";
-}
-
 // Diese Funktion schließt das Modal
 function closeModal(modal) {
   modal.style.display = "none";
