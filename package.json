@@ -8,6 +8,6 @@
     "watch:css": "tailwindcss -i ./public/css/src/app.css -o ./public/css/tackpad.css --watch"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^4.3.3"
   }
 }
